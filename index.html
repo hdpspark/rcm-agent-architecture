@@ -3,14 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RCM Agent Architecture - AI-Powered Revenue Cycle Management</title>
+    <title>RCM Agent - AI-Powered Revenue Cycle Management</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         :root {
-            --primary: #00ff00;
-            --bg-dark: #0a0a0a;
-            --bg-light: #1a1a1a;
-            --text: #e0e0e0;
-            --accent: #00cc00;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #666666;
+            --accent-primary: #00dc82;
+            --accent-secondary: #00ff88;
+            --accent-gradient: linear-gradient(135deg, #00dc82 0%, #00ff88 50%, #36ef7a 100%);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-glow: 0 0 40px rgba(0, 220, 130, 0.3);
         }
         
         * {
@@ -20,27 +30,46 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(0, 220, 130, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(54, 239, 122, 0.05) 0%, transparent 50%);
+            z-index: -1;
         }
         
         /* Navigation */
         nav {
-            background: var(--bg-light);
-            padding: 1rem 0;
             position: fixed;
-            width: 100%;
             top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
             z-index: 1000;
-            border-bottom: 2px solid var(--primary);
+            transition: all 0.3s ease;
         }
         
         .nav-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -48,258 +77,745 @@
         
         .logo {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .nav-links {
             display: flex;
             gap: 2rem;
             list-style: none;
+            align-items: center;
         }
         
         .nav-links a {
-            color: var(--text);
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.3s;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
         }
         
         .nav-links a:hover {
-            color: var(--primary);
+            color: var(--text-primary);
+        }
+        
+        .nav-cta {
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 220, 130, 0.3);
+        }
+        
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 220, 130, 0.5);
         }
         
         /* Hero Section */
         .hero {
             padding: 8rem 2rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
             text-align: center;
-            background: linear-gradient(135deg, var(--bg-dark), var(--bg-light));
+            position: relative;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .hero-badge .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
         }
         
         .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        .hero p {
+        .hero-highlight {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-description {
             font-size: 1.25rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
         }
         
-        .cta-button {
-            display: inline-block;
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
             padding: 1rem 2rem;
-            background: var(--primary);
-            color: var(--bg-dark);
+            border-radius: 8px;
             text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(0, 220, 130, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        .cta-button:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 40px rgba(0, 220, 130, 0.5);
         }
         
-        /* Features Section */
+        .btn-secondary {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--glass-border);
+            transform: translateY(-2px);
+        }
+        
+        /* Features Grid */
         .features {
-            padding: 4rem 2rem;
+            padding: 6rem 2rem;
             max-width: 1200px;
             margin: 0 auto;
         }
         
-        .features h2 {
+        .section-header {
             text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2.5rem;
-            color: var(--primary);
+            margin-bottom: 4rem;
         }
         
-        .feature-grid {
+        .section-badge {
+            display: inline-block;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section-header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
         }
         
         .feature-card {
-            background: var(--bg-light);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
             padding: 2rem;
-            border-radius: 10px;
-            border: 2px solid transparent;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: translateX(100%);
         }
         
         .feature-card:hover {
-            border-color: var(--primary);
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.1);
+            border-color: rgba(0, 220, 130, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 220, 130, 0.1);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
         }
         
         .feature-card h3 {
-            color: var(--primary);
-            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
         }
         
-        /* Demos Section */
-        .demos {
-            padding: 4rem 2rem;
-            background: var(--bg-light);
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
         
-        .demos h2 {
-            text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2.5rem;
-            color: var(--primary);
+        /* Code Demo Section */
+        .code-demo {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
         }
         
-        .demo-grid {
+        .code-demo-container {
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
         }
         
-        .demo-card {
-            background: var(--bg-dark);
-            padding: 2rem;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid var(--primary);
-            transition: all 0.3s;
+        .code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            overflow: hidden;
+            font-family: 'Consolas', 'Monaco', monospace;
+            position: relative;
         }
         
-        .demo-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.3);
-        }
-        
-        .demo-card h3 {
-            color: var(--primary);
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
         }
         
-        .demo-card p {
-            margin-bottom: 1.5rem;
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--border-color);
         }
         
-        .demo-link {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary);
-            color: var(--bg-dark);
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: opacity 0.3s;
+        .code-dot:nth-child(1) { background: #ff5f57; }
+        .code-dot:nth-child(2) { background: #ffbd2e; }
+        .code-dot:nth-child(3) { background: #28ca42; }
+        
+        pre {
+            margin: 0;
+            overflow-x: auto;
         }
         
-        .demo-link:hover {
-            opacity: 0.8;
+        code {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        
+        .code-keyword { color: #ff79c6; }
+        .code-string { color: #50fa7b; }
+        .code-function { color: #8be9fd; }
+        .code-comment { color: #6272a4; }
+        
+        /* Metrics Section */
+        .metrics {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .metric-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 220, 130, 0.3);
+        }
+        
+        .metric-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 6rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cta h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #ffffff 0%, #a3a3a3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .cta p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .cta-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 220, 130, 0.1) 0%, transparent 70%);
+            filter: blur(100px);
+            z-index: 0;
         }
         
         /* Footer */
         footer {
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid var(--primary);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
         }
         
-        footer p {
-            color: var(--text);
-            opacity: 0.7;
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-brand p {
+            color: var(--text-secondary);
+            max-width: 300px;
+        }
+        
+        .footer-links h4 {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .code-demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="bg-gradient"></div>
+    
     <!-- Navigation -->
     <nav>
         <div class="nav-container">
-            <a href="#" class="logo">RCM Agent Architecture</a>
+            <a href="#" class="logo">
+                <span>⚡</span>
+                RCM Agent
+            </a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
-                <li><a href="#demos">Demos</a></li>
                 <li><a href="documentation.html">Documentation</a></li>
                 <li><a href="api.html">API</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#demos">Demos</a></li>
+                <li><a href="#" class="nav-cta">Get Started</a></li>
             </ul>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>RCM Agent Architecture</h1>
-        <p>Next-generation AI-powered Revenue Cycle Management system with advanced agent orchestration and real-time processing capabilities</p>
-        <a href="#demos" class="cta-button">Explore Interactive Demos</a>
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>Powered by Advanced AI</span>
+        </div>
+        <h1>
+            Revenue Cycle<br/>
+            <span class="hero-highlight">Reimagined</span>
+        </h1>
+        <p class="hero-description">
+            Transform your healthcare revenue operations with AI-powered automation. 
+            Reduce denials by 45%, accelerate payments by 10 days, and maximize 
+            reimbursements with intelligent claim processing.
+        </p>
+        <div class="hero-actions">
+            <a href="#demos" class="btn-primary">
+                <span>Explore Demos</span>
+                <span>→</span>
+            </a>
+            <a href="documentation.html" class="btn-secondary">
+                View Documentation
+            </a>
+        </div>
     </section>
 
     <!-- Features Section -->
     <section class="features" id="features">
-        <h2>Key Features</h2>
-        <div class="feature-grid">
+        <div class="section-header">
+            <span class="section-badge">FEATURES</span>
+            <h2>Built for Modern Healthcare</h2>
+            <p>Cutting-edge technology designed to handle the complexity of revenue cycle management</p>
+        </div>
+        
+        <div class="features-grid">
             <div class="feature-card">
-                <h3>Multi-Agent System</h3>
-                <p>Distributed AI agents working in parallel to process claims, verify eligibility, and optimize revenue cycles with unprecedented efficiency.</p>
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered Processing</h3>
+                <p>Machine learning algorithms automatically detect and correct claim errors before submission, reducing denials by up to 45%</p>
             </div>
+            
             <div class="feature-card">
-                <h3>Real-Time Processing</h3>
-                <p>Lightning-fast claim adjudication and denial management with instant feedback loops and automated correction mechanisms.</p>
+                <div class="feature-icon">⚡</div>
+                <h3>Real-Time Eligibility</h3>
+                <p>Instant verification across 5000+ payers with comprehensive benefit details and authorization requirements</p>
             </div>
+            
             <div class="feature-card">
-                <h3>Intelligent Automation</h3>
-                <p>Machine learning algorithms that continuously improve accuracy, reduce denials, and maximize reimbursement rates.</p>
+                <div class="feature-icon">🔄</div>
+                <h3>Automated Workflows</h3>
+                <p>Intelligent automation handles routine tasks, freeing your team to focus on complex cases and patient care</p>
             </div>
+            
             <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Predictive Analytics</h3>
+                <p>Advanced analytics predict payment patterns, identify revenue opportunities, and optimize collection strategies</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Enterprise Security</h3>
+                <p>HIPAA-compliant infrastructure with end-to-end encryption, SOC 2 certification, and continuous security monitoring</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
                 <h3>Seamless Integration</h3>
-                <p>API-first architecture that integrates with existing EHR, practice management, and billing systems without disruption.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Compliance Engine</h3>
-                <p>Built-in compliance monitoring ensures adherence to HIPAA, CMS guidelines, and payer-specific requirements.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Analytics Dashboard</h3>
-                <p>Comprehensive insights into revenue performance, denial trends, and optimization opportunities with predictive analytics.</p>
+                <p>API-first architecture integrates with any EHR, practice management system, or billing platform in days, not months</p>
             </div>
         </div>
     </section>
 
-    <!-- Demos Section -->
-    <section class="demos" id="demos">
-        <h2>Interactive Demonstrations</h2>
-        <div class="demo-grid">
-            <div class="demo-card">
-                <h3>Interactive Agent Visualization</h3>
-                <p>Explore how our multi-agent system collaborates in real-time to process complex revenue cycle workflows.</p>
-                <a href="rcm-agent-interactive.html" class="demo-link">Launch Demo</a>
+    <!-- Code Demo Section -->
+    <section class="code-demo">
+        <div class="code-demo-container">
+            <div>
+                <span class="section-badge">DEVELOPER FRIENDLY</span>
+                <h2 style="font-size: 2.5rem; margin: 1rem 0;">Simple, Powerful API</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.125rem;">
+                    Get started in minutes with our intuitive API. Process claims, verify eligibility, 
+                    and manage your entire revenue cycle programmatically.
+                </p>
+                <a href="api.html" class="btn-primary">Explore API Docs →</a>
             </div>
-            <div class="demo-card">
-                <h3>Algorithm Pattern Analysis</h3>
-                <p>Dive deep into the machine learning algorithms that power our intelligent claim processing and optimization.</p>
-                <a href="rcm-algorithm-pattern.html" class="demo-link">View Patterns</a>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                </div>
+                <pre><code><span class="code-comment">// Submit a claim with automatic validation</span>
+<span class="code-keyword">const</span> <span class="code-function">claim</span> = <span class="code-keyword">await</span> rcm.<span class="code-function">submitClaim</span>({
+  <span class="code-string">patientId</span>: <span class="code-string">"PT-123456"</span>,
+  <span class="code-string">services</span>: [{
+    <span class="code-string">cptCode</span>: <span class="code-string">"99213"</span>,
+    <span class="code-string">modifiers</span>: [<span class="code-string">"25"</span>],
+    <span class="code-string">charge</span>: <span class="code-string">150.00</span>
+  }],
+  <span class="code-string">insurance</span>: {
+    <span class="code-string">payerId</span>: <span class="code-string">"BCBS001"</span>,
+    <span class="code-string">memberId</span>: <span class="code-string">"XYZ789"</span>
+  }
+});
+
+<span class="code-comment">// AI automatically handles:</span>
+<span class="code-comment">// ✓ Eligibility verification</span>
+<span class="code-comment">// ✓ Code validation & scrubbing</span>
+<span class="code-comment">// ✓ Prior auth checks</span>
+<span class="code-comment">// ✓ Claim submission</span></code></pre>
             </div>
-            <div class="demo-card">
-                <h3>Workflow Design Studio</h3>
-                <p>See how our visual workflow designer enables custom revenue cycle processes tailored to your organization.</p>
-                <a href="rcm-flow-design.html" class="demo-link">Explore Workflows</a>
+        </div>
+    </section>
+
+    <!-- Metrics Section -->
+    <section class="metrics">
+        <div class="section-header">
+            <span class="section-badge">PROVEN RESULTS</span>
+            <h2>Transforming Revenue Cycles</h2>
+            <p>Real results from healthcare organizations using RCM Agent</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-number">45%</div>
+                <div class="metric-label">Reduction in Denials</div>
             </div>
+            <div class="metric-card">
+                <div class="metric-number">10 Days</div>
+                <div class="metric-label">Faster Payments</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number">93%</div>
+                <div class="metric-label">First-Pass Rate</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-number">$2.3M</div>
+                <div class="metric-label">Additional Revenue/Year</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demos -->
+    <section class="features" id="demos">
+        <div class="section-header">
+            <span class="section-badge">INTERACTIVE DEMOS</span>
+            <h2>See It In Action</h2>
+            <p>Explore our interactive demonstrations to understand the power of RCM Agent</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Agent Visualization</h3>
+                <p>Watch AI agents collaborate in real-time to process complex revenue workflows</p>
+                <a href="rcm-agent-interactive.html" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Launch Demo →</a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🧠</div>
+                <h3>Algorithm Patterns</h3>
+                <p>Explore the ML algorithms that power intelligent claim optimization</p>
+                <a href="rcm-algorithm-pattern.html" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">View Patterns →</a>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📐</div>
+                <h3>Workflow Designer</h3>
+                <p>Design custom revenue workflows tailored to your organization</p>
+                <a href="rcm-flow-design.html" class="btn-secondary" style="margin-top: 1rem; display: inline-block;">Open Designer →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-glow"></div>
+        <div class="cta-content">
+            <h2>Ready to Transform Your Revenue Cycle?</h2>
+            <p>Join leading healthcare organizations already using RCM Agent</p>
+            <a href="#" class="btn-primary" style="font-size: 1.125rem; padding: 1.25rem 2.5rem;">
+                Start Free Trial →
+            </a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2024 RCM Agent Architecture. Version 0.1.1 | AI-Powered Healthcare Revenue Solutions</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>RCM Agent</h3>
+                <p>Next-generation AI platform transforming healthcare revenue cycle management.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="api.html">API</a></li>
+                    <li><a href="#demos">Demos</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="documentation.html">Documentation</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Case Studies</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 RCM Agent. All rights reserved. | AI-Powered Healthcare Revenue Solutions</p>
+        </div>
     </footer>
 
     <script>
-        // Smooth scrolling for anchor links
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -307,6 +823,39 @@
                     behavior: 'smooth'
                 });
             });
+        });
+
+        // Add scroll effect to nav
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(10, 10, 10, 0.95)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 10, 0.8)';
+            }
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe feature cards and metric cards
+        document.querySelectorAll('.feature-card, .metric-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
         });
     </script>
 </body>
