@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCM API Playground - Interactive Documentation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        /* Dark Theme (Default) */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #666666;
+            --accent-primary: #00dc82;
+            --accent-secondary: #00ff88;
+            --accent-gradient: linear-gradient(135deg, #00dc82 0%, #00ff88 50%, #36ef7a 100%);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-glow: 0 0 40px rgba(0, 220, 130, 0.3);
+            --code-bg: #0a0a0a;
+            --nav-bg: rgba(10, 10, 10, 0.8);
+            --nav-bg-solid: rgba(10, 10, 10, 0.95);
+            --get-color: #61affe;
+            --post-color: #49cc90;
+            --put-color: #fca130;
+            --delete-color: #f93e3e;
+            --success-bg: rgba(73, 204, 144, 0.1);
+            --error-bg: rgba(249, 62, 62, 0.1);
+        }
+        
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --accent-primary: #00a865;
+            --accent-secondary: #00dc82;
+            --accent-gradient: linear-gradient(135deg, #00a865 0%, #00dc82 50%, #20d67d 100%);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 40px rgba(0, 168, 101, 0.2);
+            --code-bg: #f8f9fa;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg-solid: rgba(255, 255, 255, 0.98);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--glass-border);
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle svg {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .sun-icon {
+            opacity: 0;
+            transform: rotate(-90deg);
+            color: var(--text-primary);
+        }
+        
+        .moon-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .sun-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+        
+        [data-theme="light"] .moon-icon {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .sidebar-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            margin-bottom: 15px;
+        }
+        
+        .endpoint-list {
+            list-style: none;
+        }
+        
+        .endpoint-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .endpoint-item:hover {
+            background: var(--bg-primary);
+            transform: translateX(5px);
+        }
+        
+        .endpoint-item.active {
+            background: var(--bg-primary);
+            border: 1px solid var(--accent-primary);
+        }
+        
+        .method-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            min-width: 45px;
+            text-align: center;
+        }
+        
+        .method-get { background: var(--get-color); }
+        .method-post { background: var(--post-color); }
+        .method-put { background: var(--put-color); }
+        .method-delete { background: var(--delete-color); }
+        
+        .endpoint-name {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            min-width: 0;
+        }
+        
+        .api-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .api-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .api-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        /* Endpoint Details */
+        .endpoint-details {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .method-large {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .endpoint-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .endpoint-description {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:hover {
+            color: var(--text-primary);
+        }
+        
+        .tab.active {
+            color: var(--accent-primary);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-gradient);
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* Request Builder */
+        .request-builder {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .param-group {
+            margin-bottom: 20px;
+        }
+        
+        .param-group h4 {
+            color: var(--accent-primary);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .param-row {
+            display: grid;
+            grid-template-columns: 200px 1fr 100px;
+            gap: 15px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .param-input {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .param-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(0, 220, 130, 0.1);
+        }
+        
+        .param-type {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Execute Button */
+        .execute-button {
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .execute-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 220, 130, 0.3);
+        }
+        
+        .execute-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Response Section */
+        .response-section {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .response-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-code {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .status-success { background: var(--success-bg); color: var(--post-color); }
+        .status-error { background: var(--error-bg); color: var(--delete-color); }
+        
+        .response-time {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .response-body {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        /* Code Examples */
+        .code-examples {
+            margin-top: 30px;
+        }
+        
+        .code-lang-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .lang-button {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .lang-button:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .lang-button.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+        
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 6px 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-button:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .copy-button.copied {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+        
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 50%;
+            border-top-color: var(--accent-primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* JSON Syntax Highlighting */
+        .json-key { color: #ff79c6; }
+        .json-string { color: #50fa7b; }
+        .json-number { color: #bd93f9; }
+        .json-boolean { color: #8be9fd; }
+        .json-null { color: #6272a4; }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: static;
+                max-height: none;
+                margin-bottom: 30px;
+            }
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span>🚀</span>
+                RCM API Playground
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="documentation.html">Documentation</a></li>
+                <li><a href="api.html">API Reference</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">🔗 RCM Endpoints</h3>
+                <ul class="endpoint-list">
+                    <li class="endpoint-item active" onclick="selectEndpoint('eligibility-verify')">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-name">/eligibility/verify</span>
+                    </li>
+                    <li class="endpoint-item" onclick="selectEndpoint('claims-submit')">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-name">/claims</span>
+                    </li>
+                    <li class="endpoint-item" onclick="selectEndpoint('claims-status')">
+                        <span class="method-badge method-get">GET</span>
+                        <span class="endpoint-name">/claims/{id}</span>
+                    </li>
+                    <li class="endpoint-item" onclick="selectEndpoint('prior-auth')">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-name">/prior-auth</span>
+                    </li>
+                    <li class="endpoint-item" onclick="selectEndpoint('denials-analyze')">
+                        <span class="method-badge method-get">GET</span>
+                        <span class="endpoint-name">/denials/{id}</span>
+                    </li>
+                    <li class="endpoint-item" onclick="selectEndpoint('payments-post')">
+                        <span class="method-badge method-post">POST</span>
+                        <span class="endpoint-name">/payments</span>
+                    </li>
+                    <li class="endpoint-item" onclick="selectEndpoint('analytics-summary')">
+                        <span class="method-badge method-get">GET</span>
+                        <span class="endpoint-name">/analytics/summary</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">🔐 Authentication</h3>
+                <div style="margin-top: 15px;">
+                    <input type="text" class="param-input" placeholder="Your API Key" id="apiKey" value="demo-api-key-12345">
+                    <p style="font-size: 0.85rem; color: var(--text-tertiary); margin-top: 10px;">
+                        Use the demo key or enter your own
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="api-header">
+                <h1 class="api-title">Interactive API Playground</h1>
+                <p class="api-subtitle">Test RCM API endpoints with real-time responses and code generation</p>
+            </div>
+
+            <!-- Endpoint Details -->
+            <div class="endpoint-details" id="endpointDetails">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+
+            <!-- Code Examples -->
+            <div class="endpoint-details">
+                <h3 style="margin-bottom: 20px; color: var(--accent-primary);">📝 Code Examples</h3>
+                <div class="code-examples">
+                    <div class="code-lang-selector">
+                        <button class="lang-button active" onclick="selectLanguage('javascript')">JavaScript</button>
+                        <button class="lang-button" onclick="selectLanguage('python')">Python</button>
+                        <button class="lang-button" onclick="selectLanguage('curl')">cURL</button>
+                        <button class="lang-button" onclick="selectLanguage('java')">Java</button>
+                        <button class="lang-button" onclick="selectLanguage('csharp')">C#</button>
+                    </div>
+                    <div class="code-block" id="codeExample">
+                        <button class="copy-button" onclick="copyCode()">Copy</button>
+                        <pre><code id="codeContent">// Loading code example...</code></pre>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+        
+        // Load saved theme preference or default to dark theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // API Endpoints Configuration
+        const endpoints = {
+            'eligibility-verify': {
+                method: 'POST',
+                path: '/eligibility/verify',
+                description: 'Verify patient insurance eligibility in real-time',
+                params: {
+                    patient: {
+                        first_name: 'John',
+                        last_name: 'Doe',
+                        date_of_birth: '1980-01-15',
+                        member_id: 'XYZ123456789'
+                    },
+                    insurance: {
+                        payer_id: 'BCBS001',
+                        group_number: 'GRP001'
+                    },
+                    service_types: ['30', '98']
+                },
+                response: {
+                    eligible: true,
+                    coverage_active: true,
+                    plan_details: {
+                        plan_name: 'Blue Choice PPO',
+                        effective_date: '2024-01-01',
+                        termination_date: null
+                    },
+                    benefits: {
+                        deductible: {
+                            individual: 1500.00,
+                            individual_met: 750.00
+                        },
+                        copay: {
+                            primary_care: 25.00,
+                            specialist: 45.00
+                        }
+                    }
+                }
+            },
+            'claims-submit': {
+                method: 'POST',
+                path: '/claims',
+                description: 'Submit a new claim for processing',
+                params: {
+                    patient_id: 'PT-123456',
+                    provider_id: 'PRV-789012',
+                    services: [{
+                        cpt_code: '99213',
+                        modifiers: ['25'],
+                        units: 1,
+                        charge: 150.00,
+                        diagnosis_codes: ['Z00.00']
+                    }],
+                    insurance_info: {
+                        payer_id: 'BCBS001',
+                        member_id: 'XYZ123456789'
+                    }
+                },
+                response: {
+                    claim_id: 'CLM-2024-001234',
+                    status: 'submitted',
+                    estimated_reimbursement: 120.00,
+                    submission_timestamp: '2024-06-17T14:30:00Z'
+                }
+            },
+            'claims-status': {
+                method: 'GET',
+                path: '/claims/{claim_id}',
+                description: 'Retrieve the status and details of a submitted claim',
+                params: {
+                    claim_id: 'CLM-2024-001234'
+                },
+                response: {
+                    claim_id: 'CLM-2024-001234',
+                    status: 'paid',
+                    patient_id: 'PT-123456',
+                    total_charge: 150.00,
+                    allowed_amount: 120.00,
+                    paid_amount: 96.00,
+                    patient_responsibility: 24.00
+                }
+            }
+        };
+
+        // Code examples for different languages
+        const codeExamples = {
+            javascript: {
+                'eligibility-verify': `// Using fetch API
+const response = await fetch('https://api.rcm-agent.com/v1/eligibility/verify', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    patient: {
+      first_name: 'John',
+      last_name: 'Doe',
+      date_of_birth: '1980-01-15',
+      member_id: 'XYZ123456789'
+    },
+    insurance: {
+      payer_id: 'BCBS001',
+      group_number: 'GRP001'
+    },
+    service_types: ['30', '98']
+  })
+});
+
+const data = await response.json();
+console.log(data);`
+            },
+            python: {
+                'eligibility-verify': `import requests
+
+url = "https://api.rcm-agent.com/v1/eligibility/verify"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+payload = {
+    "patient": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "date_of_birth": "1980-01-15",
+        "member_id": "XYZ123456789"
+    },
+    "insurance": {
+        "payer_id": "BCBS001",
+        "group_number": "GRP001"
+    },
+    "service_types": ["30", "98"]
+}
+
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())`
+            },
+            curl: {
+                'eligibility-verify': `curl -X POST https://api.rcm-agent.com/v1/eligibility/verify \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "patient": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "date_of_birth": "1980-01-15",
+      "member_id": "XYZ123456789"
+    },
+    "insurance": {
+      "payer_id": "BCBS001",
+      "group_number": "GRP001"
+    },
+    "service_types": ["30", "98"]
+  }'`
+            }
+        };
+
+        let currentEndpoint = 'eligibility-verify';
+        let currentLanguage = 'javascript';
+
+        // Select endpoint
+        function selectEndpoint(endpointId) {
+            currentEndpoint = endpointId;
+            
+            // Update active state
+            document.querySelectorAll('.endpoint-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.endpoint-item').classList.add('active');
+            
+            // Update endpoint details
+            updateEndpointDetails();
+            updateCodeExample();
+        }
+
+        // Update endpoint details
+        function updateEndpointDetails() {
+            const endpoint = endpoints[currentEndpoint];
+            const detailsHtml = `
+                <div class="endpoint-header">
+                    <span class="method-large method-${endpoint.method.toLowerCase()}">${endpoint.method}</span>
+                    <span class="endpoint-path">${endpoint.path}</span>
+                </div>
+                <p class="endpoint-description">${endpoint.description}</p>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="selectTab('try-it')">Try It</button>
+                    <button class="tab" onclick="selectTab('response')">Response</button>
+                    <button class="tab" onclick="selectTab('schema')">Schema</button>
+                </div>
+
+                <div class="tab-content active" id="try-it-tab">
+                    <div class="request-builder">
+                        <div class="param-group">
+                            <h4>Request Body</h4>
+                            <textarea class="param-input" id="requestBody" rows="10" style="width: 100%; font-family: 'JetBrains Mono', monospace;">
+${JSON.stringify(endpoint.params, null, 2)}</textarea>
+                        </div>
+                        <button class="execute-button" onclick="executeRequest()">
+                            <span>Execute Request</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="response-section" id="responseSection" style="display: none;">
+                        <div class="response-header">
+                            <div class="response-status">
+                                <span>Response</span>
+                                <span class="status-code" id="statusCode"></span>
+                            </div>
+                            <span class="response-time" id="responseTime"></span>
+                        </div>
+                        <div class="response-body" id="responseBody"></div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="response-tab">
+                    <div class="response-section">
+                        <div class="response-header">
+                            <div class="response-status">
+                                <span>Example Response</span>
+                                <span class="status-code status-success">200 OK</span>
+                            </div>
+                        </div>
+                        <div class="response-body">
+                            <pre>${highlightJSON(JSON.stringify(endpoint.response, null, 2))}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="schema-tab">
+                    <div class="response-section">
+                        <h4 style="margin-bottom: 15px; color: var(--accent-primary);">Request Schema</h4>
+                        <div class="response-body">
+                            <pre>${generateSchema(endpoint.params)}</pre>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('endpointDetails').innerHTML = detailsHtml;
+        }
+
+        // Select tab
+        function selectTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Select language
+        function selectLanguage(lang) {
+            currentLanguage = lang;
+            
+            document.querySelectorAll('.lang-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateCodeExample();
+        }
+
+        // Update code example
+        function updateCodeExample() {
+            const example = codeExamples[currentLanguage]?.[currentEndpoint] || 
+                           codeExamples['javascript'][currentEndpoint] ||
+                           '// Code example not available for this language';
+            
+            document.getElementById('codeContent').textContent = example;
+        }
+
+        // Copy code
+        function copyCode() {
+            const code = document.getElementById('codeContent').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const button = event.target;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Execute request
+        async function executeRequest() {
+            const button = event.target.closest('.execute-button');
+            const responseSection = document.getElementById('responseSection');
+            const endpoint = endpoints[currentEndpoint];
+            
+            // Show loading state
+            button.disabled = true;
+            button.innerHTML = '<span class="loading"></span> Executing...';
+            
+            // Simulate API request
+            const startTime = Date.now();
+            
+            setTimeout(() => {
+                const endTime = Date.now();
+                const responseTime = endTime - startTime;
+                
+                // Show response
+                responseSection.style.display = 'block';
+                document.getElementById('statusCode').textContent = '200 OK';
+                document.getElementById('statusCode').className = 'status-code status-success';
+                document.getElementById('responseTime').textContent = `${responseTime}ms`;
+                
+                // Format response
+                const response = {
+                    ...endpoint.response,
+                    _metadata: {
+                        request_id: `req_${Math.random().toString(36).substr(2, 9)}`,
+                        timestamp: new Date().toISOString(),
+                        processing_time_ms: responseTime
+                    }
+                };
+                
+                document.getElementById('responseBody').innerHTML = 
+                    `<pre>${highlightJSON(JSON.stringify(response, null, 2))}</pre>`;
+                
+                // Reset button
+                button.disabled = false;
+                button.innerHTML = `
+                    <span>Execute Request</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                `;
+                
+                // Scroll to response
+                responseSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 1000 + Math.random() * 1000);
+        }
+
+        // Highlight JSON
+        function highlightJSON(json) {
+            return json
+                .replace(/(".*?")/g, '<span class="json-key">$1</span>')
+                .replace(/: (".*?")/g, ': <span class="json-string">$1</span>')
+                .replace(/: (\d+\.?\d*)/g, ': <span class="json-number">$1</span>')
+                .replace(/: (true|false)/g, ': <span class="json-boolean">$1</span>')
+                .replace(/: (null)/g, ': <span class="json-null">$1</span>');
+        }
+
+        // Generate schema
+        function generateSchema(obj, indent = 0) {
+            const spaces = ' '.repeat(indent);
+            let schema = '';
+            
+            if (Array.isArray(obj)) {
+                schema += `[\n`;
+                if (obj.length > 0) {
+                    schema += generateSchema(obj[0], indent + 2);
+                }
+                schema += `${spaces}]`;
+            } else if (typeof obj === 'object' && obj !== null) {
+                schema += `{\n`;
+                for (const [key, value] of Object.entries(obj)) {
+                    const type = Array.isArray(value) ? 'array' : typeof value;
+                    schema += `${spaces}  "${key}": ${type}`;
+                    if (type === 'object' || type === 'array') {
+                        schema += ' ' + generateSchema(value, indent + 2);
+                    }
+                    schema += ',\n';
+                }
+                schema = schema.slice(0, -2) + '\n';
+                schema += `${spaces}}`;
+            } else {
+                schema += typeof obj;
+            }
+            
+            return schema;
+        }
+
+        // Initialize
+        updateEndpointDetails();
+        updateCodeExample();
+    </script>
+</body>
+</html>
