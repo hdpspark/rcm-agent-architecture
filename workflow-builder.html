@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Workflow Builder - RCM Process Designer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        /* Dark Theme (Default) */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #666666;
+            --accent-primary: #00dc82;
+            --accent-secondary: #00ff88;
+            --accent-gradient: linear-gradient(135deg, #00dc82 0%, #00ff88 50%, #36ef7a 100%);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-glow: 0 0 40px rgba(0, 220, 130, 0.3);
+            --nav-bg: rgba(10, 10, 10, 0.8);
+            --nav-bg-solid: rgba(10, 10, 10, 0.95);
+            --node-claim: #61affe;
+            --node-eligibility: #00dc82;
+            --node-payment: #fca130;
+            --node-denial: #f93e3e;
+            --node-analytics: #ba68c8;
+        }
+        
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --accent-primary: #00a865;
+            --accent-secondary: #00dc82;
+            --accent-gradient: linear-gradient(135deg, #00a865 0%, #00dc82 50%, #20d67d 100%);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 40px rgba(0, 168, 101, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg-solid: rgba(255, 255, 255, 0.98);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--glass-border);
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle svg {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .sun-icon {
+            opacity: 0;
+            transform: rotate(-90deg);
+            color: var(--text-primary);
+        }
+        
+        .moon-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .sun-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+        
+        [data-theme="light"] .moon-icon {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+        
+        /* Main Layout */
+        .container {
+            display: flex;
+            height: 100vh;
+            padding-top: 70px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .sidebar h3 {
+            color: var(--accent-primary);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .node-palette {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .palette-node {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .palette-node:hover {
+            transform: translateX(5px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 5px 20px rgba(0, 220, 130, 0.1);
+        }
+        
+        .palette-node.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .node-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .node-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .node-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Canvas */
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 1px 1px, var(--border-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        #workflow-canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        /* Workflow Nodes */
+        .workflow-node {
+            position: absolute;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            min-width: 200px;
+            cursor: move;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .workflow-node:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 30px rgba(0, 220, 130, 0.2);
+        }
+        
+        .workflow-node.selected {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 220, 130, 0.2);
+        }
+        
+        .workflow-node.dragging {
+            opacity: 0.8;
+            cursor: grabbing;
+            z-index: 100;
+        }
+        
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .node-type-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--glass-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .node-name {
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .node-delete {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .node-delete:hover {
+            background: rgba(249, 62, 62, 0.1);
+            color: #f93e3e;
+        }
+        
+        /* Connection Points */
+        .connection-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-primary);
+            border: 2px solid var(--bg-primary);
+            border-radius: 50%;
+            cursor: crosshair;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .connection-point:hover {
+            transform: scale(1.5);
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+        
+        .connection-point.input {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .connection-point.output {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        /* Connections */
+        .connection-line {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .connection-path {
+            stroke: var(--accent-primary);
+            stroke-width: 2;
+            fill: none;
+            filter: drop-shadow(0 0 10px rgba(0, 220, 130, 0.3));
+        }
+        
+        /* Properties Panel */
+        .properties-panel {
+            width: 320px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: none;
+        }
+        
+        .properties-panel.active {
+            display: block;
+        }
+        
+        .properties-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .properties-title {
+            color: var(--accent-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .property-group {
+            margin-bottom: 20px;
+        }
+        
+        .property-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .property-input {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+        
+        .property-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(0, 220, 130, 0.1);
+        }
+        
+        /* Toolbar */
+        .toolbar {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 10px 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toolbar-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .toolbar-button:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .toolbar-button.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+        
+        /* Zoom Controls */
+        .zoom-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .zoom-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .zoom-button:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        /* Export Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .export-code {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            color: var(--text-secondary);
+        }
+        
+        .copy-button {
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .copy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 220, 130, 0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .properties-panel {
+                width: 280px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .properties-panel {
+                position: absolute;
+                right: 0;
+                top: 70px;
+                bottom: 0;
+                width: 80%;
+                max-width: 320px;
+            }
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span>🔄</span>
+                RCM Workflow Builder
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="ai-chat-demo.html">AI Chat</a></li>
+                <li><a href="api-playground.html">API</a></li>
+                <li><a href="analytics-dashboard.html">Analytics</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Sidebar with Node Palette -->
+        <aside class="sidebar">
+            <h3>🎨 Workflow Components</h3>
+            <div class="node-palette">
+                <div class="palette-node" draggable="true" data-node-type="eligibility">
+                    <div class="node-icon" style="background: rgba(0, 220, 130, 0.1); color: var(--node-eligibility);">✅</div>
+                    <div class="node-title">Eligibility Check</div>
+                    <div class="node-description">Verify patient insurance coverage</div>
+                </div>
+                
+                <div class="palette-node" draggable="true" data-node-type="claim">
+                    <div class="node-icon" style="background: rgba(97, 175, 254, 0.1); color: var(--node-claim);">📄</div>
+                    <div class="node-title">Claim Processing</div>
+                    <div class="node-description">Submit and track claims</div>
+                </div>
+                
+                <div class="palette-node" draggable="true" data-node-type="payment">
+                    <div class="node-icon" style="background: rgba(252, 161, 48, 0.1); color: var(--node-payment);">💰</div>
+                    <div class="node-title">Payment Posting</div>
+                    <div class="node-description">Process payments and EOBs</div>
+                </div>
+                
+                <div class="palette-node" draggable="true" data-node-type="denial">
+                    <div class="node-icon" style="background: rgba(249, 62, 62, 0.1); color: var(--node-denial);">🚫</div>
+                    <div class="node-title">Denial Management</div>
+                    <div class="node-description">Handle denials and appeals</div>
+                </div>
+                
+                <div class="palette-node" draggable="true" data-node-type="analytics">
+                    <div class="node-icon" style="background: rgba(186, 104, 200, 0.1); color: var(--node-analytics);">📊</div>
+                    <div class="node-title">Analytics</div>
+                    <div class="node-description">Generate reports and insights</div>
+                </div>
+                
+                <div class="palette-node" draggable="true" data-node-type="condition">
+                    <div class="node-icon" style="background: rgba(255, 255, 255, 0.05);">🔀</div>
+                    <div class="node-title">Conditional Logic</div>
+                    <div class="node-description">Branch based on conditions</div>
+                </div>
+                
+                <div class="palette-node" draggable="true" data-node-type="api">
+                    <div class="node-icon" style="background: rgba(255, 255, 255, 0.05);">🔌</div>
+                    <div class="node-title">API Integration</div>
+                    <div class="node-description">Connect to external systems</div>
+                </div>
+                
+                <div class="palette-node" draggable="true" data-node-type="notification">
+                    <div class="node-icon" style="background: rgba(255, 255, 255, 0.05);">🔔</div>
+                    <div class="node-title">Notification</div>
+                    <div class="node-description">Send alerts and messages</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Canvas -->
+        <div class="canvas-container">
+            <div class="toolbar">
+                <button class="toolbar-button" onclick="clearCanvas()">
+                    <span>🗑️</span>
+                    <span>Clear</span>
+                </button>
+                <button class="toolbar-button" onclick="autoLayout()">
+                    <span>📐</span>
+                    <span>Auto Layout</span>
+                </button>
+                <button class="toolbar-button" onclick="saveWorkflow()">
+                    <span>💾</span>
+                    <span>Save</span>
+                </button>
+                <button class="toolbar-button" onclick="exportWorkflow()">
+                    <span>📤</span>
+                    <span>Export</span>
+                </button>
+                <button class="toolbar-button" onclick="runWorkflow()">
+                    <span>▶️</span>
+                    <span>Run</span>
+                </button>
+            </div>
+
+            <div id="workflow-canvas">
+                <svg id="connections-svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-primary)" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <div class="zoom-controls">
+                <button class="zoom-button" onclick="zoomIn()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                        <line x1="11" y1="8" x2="11" y2="14"></line>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                </button>
+                <button class="zoom-button" onclick="zoomOut()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                        <line x1="8" y1="11" x2="14" y2="11"></line>
+                    </svg>
+                </button>
+                <button class="zoom-button" onclick="resetZoom()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3.8 3.8 20.2 20.2M20.2 3.8 3.8 20.2"></path>
+                        <circle cx="12" cy="12" r="8"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Properties Panel -->
+        <aside class="properties-panel" id="propertiesPanel">
+            <div class="properties-header">
+                <h3 class="properties-title">Node Properties</h3>
+                <button class="modal-close" onclick="closeProperties()">×</button>
+            </div>
+            <div id="propertiesContent">
+                <!-- Dynamic properties will be loaded here -->
+            </div>
+        </aside>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Export Workflow</h2>
+                <button class="modal-close" onclick="closeExportModal()">×</button>
+            </div>
+            <div class="export-code" id="exportCode">
+                <!-- Export code will be displayed here -->
+            </div>
+            <button class="copy-button" onclick="copyExportCode()">Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+        
+        // Load saved theme preference or default to dark theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Workflow Builder State
+        let nodes = [];
+        let connections = [];
+        let selectedNode = null;
+        let nodeIdCounter = 0;
+        let currentZoom = 1;
+        let draggedNode = null;
+        let isConnecting = false;
+        let connectionStart = null;
+
+        // Initialize canvas
+        const canvas = document.getElementById('workflow-canvas');
+        const svg = document.getElementById('connections-svg');
+
+        // Node Templates
+        const nodeTemplates = {
+            eligibility: {
+                icon: '✅',
+                color: 'var(--node-eligibility)',
+                properties: {
+                    patientId: { type: 'text', label: 'Patient ID', value: '' },
+                    payerId: { type: 'text', label: 'Payer ID', value: '' },
+                    serviceDate: { type: 'date', label: 'Service Date', value: '' }
+                }
+            },
+            claim: {
+                icon: '📄',
+                color: 'var(--node-claim)',
+                properties: {
+                    claimType: { type: 'select', label: 'Claim Type', value: 'professional', options: ['professional', 'institutional'] },
+                    providerId: { type: 'text', label: 'Provider ID', value: '' },
+                    totalAmount: { type: 'number', label: 'Total Amount', value: '' }
+                }
+            },
+            payment: {
+                icon: '💰',
+                color: 'var(--node-payment)',
+                properties: {
+                    paymentMethod: { type: 'select', label: 'Payment Method', value: 'eft', options: ['eft', 'check', 'credit'] },
+                    amount: { type: 'number', label: 'Amount', value: '' }
+                }
+            },
+            denial: {
+                icon: '🚫',
+                color: 'var(--node-denial)',
+                properties: {
+                    denialCode: { type: 'text', label: 'Denial Code', value: '' },
+                    action: { type: 'select', label: 'Action', value: 'appeal', options: ['appeal', 'resubmit', 'writeoff'] }
+                }
+            },
+            analytics: {
+                icon: '📊',
+                color: 'var(--node-analytics)',
+                properties: {
+                    reportType: { type: 'select', label: 'Report Type', value: 'summary', options: ['summary', 'detailed', 'custom'] },
+                    dateRange: { type: 'select', label: 'Date Range', value: 'month', options: ['day', 'week', 'month', 'quarter'] }
+                }
+            },
+            condition: {
+                icon: '🔀',
+                color: 'var(--text-secondary)',
+                properties: {
+                    condition: { type: 'text', label: 'Condition', value: '' },
+                    operator: { type: 'select', label: 'Operator', value: 'equals', options: ['equals', 'greater', 'less', 'contains'] }
+                }
+            },
+            api: {
+                icon: '🔌',
+                color: 'var(--text-secondary)',
+                properties: {
+                    endpoint: { type: 'text', label: 'API Endpoint', value: '' },
+                    method: { type: 'select', label: 'Method', value: 'GET', options: ['GET', 'POST', 'PUT', 'DELETE'] }
+                }
+            },
+            notification: {
+                icon: '🔔',
+                color: 'var(--text-secondary)',
+                properties: {
+                    recipient: { type: 'text', label: 'Recipient', value: '' },
+                    channel: { type: 'select', label: 'Channel', value: 'email', options: ['email', 'sms', 'push'] }
+                }
+            }
+        };
+
+        // Drag and Drop from Palette
+        document.querySelectorAll('.palette-node').forEach(node => {
+            node.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('nodeType', node.dataset.nodeType);
+                node.classList.add('dragging');
+            });
+
+            node.addEventListener('dragend', () => {
+                node.classList.remove('dragging');
+            });
+        });
+
+        canvas.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        canvas.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const nodeType = e.dataTransfer.getData('nodeType');
+            if (nodeType) {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                createNode(nodeType, x, y);
+            }
+        });
+
+        // Create Node
+        function createNode(type, x, y) {
+            const nodeId = `node-${nodeIdCounter++}`;
+            const template = nodeTemplates[type];
+            
+            const nodeElement = document.createElement('div');
+            nodeElement.className = 'workflow-node';
+            nodeElement.id = nodeId;
+            nodeElement.style.left = `${x - 100}px`;
+            nodeElement.style.top = `${y - 50}px`;
+            
+            nodeElement.innerHTML = `
+                <div class="connection-point input"></div>
+                <div class="connection-point output"></div>
+                <div class="node-header">
+                    <div class="node-type-icon" style="background: ${template.color}20; color: ${template.color};">
+                        ${template.icon}
+                    </div>
+                    <div class="node-name">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                    <button class="node-delete" onclick="deleteNode('${nodeId}')">×</button>
+                </div>
+                <div class="node-content">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Click to configure</div>
+                </div>
+            `;
+            
+            canvas.appendChild(nodeElement);
+            
+            // Add to nodes array
+            nodes.push({
+                id: nodeId,
+                type: type,
+                x: x - 100,
+                y: y - 50,
+                properties: JSON.parse(JSON.stringify(template.properties))
+            });
+            
+            // Make node draggable
+            makeNodeDraggable(nodeElement);
+            
+            // Add click handler
+            nodeElement.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('connection-point') && !e.target.classList.contains('node-delete')) {
+                    selectNode(nodeId);
+                }
+            });
+            
+            // Add connection handlers
+            const outputPoint = nodeElement.querySelector('.connection-point.output');
+            const inputPoint = nodeElement.querySelector('.connection-point.input');
+            
+            outputPoint.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                startConnection(nodeId, 'output', e);
+            });
+            
+            inputPoint.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                startConnection(nodeId, 'input', e);
+            });
+        }
+
+        // Make Node Draggable
+        function makeNodeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.addEventListener('mousedown', dragMouseDown);
+            
+            function dragMouseDown(e) {
+                if (e.target.classList.contains('connection-point') || e.target.classList.contains('node-delete')) {
+                    return;
+                }
+                
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.classList.add('dragging');
+                
+                document.addEventListener('mouseup', closeDragElement);
+                document.addEventListener('mousemove', elementDrag);
+            }
+            
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                
+                const newTop = element.offsetTop - pos2;
+                const newLeft = element.offsetLeft - pos1;
+                
+                element.style.top = newTop + "px";
+                element.style.left = newLeft + "px";
+                
+                // Update node position
+                const node = nodes.find(n => n.id === element.id);
+                if (node) {
+                    node.x = newLeft;
+                    node.y = newTop;
+                }
+                
+                // Update connections
+                updateConnections();
+            }
+            
+            function closeDragElement() {
+                element.classList.remove('dragging');
+                document.removeEventListener('mouseup', closeDragElement);
+                document.removeEventListener('mousemove', elementDrag);
+            }
+        }
+
+        // Connection Management
+        function startConnection(nodeId, pointType, e) {
+            isConnecting = true;
+            connectionStart = { nodeId, pointType };
+            
+            const tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            tempLine.id = 'temp-connection';
+            tempLine.setAttribute('class', 'connection-path');
+            tempLine.style.strokeDasharray = '5,5';
+            svg.appendChild(tempLine);
+            
+            document.addEventListener('mousemove', updateTempConnection);
+            document.addEventListener('mouseup', endConnection);
+        }
+
+        function updateTempConnection(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const startPoint = getConnectionPoint(connectionStart.nodeId, connectionStart.pointType);
+            const path = `M ${startPoint.x} ${startPoint.y} C ${(startPoint.x + x) / 2} ${startPoint.y}, ${(startPoint.x + x) / 2} ${y}, ${x} ${y}`;
+            
+            document.getElementById('temp-connection').setAttribute('d', path);
+        }
+
+        function endConnection(e) {
+            document.removeEventListener('mousemove', updateTempConnection);
+            document.removeEventListener('mouseup', endConnection);
+            
+            const tempLine = document.getElementById('temp-connection');
+            if (tempLine) {
+                tempLine.remove();
+            }
+            
+            // Check if dropped on a connection point
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            if (target && target.classList.contains('connection-point')) {
+                const targetNode = target.closest('.workflow-node');
+                const targetType = target.classList.contains('input') ? 'input' : 'output';
+                
+                if (targetNode && targetType !== connectionStart.pointType) {
+                    createConnection(connectionStart.nodeId, targetNode.id);
+                }
+            }
+            
+            isConnecting = false;
+            connectionStart = null;
+        }
+
+        function createConnection(fromId, toId) {
+            // Check if connection already exists
+            if (connections.find(c => c.from === fromId && c.to === toId)) {
+                return;
+            }
+            
+            connections.push({ from: fromId, to: toId });
+            updateConnections();
+        }
+
+        function updateConnections() {
+            // Clear existing connections
+            svg.querySelectorAll('.connection-path:not(#temp-connection)').forEach(path => path.remove());
+            
+            // Draw all connections
+            connections.forEach(conn => {
+                const fromPoint = getConnectionPoint(conn.from, 'output');
+                const toPoint = getConnectionPoint(conn.to, 'input');
+                
+                if (fromPoint && toPoint) {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('class', 'connection-path');
+                    path.setAttribute('marker-end', 'url(#arrowhead)');
+                    
+                    const d = `M ${fromPoint.x} ${fromPoint.y} C ${(fromPoint.x + toPoint.x) / 2} ${fromPoint.y}, ${(fromPoint.x + toPoint.x) / 2} ${toPoint.y}, ${toPoint.x} ${toPoint.y}`;
+                    path.setAttribute('d', d);
+                    
+                    svg.appendChild(path);
+                }
+            });
+        }
+
+        function getConnectionPoint(nodeId, pointType) {
+            const node = document.getElementById(nodeId);
+            if (!node) return null;
+            
+            const point = node.querySelector(`.connection-point.${pointType}`);
+            if (!point) return null;
+            
+            const rect = point.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            return {
+                x: rect.left + rect.width / 2 - canvasRect.left,
+                y: rect.top + rect.height / 2 - canvasRect.top
+            };
+        }
+
+        // Node Selection and Properties
+        function selectNode(nodeId) {
+            // Remove previous selection
+            document.querySelectorAll('.workflow-node').forEach(n => n.classList.remove('selected'));
+            
+            // Select new node
+            const nodeElement = document.getElementById(nodeId);
+            nodeElement.classList.add('selected');
+            selectedNode = nodes.find(n => n.id === nodeId);
+            
+            // Show properties panel
+            showProperties();
+        }
+
+        function showProperties() {
+            if (!selectedNode) return;
+            
+            const panel = document.getElementById('propertiesPanel');
+            const content = document.getElementById('propertiesContent');
+            
+            panel.classList.add('active');
+            
+            // Build properties form
+            let html = `<h4 style="margin-bottom: 15px;">${selectedNode.type.charAt(0).toUpperCase() + selectedNode.type.slice(1)} Node</h4>`;
+            
+            for (const [key, prop] of Object.entries(selectedNode.properties)) {
+                html += `<div class="property-group">`;
+                html += `<label class="property-label">${prop.label}</label>`;
+                
+                if (prop.type === 'select') {
+                    html += `<select class="property-input" data-prop="${key}">`;
+                    prop.options.forEach(opt => {
+                        html += `<option value="${opt}" ${prop.value === opt ? 'selected' : ''}>${opt}</option>`;
+                    });
+                    html += `</select>`;
+                } else {
+                    html += `<input type="${prop.type}" class="property-input" data-prop="${key}" value="${prop.value}">`;
+                }
+                
+                html += `</div>`;
+            }
+            
+            content.innerHTML = html;
+            
+            // Add change handlers
+            content.querySelectorAll('.property-input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const propKey = e.target.dataset.prop;
+                    selectedNode.properties[propKey].value = e.target.value;
+                });
+            });
+        }
+
+        function closeProperties() {
+            document.getElementById('propertiesPanel').classList.remove('active');
+            document.querySelectorAll('.workflow-node').forEach(n => n.classList.remove('selected'));
+            selectedNode = null;
+        }
+
+        // Delete Node
+        function deleteNode(nodeId) {
+            // Remove node element
+            const nodeElement = document.getElementById(nodeId);
+            if (nodeElement) {
+                nodeElement.remove();
+            }
+            
+            // Remove from nodes array
+            nodes = nodes.filter(n => n.id !== nodeId);
+            
+            // Remove connections
+            connections = connections.filter(c => c.from !== nodeId && c.to !== nodeId);
+            updateConnections();
+            
+            // Close properties if this node was selected
+            if (selectedNode && selectedNode.id === nodeId) {
+                closeProperties();
+            }
+        }
+
+        // Toolbar Functions
+        function clearCanvas() {
+            if (confirm('Are you sure you want to clear the entire workflow?')) {
+                canvas.querySelectorAll('.workflow-node').forEach(node => node.remove());
+                nodes = [];
+                connections = [];
+                updateConnections();
+                closeProperties();
+            }
+        }
+
+        function autoLayout() {
+            // Simple auto-layout algorithm
+            const levelMap = new Map();
+            const visited = new Set();
+            
+            // Find root nodes (no incoming connections)
+            const roots = nodes.filter(node => 
+                !connections.some(conn => conn.to === node.id)
+            );
+            
+            // BFS to assign levels
+            const queue = roots.map(r => ({ node: r, level: 0 }));
+            
+            while (queue.length > 0) {
+                const { node, level } = queue.shift();
+                
+                if (visited.has(node.id)) continue;
+                visited.add(node.id);
+                
+                if (!levelMap.has(level)) {
+                    levelMap.set(level, []);
+                }
+                levelMap.get(level).push(node);
+                
+                // Find connected nodes
+                const connectedNodes = connections
+                    .filter(conn => conn.from === node.id)
+                    .map(conn => nodes.find(n => n.id === conn.to))
+                    .filter(n => n && !visited.has(n.id));
+                
+                connectedNodes.forEach(n => {
+                    queue.push({ node: n, level: level + 1 });
+                });
+            }
+            
+            // Position nodes
+            const horizontalSpacing = 250;
+            const verticalSpacing = 150;
+            const startX = 100;
+            const startY = 100;
+            
+            levelMap.forEach((nodesInLevel, level) => {
+                nodesInLevel.forEach((node, index) => {
+                    node.x = startX + level * horizontalSpacing;
+                    node.y = startY + index * verticalSpacing;
+                    
+                    const element = document.getElementById(node.id);
+                    if (element) {
+                        element.style.left = `${node.x}px`;
+                        element.style.top = `${node.y}px`;
+                    }
+                });
+            });
+            
+            updateConnections();
+        }
+
+        function saveWorkflow() {
+            const workflow = {
+                nodes: nodes,
+                connections: connections,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('rcm-workflow', JSON.stringify(workflow));
+            
+            // Show save confirmation
+            const button = event.target.closest('.toolbar-button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span>✅</span><span>Saved!</span>';
+            setTimeout(() => {
+                button.innerHTML = originalText;
+            }, 2000);
+        }
+
+        function exportWorkflow() {
+            const workflow = {
+                nodes: nodes.map(n => ({
+                    id: n.id,
+                    type: n.type,
+                    properties: Object.entries(n.properties).reduce((acc, [key, prop]) => {
+                        acc[key] = prop.value;
+                        return acc;
+                    }, {})
+                })),
+                connections: connections
+            };
+            
+            const code = JSON.stringify(workflow, null, 2);
+            document.getElementById('exportCode').textContent = code;
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.remove('active');
+        }
+
+        function copyExportCode() {
+            const code = document.getElementById('exportCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const button = event.target;
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = 'Copy to Clipboard';
+                }, 2000);
+            });
+        }
+
+        function runWorkflow() {
+            // Simulate workflow execution
+            const button = event.target.closest('.toolbar-button');
+            button.classList.add('active');
+            button.innerHTML = '<span>⏳</span><span>Running...</span>';
+            
+            // Animate nodes in sequence
+            const visited = new Set();
+            const queue = nodes.filter(node => 
+                !connections.some(conn => conn.to === node.id)
+            );
+            
+            let delay = 0;
+            
+            function animateNode(nodeId) {
+                const element = document.getElementById(nodeId);
+                if (element) {
+                    element.style.transition = 'all 0.3s ease';
+                    element.style.transform = 'scale(1.1)';
+                    element.style.boxShadow = '0 0 30px var(--accent-primary)';
+                    
+                    setTimeout(() => {
+                        element.style.transform = '';
+                        element.style.boxShadow = '';
+                    }, 500);
+                }
+            }
+            
+            while (queue.length > 0) {
+                const node = queue.shift();
+                
+                if (visited.has(node.id)) continue;
+                visited.add(node.id);
+                
+                setTimeout(() => animateNode(node.id), delay);
+                delay += 600;
+                
+                // Find connected nodes
+                connections
+                    .filter(conn => conn.from === node.id)
+                    .forEach(conn => {
+                        const nextNode = nodes.find(n => n.id === conn.to);
+                        if (nextNode && !visited.has(nextNode.id)) {
+                            queue.push(nextNode);
+                        }
+                    });
+            }
+            
+            setTimeout(() => {
+                button.classList.remove('active');
+                button.innerHTML = '<span>▶️</span><span>Run</span>';
+            }, delay + 1000);
+        }
+
+        // Zoom Controls
+        function zoomIn() {
+            currentZoom = Math.min(currentZoom + 0.1, 2);
+            canvas.style.transform = `scale(${currentZoom})`;
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(currentZoom - 0.1, 0.5);
+            canvas.style.transform = `scale(${currentZoom})`;
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            canvas.style.transform = 'scale(1)';
+        }
+
+        // Load saved workflow
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('rcm-workflow');
+            if (saved) {
+                const workflow = JSON.parse(saved);
+                
+                // Recreate nodes
+                workflow.nodes.forEach(node => {
+                    const template = nodeTemplates[node.type];
+                    const nodeElement = document.createElement('div');
+                    nodeElement.className = 'workflow-node';
+                    nodeElement.id = node.id;
+                    nodeElement.style.left = `${node.x}px`;
+                    nodeElement.style.top = `${node.y}px`;
+                    
+                    nodeElement.innerHTML = `
+                        <div class="connection-point input"></div>
+                        <div class="connection-point output"></div>
+                        <div class="node-header">
+                            <div class="node-type-icon" style="background: ${template.color}20; color: ${template.color};">
+                                ${template.icon}
+                            </div>
+                            <div class="node-name">${node.type.charAt(0).toUpperCase() + node.type.slice(1)}</div>
+                            <button class="node-delete" onclick="deleteNode('${node.id}')">×</button>
+                        </div>
+                        <div class="node-content">
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">Click to configure</div>
+                        </div>
+                    `;
+                    
+                    canvas.appendChild(nodeElement);
+                    makeNodeDraggable(nodeElement);
+                    
+                    // Add click handler
+                    nodeElement.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('connection-point') && !e.target.classList.contains('node-delete')) {
+                            selectNode(node.id);
+                        }
+                    });
+                    
+                    // Add connection handlers
+                    const outputPoint = nodeElement.querySelector('.connection-point.output');
+                    const inputPoint = nodeElement.querySelector('.connection-point.input');
+                    
+                    outputPoint.addEventListener('mousedown', (e) => {
+                        e.stopPropagation();
+                        startConnection(node.id, 'output', e);
+                    });
+                    
+                    inputPoint.addEventListener('mousedown', (e) => {
+                        e.stopPropagation();
+                        startConnection(node.id, 'input', e);
+                    });
+                });
+                
+                nodes = workflow.nodes;
+                connections = workflow.connections;
+                nodeIdCounter = Math.max(...nodes.map(n => parseInt(n.id.split('-')[1]))) + 1;
+                
+                updateConnections();
+            }
+        });
+
+        // Click outside to deselect
+        canvas.addEventListener('click', (e) => {
+            if (e.target === canvas) {
+                closeProperties();
+            }
+        });
+    </script>
+</body>
+</html>

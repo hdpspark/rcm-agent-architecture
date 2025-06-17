@@ -97,7 +97,7 @@
         }
         
         .nav-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 1rem 2rem;
             display: flex;
@@ -619,6 +619,21 @@
         }
         
         /* Responsive */
+        @media (max-width: 1200px) {
+            .nav-links {
+                gap: 1.5rem;
+            }
+            
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+            
+            .nav-cta {
+                padding: 0.4rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -651,12 +666,11 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
-                <li><a href="ai-chat-demo.html">AI Chat Demo</a></li>
-                <li><a href="api-playground.html">API Playground</a></li>
-                <li><a href="ai-enterprise-integration.html">AI Integration</a></li>
-                <li><a href="documentation.html">Documentation</a></li>
-                <li><a href="api.html">API</a></li>
-                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="ai-chat-demo.html">AI Chat</a></li>
+                <li><a href="api-playground.html">API</a></li>
+                <li><a href="analytics-dashboard.html">Analytics</a></li>
+                <li><a href="workflow-builder.html">Workflow</a></li>
+                <li><a href="ai-sandbox.html">Sandbox</a></li>
                 <li><a href="#demos">Demos</a></li>
                 <li>
                     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">

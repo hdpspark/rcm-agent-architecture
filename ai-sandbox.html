@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Sandbox - Test & Experiment with LLMs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        /* Dark Theme (Default) */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #666666;
+            --accent-primary: #00dc82;
+            --accent-secondary: #00ff88;
+            --accent-gradient: linear-gradient(135deg, #00dc82 0%, #00ff88 50%, #36ef7a 100%);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-glow: 0 0 40px rgba(0, 220, 130, 0.3);
+            --nav-bg: rgba(10, 10, 10, 0.8);
+            --nav-bg-solid: rgba(10, 10, 10, 0.95);
+            --code-bg: #0a0a0a;
+            --success-color: #00dc82;
+            --warning-color: #fca130;
+            --error-color: #f93e3e;
+            --info-color: #61affe;
+        }
+        
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --accent-primary: #00a865;
+            --accent-secondary: #00dc82;
+            --accent-gradient: linear-gradient(135deg, #00a865 0%, #00dc82 50%, #20d67d 100%);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 40px rgba(0, 168, 101, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg-solid: rgba(255, 255, 255, 0.98);
+            --code-bg: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--glass-border);
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle svg {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .sun-icon {
+            opacity: 0;
+            transform: rotate(-90deg);
+            color: var(--text-primary);
+        }
+        
+        .moon-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .sun-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+        
+        [data-theme="light"] .moon-icon {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+        
+        /* Header */
+        .sandbox-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .sandbox-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        
+        .sandbox-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Main Layout */
+        .sandbox-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        /* Model Selection */
+        .model-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            height: fit-content;
+        }
+        
+        .panel-title {
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .model-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .model-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .model-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 5px 20px rgba(0, 220, 130, 0.1);
+        }
+        
+        .model-card.active {
+            border-color: var(--accent-primary);
+            background: var(--glass-bg);
+        }
+        
+        .model-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .model-provider {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .model-features {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .feature-tag {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Chat Interface */
+        .chat-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 800px;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-model-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .model-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .model-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+        }
+        
+        .model-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success-color);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+        
+        .action-btn:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        /* Messages Area */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .message.user .message-avatar {
+            background: var(--accent-gradient);
+        }
+        
+        .message-content {
+            max-width: 70%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px 20px;
+        }
+        
+        .message.user .message-content {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border: none;
+        }
+        
+        .message-text {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 8px;
+        }
+        
+        .message.user .message-time {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Code Block in Messages */
+        .message-code {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+        
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        
+        .input-wrapper {
+            flex: 1;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-wrapper:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(0, 220, 130, 0.1);
+        }
+        
+        .chat-input {
+            width: 100%;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+            max-height: 150px;
+        }
+        
+        .send-button {
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 12px;
+            padding: 15px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 220, 130, 0.3);
+        }
+        
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Settings Panel */
+        .settings-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            height: fit-content;
+        }
+        
+        .setting-group {
+            margin-bottom: 25px;
+        }
+        
+        .setting-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .setting-value {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 6px;
+            background: var(--glass-border);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: var(--glass-border);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active {
+            background: var(--accent-primary);
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+        
+        /* Tool Functions */
+        .tools-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .tool-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(3px);
+        }
+        
+        .tool-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .tool-toggle {
+            width: 40px;
+            height: 22px;
+            background: var(--glass-border);
+            border-radius: 11px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-toggle.active {
+            background: var(--accent-primary);
+        }
+        
+        .tool-toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .tool-toggle.active .tool-toggle-slider {
+            transform: translateX(18px);
+        }
+        
+        /* Examples Section */
+        .examples-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .examples-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .example-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .example-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 10px 30px rgba(0, 220, 130, 0.1);
+        }
+        
+        .example-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .example-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .example-prompt {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Loading Animation */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 15px 20px;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sandbox-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .model-panel, .settings-panel {
+                display: none;
+            }
+            
+            .sandbox-title {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span>🧪</span>
+                AI Agent Sandbox
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="ai-chat-demo.html">AI Chat</a></li>
+                <li><a href="api-playground.html">API</a></li>
+                <li><a href="workflow-builder.html">Workflow</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="sandbox-header">
+            <h1 class="sandbox-title">AI Agent Testing Sandbox</h1>
+            <p class="sandbox-subtitle">Experiment with different LLMs, test prompts, and build AI agents for revenue cycle management</p>
+        </div>
+
+        <!-- Examples Section -->
+        <section class="examples-section">
+            <h2 class="examples-title">Quick Start Examples</h2>
+            <div class="examples-grid">
+                <div class="example-card" onclick="loadExample('eligibility')">
+                    <div class="example-icon">✅</div>
+                    <h3 class="example-title">Eligibility Verification</h3>
+                    <p class="example-prompt">Check if patient John Doe (DOB: 01/15/1980) with BCBS insurance ID XYZ123 is eligible for CPT 99213</p>
+                </div>
+                
+                <div class="example-card" onclick="loadExample('claim-analysis')">
+                    <div class="example-icon">📊</div>
+                    <h3 class="example-title">Claim Analysis</h3>
+                    <p class="example-prompt">Analyze why claim #CLM-2024-1234 was denied and suggest corrective actions</p>
+                </div>
+                
+                <div class="example-card" onclick="loadExample('coding')">
+                    <div class="example-icon">🔤</div>
+                    <h3 class="example-title">Medical Coding</h3>
+                    <p class="example-prompt">Find the appropriate ICD-10 codes for: Patient presents with acute bronchitis and hypertension</p>
+                </div>
+                
+                <div class="example-card" onclick="loadExample('appeal')">
+                    <div class="example-icon">📝</div>
+                    <h3 class="example-title">Appeal Letter</h3>
+                    <p class="example-prompt">Generate an appeal letter for denial code CO-197 (prior auth missing) for procedure 43235</p>
+                </div>
+                
+                <div class="example-card" onclick="loadExample('payment')">
+                    <div class="example-icon">💰</div>
+                    <h3 class="example-title">Payment Posting</h3>
+                    <p class="example-prompt">Process ERA with payment $1,250 for claim #CLM-2024-5678, allowed amount $1,500</p>
+                </div>
+                
+                <div class="example-card" onclick="loadExample('workflow')">
+                    <div class="example-icon">🔄</div>
+                    <h3 class="example-title">Workflow Automation</h3>
+                    <p class="example-prompt">Create a workflow to automatically check eligibility before claim submission</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Layout -->
+        <div class="sandbox-layout">
+            <!-- Model Selection Panel -->
+            <aside class="model-panel">
+                <h3 class="panel-title">
+                    <span>🤖</span>
+                    <span>Select AI Model</span>
+                </h3>
+                <div class="model-list">
+                    <div class="model-card active" onclick="selectModel('gpt-4')">
+                        <div class="model-name">GPT-4</div>
+                        <div class="model-provider">OpenAI</div>
+                        <div class="model-features">
+                            <span class="feature-tag">128k context</span>
+                            <span class="feature-tag">Vision</span>
+                            <span class="feature-tag">Functions</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" onclick="selectModel('claude-3')">
+                        <div class="model-name">Claude 3 Opus</div>
+                        <div class="model-provider">Anthropic</div>
+                        <div class="model-features">
+                            <span class="feature-tag">200k context</span>
+                            <span class="feature-tag">Vision</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" onclick="selectModel('gemini-pro')">
+                        <div class="model-name">Gemini Pro</div>
+                        <div class="model-provider">Google</div>
+                        <div class="model-features">
+                            <span class="feature-tag">32k context</span>
+                            <span class="feature-tag">Multimodal</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" onclick="selectModel('llama-3')">
+                        <div class="model-name">Llama 3 70B</div>
+                        <div class="model-provider">Meta</div>
+                        <div class="model-features">
+                            <span class="feature-tag">8k context</span>
+                            <span class="feature-tag">Open source</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card" onclick="selectModel('mixtral')">
+                        <div class="model-name">Mixtral 8x7B</div>
+                        <div class="model-provider">Mistral AI</div>
+                        <div class="model-features">
+                            <span class="feature-tag">32k context</span>
+                            <span class="feature-tag">MoE</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Chat Interface -->
+            <main class="chat-panel">
+                <div class="chat-header">
+                    <div class="chat-model-info">
+                        <div class="model-avatar">🤖</div>
+                        <div class="model-details">
+                            <h3 id="activeModelName">GPT-4</h3>
+                            <div class="model-status">
+                                <span class="status-dot"></span>
+                                <span>Ready • Demo Mode</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="action-btn" onclick="clearChat()">Clear</button>
+                        <button class="action-btn" onclick="exportChat()">Export</button>
+                        <button class="action-btn" onclick="shareChat()">Share</button>
+                    </div>
+                </div>
+
+                <div class="messages-area" id="messagesArea">
+                    <div class="message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <div class="message-text">Hello! I'm your AI assistant for revenue cycle management. I can help you with:
+
+• Eligibility verification and benefits checking
+• Claim processing and submission
+• Denial management and appeals
+• Medical coding (ICD-10, CPT, HCPCS)
+• Prior authorization workflows
+• Payment posting and reconciliation
+• Revenue analytics and reporting
+
+Try one of the examples above or ask me anything about RCM!</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="input-container">
+                        <div class="input-wrapper">
+                            <textarea 
+                                class="chat-input" 
+                                id="chatInput"
+                                placeholder="Ask about eligibility, claims, denials, or any RCM topic..."
+                                rows="1"
+                                onkeypress="handleKeyPress(event)"
+                                oninput="autoResize(this)"
+                            ></textarea>
+                        </div>
+                        <button class="send-button" id="sendButton" onclick="sendMessage()">
+                            <span>Send</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Settings Panel -->
+            <aside class="settings-panel">
+                <h3 class="panel-title">
+                    <span>⚙️</span>
+                    <span>Model Settings</span>
+                </h3>
+                
+                <div class="setting-group">
+                    <div class="setting-label">
+                        <span>Temperature</span>
+                        <span class="setting-value" id="tempValue">0.7</span>
+                    </div>
+                    <input type="range" class="slider" id="temperature" min="0" max="2" step="0.1" value="0.7" onchange="updateSetting('temperature')">
+                </div>
+                
+                <div class="setting-group">
+                    <div class="setting-label">
+                        <span>Max Tokens</span>
+                        <span class="setting-value" id="maxTokensValue">2048</span>
+                    </div>
+                    <input type="range" class="slider" id="maxTokens" min="256" max="4096" step="256" value="2048" onchange="updateSetting('maxTokens')">
+                </div>
+                
+                <div class="setting-group">
+                    <div class="setting-label">
+                        <span>Top P</span>
+                        <span class="setting-value" id="topPValue">0.9</span>
+                    </div>
+                    <input type="range" class="slider" id="topP" min="0" max="1" step="0.1" value="0.9" onchange="updateSetting('topP')">
+                </div>
+                
+                <div class="setting-group">
+                    <div class="setting-label">
+                        <span>Stream Response</span>
+                        <div class="toggle-switch active" id="streamToggle" onclick="toggleSetting('stream')">
+                            <div class="toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tools-section">
+                    <h4 class="panel-title" style="font-size: 1rem; margin-bottom: 15px;">
+                        <span>🛠️</span>
+                        <span>Tool Functions</span>
+                    </h4>
+                    
+                    <div class="tool-item">
+                        <span class="tool-name">Database Query</span>
+                        <div class="tool-toggle active" onclick="toggleTool('database')">
+                            <div class="tool-toggle-slider"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <span class="tool-name">API Calls</span>
+                        <div class="tool-toggle active" onclick="toggleTool('api')">
+                            <div class="tool-toggle-slider"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <span class="tool-name">Code Execution</span>
+                        <div class="tool-toggle" onclick="toggleTool('code')">
+                            <div class="tool-toggle-slider"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tool-item">
+                        <span class="tool-name">Web Search</span>
+                        <div class="tool-toggle" onclick="toggleTool('search')">
+                            <div class="tool-toggle-slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+        
+        // Load saved theme preference or default to dark theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // State Management
+        let currentModel = 'gpt-4';
+        let settings = {
+            temperature: 0.7,
+            maxTokens: 2048,
+            topP: 0.9,
+            stream: true
+        };
+        let enabledTools = ['database', 'api'];
+
+        // Model Information
+        const modelInfo = {
+            'gpt-4': { name: 'GPT-4', icon: '🤖', provider: 'OpenAI' },
+            'claude-3': { name: 'Claude 3 Opus', icon: '🌟', provider: 'Anthropic' },
+            'gemini-pro': { name: 'Gemini Pro', icon: '💎', provider: 'Google' },
+            'llama-3': { name: 'Llama 3 70B', icon: '🦙', provider: 'Meta' },
+            'mixtral': { name: 'Mixtral 8x7B', icon: '🔀', provider: 'Mistral AI' }
+        };
+
+        // Example Prompts
+        const examplePrompts = {
+            eligibility: "Check if patient John Doe (DOB: 01/15/1980) with BCBS insurance ID XYZ123 is eligible for CPT 99213",
+            'claim-analysis': "Analyze why claim #CLM-2024-1234 was denied and suggest corrective actions",
+            coding: "Find the appropriate ICD-10 codes for: Patient presents with acute bronchitis and hypertension",
+            appeal: "Generate an appeal letter for denial code CO-197 (prior auth missing) for procedure 43235",
+            payment: "Process ERA with payment $1,250 for claim #CLM-2024-5678, allowed amount $1,500",
+            workflow: "Create a workflow to automatically check eligibility before claim submission"
+        };
+
+        // Select Model
+        function selectModel(modelId) {
+            currentModel = modelId;
+            
+            // Update UI
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.target.closest('.model-card').classList.add('active');
+            
+            // Update chat header
+            const model = modelInfo[modelId];
+            document.getElementById('activeModelName').textContent = model.name;
+            document.querySelector('.model-avatar').textContent = model.icon;
+            
+            // Add system message
+            addMessage('system', `Switched to ${model.name} (${model.provider})`);
+        }
+
+        // Load Example
+        function loadExample(exampleId) {
+            const prompt = examplePrompts[exampleId];
+            document.getElementById('chatInput').value = prompt;
+            autoResize(document.getElementById('chatInput'));
+            document.getElementById('chatInput').focus();
+        }
+
+        // Auto-resize textarea
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // Handle Enter key
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Send Message
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Disable send button
+            document.getElementById('sendButton').disabled = true;
+            
+            // Add user message
+            addMessage('user', message);
+            
+            // Clear input
+            input.value = '';
+            autoResize(input);
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = generateMockResponse(message);
+                addMessage('assistant', response);
+                
+                // Re-enable send button
+                document.getElementById('sendButton').disabled = false;
+                input.focus();
+            }, 1500 + Math.random() * 1500);
+        }
+
+        // Add Message
+        function addMessage(sender, text) {
+            const messagesArea = document.getElementById('messagesArea');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = sender === 'user' ? '👤' : 
+                          sender === 'system' ? '⚙️' : 
+                          modelInfo[currentModel].icon;
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            if (sender === 'system') {
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">⚙️</div>
+                    <div class="message-content" style="background: var(--glass-bg); border-color: var(--accent-primary);">
+                        <div class="message-text" style="color: var(--text-secondary); font-style: italic;">${text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">${avatar}</div>
+                    <div class="message-content">
+                        <div class="message-text">${text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+            }
+            
+            messagesArea.appendChild(messageDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        // Show Typing Indicator
+        function showTypingIndicator() {
+            const messagesArea = document.getElementById('messagesArea');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">${modelInfo[currentModel].icon}</div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            messagesArea.appendChild(typingDiv);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        // Remove Typing Indicator
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // Generate Mock Response
+        function generateMockResponse(prompt) {
+            const lowerPrompt = prompt.toLowerCase();
+            
+            // Eligibility queries
+            if (lowerPrompt.includes('eligibility') || lowerPrompt.includes('eligible')) {
+                return `I've verified the eligibility for the patient:
+
+**Patient Information:**
+• Name: John Doe
+• DOB: 01/15/1980
+• Insurance: BCBS
+• Member ID: XYZ123
+
+**Eligibility Status:** ✅ Active Coverage
+
+**Benefits for CPT 99213 (Office Visit - Established Patient):**
+• Coverage: Approved
+• Copay: $25
+• Deductible: $500 (Met: $350)
+• Out-of-Pocket Max: $3,000 (Met: $1,200)
+• Prior Authorization: Not Required
+
+**Additional Notes:**
+• Patient has 80/20 coinsurance after deductible
+• No referral required for specialist visits
+• Coverage verified as of ${new Date().toLocaleDateString()}
+
+Would you like me to check coverage for additional procedures or services?`;
+            }
+            
+            // Denial analysis
+            if (lowerPrompt.includes('denial') || lowerPrompt.includes('denied')) {
+                return `I've analyzed the denial for claim #CLM-2024-1234:
+
+**Denial Details:**
+• Denial Code: CO-197
+• Reason: Precertification/authorization/notification absent
+• Date of Denial: ${new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+• Payer: United Healthcare
+
+**Root Cause Analysis:**
+The claim was denied because prior authorization was not obtained before the procedure was performed. The procedure code 43235 (EGD with biopsy) requires prior auth for this payer.
+
+**Recommended Actions:**
+1. **Immediate:** Submit retroactive authorization request
+2. **Documentation:** Gather medical necessity documentation
+3. **Appeal:** File formal appeal within 30 days
+4. **Prevention:** Update pre-service workflows to flag auth requirements
+
+**Appeal Success Rate:** 73% for similar denials when proper documentation is provided
+
+Would you like me to generate the appeal letter or help with the retroactive auth request?`;
+            }
+            
+            // Coding queries
+            if (lowerPrompt.includes('icd') || lowerPrompt.includes('code') || lowerPrompt.includes('coding')) {
+                return `Based on the clinical presentation, here are the appropriate ICD-10 codes:
+
+**Primary Diagnosis:**
+• J20.9 - Acute bronchitis, unspecified
+  - Covers the acute bronchitis presentation
+  - Most commonly used for uncomplicated cases
+
+**Secondary Diagnosis:**
+• I10 - Essential (primary) hypertension
+  - For the documented hypertension
+  - Use if patient has established diagnosis
+
+**Additional Considerations:**
+• J20.8 - Acute bronchitis due to other specified organisms (if pathogen identified)
+• J40 - Bronchitis, not specified as acute or chronic (if chronicity unclear)
+• I11.9 - Hypertensive heart disease without heart failure (if cardiac involvement)
+
+**Coding Tips:**
+• Sequence acute condition (bronchitis) first as primary
+• Include hypertension as it affects overall treatment plan
+• Check for any additional symptoms or complications to code
+
+Would you like me to suggest CPT codes for the encounter or help with modifier selection?`;
+            }
+            
+            // Appeal letter
+            if (lowerPrompt.includes('appeal')) {
+                return `I've generated an appeal letter for your denial:
+
+---
+
+[Date]
+
+[Payer Name]
+Appeals Department
+[Address]
+
+**Re: Appeal for Claim Denial - Claim #CLM-2024-1234**
+**Patient: [Patient Name]**
+**Member ID: [ID]**
+**Date of Service: [DOS]**
+
+Dear Appeals Reviewer,
+
+I am writing to formally appeal your denial of claim #CLM-2024-1234 for CPT code 43235 (EGD with biopsy) with denial code CO-197 (prior authorization absent).
+
+**Medical Necessity:**
+The procedure was medically necessary and emergent due to:
+• Severe dysphagia with weight loss
+• Suspected malignancy requiring immediate diagnosis
+• Risk of esophageal obstruction
+
+**Circumstances:**
+This was performed emergently outside normal business hours when authorization could not be obtained. The patient's condition required immediate intervention to prevent serious complications.
+
+**Supporting Documentation:**
+1. Emergency department notes
+2. GI consultation report
+3. Pathology results confirming diagnosis
+
+We respectfully request reconsideration and approval of this claim based on medical necessity and emergent circumstances.
+
+Sincerely,
+[Provider Name]
+
+---
+
+Would you like me to customize this further or add additional clinical details?`;
+            }
+            
+            // Payment posting
+            if (lowerPrompt.includes('payment') || lowerPrompt.includes('era') || lowerPrompt.includes('posting')) {
+                return `I'll help you process this payment posting:
+
+**ERA/Payment Details:**
+• Claim #: CLM-2024-5678
+• Check/EFT #: 834521
+• Payment Amount: $1,250.00
+• Allowed Amount: $1,500.00
+
+**Payment Breakdown:**
+• Billed Amount: $2,000.00
+• Allowed Amount: $1,500.00
+• Insurance Paid: $1,250.00
+• Adjustment: $500.00 (contractual)
+• Patient Responsibility: $250.00 (deductible)
+
+**Posting Instructions:**
+1. Apply payment of $1,250.00 to claim
+2. Write off $500.00 as contractual adjustment
+3. Transfer $250.00 to patient balance
+4. Update claim status to "Processed"
+5. Generate patient statement for remaining balance
+
+**Variance Alert:** ⚠️ Patient has $250 deductible that needs to be collected
+
+Would you like me to check for any secondary insurance or payment plan options for the patient balance?`;
+            }
+            
+            // Default response
+            return `I understand you're asking about "${prompt}". 
+
+In a production environment, I would:
+
+1. **Analyze your request** using natural language processing
+2. **Access relevant data** from your RCM systems via API
+3. **Process the information** using specialized healthcare AI models
+4. **Provide actionable insights** with specific recommendations
+
+For this demo, I can help you with:
+• Eligibility verification scenarios
+• Claim denial analysis
+• Medical coding assistance
+• Appeal letter generation
+• Payment posting workflows
+• Revenue cycle analytics
+
+Please try one of the example prompts or ask a specific RCM question!`;
+        }
+
+        // Settings Management
+        function updateSetting(settingName) {
+            const value = document.getElementById(settingName).value;
+            settings[settingName] = parseFloat(value);
+            
+            // Update display
+            if (settingName === 'temperature') {
+                document.getElementById('tempValue').textContent = value;
+            } else if (settingName === 'maxTokens') {
+                document.getElementById('maxTokensValue').textContent = value;
+            } else if (settingName === 'topP') {
+                document.getElementById('topPValue').textContent = value;
+            }
+        }
+
+        function toggleSetting(settingName) {
+            const toggle = document.getElementById(`${settingName}Toggle`);
+            toggle.classList.toggle('active');
+            settings[settingName] = toggle.classList.contains('active');
+        }
+
+        function toggleTool(toolName) {
+            const toggle = event.target.closest('.tool-toggle');
+            toggle.classList.toggle('active');
+            
+            if (toggle.classList.contains('active')) {
+                enabledTools.push(toolName);
+            } else {
+                enabledTools = enabledTools.filter(t => t !== toolName);
+            }
+        }
+
+        // Chat Actions
+        function clearChat() {
+            const messagesArea = document.getElementById('messagesArea');
+            messagesArea.innerHTML = `
+                <div class="message">
+                    <div class="message-avatar">${modelInfo[currentModel].icon}</div>
+                    <div class="message-content">
+                        <div class="message-text">Chat cleared. How can I help you with revenue cycle management today?</div>
+                        <div class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportChat() {
+            const messages = [];
+            document.querySelectorAll('.message').forEach(msg => {
+                const sender = msg.classList.contains('user') ? 'User' : 'Assistant';
+                const text = msg.querySelector('.message-text').textContent;
+                const time = msg.querySelector('.message-time').textContent;
+                messages.push(`[${time}] ${sender}: ${text}`);
+            });
+            
+            const chatLog = messages.join('\n\n');
+            const blob = new Blob([chatLog], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rcm-chat-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+        }
+
+        function shareChat() {
+            // In a real implementation, this would generate a shareable link
+            const mockUrl = `https://rcm-agent.com/shared/chat/${Math.random().toString(36).substr(2, 9)}`;
+            
+            navigator.clipboard.writeText(mockUrl).then(() => {
+                addMessage('system', `Chat link copied to clipboard: ${mockUrl}`);
+            });
+        }
+
+        // Initialize
+        document.getElementById('chatInput').focus();
+    </script>
+</body>
+</html>

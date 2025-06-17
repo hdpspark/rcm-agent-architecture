@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCM Analytics Dashboard - Real-Time Revenue Insights</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        /* Dark Theme (Default) */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #666666;
+            --accent-primary: #00dc82;
+            --accent-secondary: #00ff88;
+            --accent-gradient: linear-gradient(135deg, #00dc82 0%, #00ff88 50%, #36ef7a 100%);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-glow: 0 0 40px rgba(0, 220, 130, 0.3);
+            --nav-bg: rgba(10, 10, 10, 0.8);
+            --nav-bg-solid: rgba(10, 10, 10, 0.95);
+            --success-color: #00dc82;
+            --warning-color: #fca130;
+            --error-color: #f93e3e;
+            --info-color: #61affe;
+        }
+        
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --accent-primary: #00a865;
+            --accent-secondary: #00dc82;
+            --accent-gradient: linear-gradient(135deg, #00a865 0%, #00dc82 50%, #20d67d 100%);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 40px rgba(0, 168, 101, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg-solid: rgba(255, 255, 255, 0.98);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--glass-border);
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle svg {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .sun-icon {
+            opacity: 0;
+            transform: rotate(-90deg);
+            color: var(--text-primary);
+        }
+        
+        .moon-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .sun-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+        
+        [data-theme="light"] .moon-icon {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+        
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+        
+        /* Dashboard Header */
+        .dashboard-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .time-range-selector {
+            display: flex;
+            gap: 10px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 5px;
+        }
+        
+        .time-range-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .time-range-btn:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .time-range-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+        
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 220, 130, 0.1);
+        }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .metric-title {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .metric-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .change-positive {
+            color: var(--success-color);
+        }
+        
+        .change-negative {
+            color: var(--error-color);
+        }
+        
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-action-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+        
+        .chart-action-btn:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Activity Feed */
+        .activity-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .activity-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+        
+        .activity-time {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* Live Status Indicator */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success-color);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 80px 15px 30px;
+            }
+            
+            .dashboard-title {
+                font-size: 2rem;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .metric-value {
+                font-size: 2rem;
+            }
+            
+            .time-range-selector {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
+        
+        /* Chart.js Theme Override */
+        .chart-card canvas {
+            max-height: 300px !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span>📊</span>
+                RCM Analytics
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="ai-chat-demo.html">AI Chat</a></li>
+                <li><a href="api-playground.html">API</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">Revenue Analytics Dashboard</h1>
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    <span>Live Data • Updated every 5 seconds</span>
+                </div>
+            </div>
+            <div class="time-range-selector">
+                <button class="time-range-btn active" onclick="selectTimeRange('today')">Today</button>
+                <button class="time-range-btn" onclick="selectTimeRange('week')">Week</button>
+                <button class="time-range-btn" onclick="selectTimeRange('month')">Month</button>
+                <button class="time-range-btn" onclick="selectTimeRange('quarter')">Quarter</button>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-header">
+                    <h3 class="metric-title">Total Revenue</h3>
+                    <div class="metric-icon">💰</div>
+                </div>
+                <div class="metric-value" id="totalRevenue">$847,293</div>
+                <div class="metric-change change-positive">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <span>+12.5% from last period</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <h3 class="metric-title">Claims Processed</h3>
+                    <div class="metric-icon">📄</div>
+                </div>
+                <div class="metric-value" id="claimsProcessed">1,847</div>
+                <div class="metric-change change-positive">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <span>+8.3% from last period</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <h3 class="metric-title">Days in A/R</h3>
+                    <div class="metric-icon">📅</div>
+                </div>
+                <div class="metric-value" id="daysInAR">28.5</div>
+                <div class="metric-change change-positive">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(180)">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <span>-3.2 days improvement</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-header">
+                    <h3 class="metric-title">Denial Rate</h3>
+                    <div class="metric-icon">🚫</div>
+                </div>
+                <div class="metric-value" id="denialRate">5.2%</div>
+                <div class="metric-change change-positive">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" transform="rotate(180)">
+                        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                        <polyline points="17 6 23 6 23 12"></polyline>
+                    </svg>
+                    <span>-1.8% from last period</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-container">
+            <!-- Revenue Trend Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Trend</h3>
+                    <div class="chart-actions">
+                        <button class="chart-action-btn">Daily</button>
+                        <button class="chart-action-btn">Weekly</button>
+                        <button class="chart-action-btn">Export</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Claims Status Distribution -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Claims Status Distribution</h3>
+                    <div class="chart-actions">
+                        <button class="chart-action-btn">Details</button>
+                        <button class="chart-action-btn">Export</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="claimsStatusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Payer Mix -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Top Payers by Revenue</h3>
+                    <div class="chart-actions">
+                        <button class="chart-action-btn">View All</button>
+                        <button class="chart-action-btn">Export</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="payerMixChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Denial Reasons -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Top Denial Reasons</h3>
+                    <div class="chart-actions">
+                        <button class="chart-action-btn">Actions</button>
+                        <button class="chart-action-btn">Export</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="denialReasonsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="activity-section">
+            <div class="activity-header">
+                <h3 class="activity-title">Recent Activity</h3>
+                <button class="chart-action-btn">View All</button>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+                <!-- Activity items will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update charts theme
+            updateChartsTheme();
+        }
+        
+        // Load saved theme preference or default to dark theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Chart.js default configuration
+        Chart.defaults.color = savedTheme === 'light' ? '#495057' : '#a3a3a3';
+        Chart.defaults.borderColor = savedTheme === 'light' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+
+        // Initialize charts
+        let revenueTrendChart, claimsStatusChart, payerMixChart, denialReasonsChart;
+
+        function initializeCharts() {
+            const isDarkTheme = document.documentElement.getAttribute('data-theme') !== 'light';
+            const textColor = isDarkTheme ? '#a3a3a3' : '#495057';
+            const gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+            // Revenue Trend Chart
+            const revenueTrendCtx = document.getElementById('revenueTrendChart').getContext('2d');
+            revenueTrendChart = new Chart(revenueTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [125000, 135000, 128000, 142000, 155000, 148000, 158000],
+                        borderColor: '#00dc82',
+                        backgroundColor: 'rgba(0, 220, 130, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                            titleColor: isDarkTheme ? '#ffffff' : '#1a1a1a',
+                            bodyColor: isDarkTheme ? '#a3a3a3' : '#495057',
+                            borderColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: gridColor,
+                                display: true
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: gridColor,
+                                display: true
+                            },
+                            ticks: {
+                                color: textColor,
+                                callback: function(value) {
+                                    return '$' + (value / 1000) + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Claims Status Chart
+            const claimsStatusCtx = document.getElementById('claimsStatusChart').getContext('2d');
+            claimsStatusChart = new Chart(claimsStatusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Paid', 'Pending', 'Denied', 'Processing'],
+                    datasets: [{
+                        data: [1234, 456, 98, 59],
+                        backgroundColor: [
+                            '#00dc82',
+                            '#61affe',
+                            '#f93e3e',
+                            '#fca130'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: textColor,
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                            titleColor: isDarkTheme ? '#ffffff' : '#1a1a1a',
+                            bodyColor: isDarkTheme ? '#a3a3a3' : '#495057',
+                            borderColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1
+                        }
+                    }
+                }
+            });
+
+            // Payer Mix Chart
+            const payerMixCtx = document.getElementById('payerMixChart').getContext('2d');
+            payerMixChart = new Chart(payerMixCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['BCBS', 'United Health', 'Aetna', 'Cigna', 'Humana'],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [245000, 198000, 176000, 145000, 98000],
+                        backgroundColor: '#00dc82',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                            titleColor: isDarkTheme ? '#ffffff' : '#1a1a1a',
+                            bodyColor: isDarkTheme ? '#a3a3a3' : '#495057',
+                            borderColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: gridColor,
+                                display: true
+                            },
+                            ticks: {
+                                color: textColor,
+                                callback: function(value) {
+                                    return '$' + (value / 1000) + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Denial Reasons Chart
+            const denialReasonsCtx = document.getElementById('denialReasonsChart').getContext('2d');
+            denialReasonsChart = new Chart(denialReasonsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Prior Auth', 'Coding Error', 'Coverage', 'Timely Filing', 'Other'],
+                    datasets: [{
+                        label: 'Count',
+                        data: [45, 32, 28, 18, 12],
+                        backgroundColor: '#f93e3e',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: isDarkTheme ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                            titleColor: isDarkTheme ? '#ffffff' : '#1a1a1a',
+                            bodyColor: isDarkTheme ? '#a3a3a3' : '#495057',
+                            borderColor: isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: gridColor,
+                                display: true
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update charts theme
+        function updateChartsTheme() {
+            const isDarkTheme = document.documentElement.getAttribute('data-theme') !== 'light';
+            const textColor = isDarkTheme ? '#a3a3a3' : '#495057';
+            const gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+            // Update all charts
+            [revenueTrendChart, claimsStatusChart, payerMixChart, denialReasonsChart].forEach(chart => {
+                if (chart) {
+                    chart.options.scales?.x?.grid && (chart.options.scales.x.grid.color = gridColor);
+                    chart.options.scales?.y?.grid && (chart.options.scales.y.grid.color = gridColor);
+                    chart.options.scales?.x?.ticks && (chart.options.scales.x.ticks.color = textColor);
+                    chart.options.scales?.y?.ticks && (chart.options.scales.y.ticks.color = textColor);
+                    chart.options.plugins?.legend?.labels && (chart.options.plugins.legend.labels.color = textColor);
+                    chart.update();
+                }
+            });
+        }
+
+        // Activity feed data
+        const activities = [
+            { icon: '✅', text: 'Claim #CLM-2024-1847 approved for $2,450', time: 'Just now' },
+            { icon: '📄', text: 'New claim submitted for patient John Doe', time: '2 minutes ago' },
+            { icon: '💰', text: 'Payment received: $45,230 from Blue Cross', time: '5 minutes ago' },
+            { icon: '🚫', text: 'Denial received for claim #CLM-2024-1823', time: '8 minutes ago' },
+            { icon: '✅', text: 'Prior authorization approved for patient Jane Smith', time: '12 minutes ago' },
+            { icon: '📊', text: 'Weekly report generated and sent', time: '15 minutes ago' },
+            { icon: '🔄', text: 'Appeal submitted for denied claim #CLM-2024-1756', time: '18 minutes ago' },
+            { icon: '💳', text: 'Patient payment processed: $125.00', time: '22 minutes ago' }
+        ];
+
+        // Initialize activity feed
+        function initializeActivityFeed() {
+            const feed = document.getElementById('activityFeed');
+            activities.forEach((activity, index) => {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'activity-item';
+                    item.innerHTML = `
+                        <div class="activity-icon">${activity.icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-text">${activity.text}</div>
+                            <div class="activity-time">${activity.time}</div>
+                        </div>
+                    `;
+                    feed.appendChild(item);
+                }, index * 200);
+            });
+        }
+
+        // Simulate real-time updates
+        function simulateRealtimeUpdates() {
+            // Update metrics
+            setInterval(() => {
+                // Update revenue
+                const currentRevenue = parseInt(document.getElementById('totalRevenue').textContent.replace(/[$,]/g, ''));
+                const newRevenue = currentRevenue + Math.floor(Math.random() * 1000);
+                document.getElementById('totalRevenue').textContent = '$' + newRevenue.toLocaleString();
+
+                // Update claims processed
+                const currentClaims = parseInt(document.getElementById('claimsProcessed').textContent.replace(/,/g, ''));
+                const newClaims = currentClaims + Math.floor(Math.random() * 3);
+                document.getElementById('claimsProcessed').textContent = newClaims.toLocaleString();
+
+                // Update revenue trend chart
+                if (revenueTrendChart) {
+                    const data = revenueTrendChart.data.datasets[0].data;
+                    data.shift();
+                    data.push(140000 + Math.floor(Math.random() * 20000));
+                    revenueTrendChart.update('none');
+                }
+
+                // Add new activity
+                const newActivities = [
+                    { icon: '✅', text: `Claim #CLM-2024-${Math.floor(Math.random() * 9999)} approved` },
+                    { icon: '📄', text: 'New eligibility verification completed' },
+                    { icon: '💰', text: `Payment received: $${Math.floor(Math.random() * 5000)}` },
+                    { icon: '🔄', text: 'Batch claims processing completed' }
+                ];
+
+                const randomActivity = newActivities[Math.floor(Math.random() * newActivities.length)];
+                const feed = document.getElementById('activityFeed');
+                const newItem = document.createElement('div');
+                newItem.className = 'activity-item';
+                newItem.innerHTML = `
+                    <div class="activity-icon">${randomActivity.icon}</div>
+                    <div class="activity-content">
+                        <div class="activity-text">${randomActivity.text}</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                `;
+                
+                feed.insertBefore(newItem, feed.firstChild);
+                
+                // Remove old items
+                while (feed.children.length > 10) {
+                    feed.removeChild(feed.lastChild);
+                }
+            }, 5000);
+        }
+
+        // Time range selector
+        function selectTimeRange(range) {
+            document.querySelectorAll('.time-range-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update charts based on selected range
+            // This would typically fetch new data from the server
+            console.log('Selected time range:', range);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeCharts();
+            initializeActivityFeed();
+            simulateRealtimeUpdates();
+        });
+    </script>
+</body>
+</html>
