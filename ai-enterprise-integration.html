@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI/Agentic Enterprise Integration - Fixed Version</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b3d 25%, #3d1e4e 50%, #2d1b3d 75%, #1a0b2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(255, 107, 107, 0.15) 0%, transparent 40%),
+                radial-gradient(ellipse at 80% 70%, rgba(147, 51, 234, 0.15) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 1;
+            backdrop-filter: blur(100px);
+            animation: nebulaFlow 20s ease-in-out infinite;
+        }
+
+        @keyframes nebulaFlow {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #ff6b6b 0%, #f06292 25%, #ba68c8 50%, #9575cd 75%, #7986cb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease-out, glowPulse 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(236, 72, 153, 0.5));
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { filter: drop-shadow(0 0 40px rgba(236, 72, 153, 0.5)); }
+            50% { filter: drop-shadow(0 0 60px rgba(236, 72, 153, 0.8)); }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .section {
+            margin-bottom: 60px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #ff6b6b;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            filter: drop-shadow(0 0 20px rgba(255, 107, 107, 0.4));
+        }
+
+        .section-title::before {
+            content: '';
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #f06292, #ba68c8);
+            display: block;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
+            border-radius: 3px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px) saturate(150%);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            border-radius: 24px 16px 24px 16px / 16px 24px 16px 24px;
+            padding: 25px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+            animation: liquidRotate 15s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes liquidRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(255, 107, 107, 0.4);
+            box-shadow: 
+                0 15px 40px rgba(236, 72, 153, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            background: linear-gradient(90deg, #ff6b6b, #f06292);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .card-content {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: rgba(147, 51, 234, 0.08);
+            backdrop-filter: blur(30px) saturate(130%);
+            border: 1px solid rgba(147, 51, 234, 0.2);
+            border-radius: 18px 12px 18px 12px / 12px 18px 12px 18px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #f06292, #ba68c8, #9575cd);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tech-item:hover {
+            background: rgba(147, 51, 234, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.3);
+        }
+
+        .tech-item:hover::after {
+            transform: scaleX(1);
+        }
+
+        .tech-category {
+            font-size: 0.9rem;
+            color: #ff6b6b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .tech-name {
+            font-size: 1.2rem;
+            color: #f06292;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .tech-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .evolution-timeline {
+            position: relative;
+            padding: 40px 0;
+            margin: 40px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #ff6b6b, #f06292, #ba68c8, #9575cd);
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+        }
+
+        .timeline-item {
+            position: relative;
+            width: 45%;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: slideIn 0.8s ease-out forwards;
+        }
+
+        .timeline-item:nth-child(odd) {
+            margin-left: auto;
+            animation-delay: 0.2s;
+        }
+
+        .timeline-item:nth-child(even) {
+            animation-delay: 0.4s;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            border-radius: 20px 14px 20px 14px / 14px 20px 14px 20px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #f06292);
+            border: 3px solid #1a0b2e;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            left: -40px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            right: -40px;
+        }
+
+        .interactive-demo {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(50px) saturate(150%);
+            border: 2px dashed rgba(236, 72, 153, 0.3);
+            border-radius: 28px 20px 28px 20px / 20px 28px 20px 28px;
+            padding: 40px;
+            text-align: center;
+            margin: 40px 0;
+            box-shadow: 
+                inset 0 0 40px rgba(147, 51, 234, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .interactive-demo::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, transparent 30%, rgba(236, 72, 153, 0.3) 50%, transparent 70%);
+            border-radius: inherit;
+            opacity: 0;
+            animation: demoShimmer 4s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes demoShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) rotate(45deg); opacity: 0; }
+        }
+
+        .demo-button {
+            background: linear-gradient(135deg, #ff6b6b, #f06292, #ba68c8);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 14px 10px 14px 10px / 10px 14px 10px 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 10px;
+            box-shadow: 
+                0 4px 15px rgba(236, 72, 153, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            transition: width 0.6s ease, height 0.6s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .demo-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 25px rgba(236, 72, 153, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .demo-output {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
+            border-radius: 20px 14px 20px 14px / 14px 20px 14px 20px;
+            min-height: 100px;
+            display: none;
+            text-align: left;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .demo-output::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .demo-output::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .demo-output::-webkit-scrollbar-thumb {
+            background: rgba(236, 72, 153, 0.5);
+            border-radius: 4px;
+        }
+
+        .workflow-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            border-radius: 24px;
+            display: none;
+        }
+
+        .workflow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .workflow-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .workflow-node {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .workflow-node:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
+        }
+
+        .workflow-node h4 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .workflow-node p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .workflow-arrow {
+            font-size: 2rem;
+            color: #ba68c8;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .workflow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .timeline-line {
+                left: 20px;
+            }
+
+            .timeline-item {
+                width: calc(100% - 50px);
+                margin-left: 50px !important;
+            }
+
+            .timeline-item .timeline-dot {
+                left: -40px !important;
+                right: auto !important;
+            }
+
+            .workflow-row {
+                flex-direction: column;
+            }
+
+            .workflow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI/Agentic Enterprise Integration</h1>
+        <p class="subtitle">The Evolution of Enterprise Integration in the Age of AI Agents</p>
+
+        <section class="section">
+            <h2 class="section-title">Key Roles in AI-Driven Integration</h2>
+            <div class="cards-grid">
+                <div class="card" onclick="expandCard(this)">
+                    <h3 class="card-title">🧠 Agent Orchestration Hub</h3>
+                    <div class="card-content">
+                        Integration platforms become the central nervous system for AI agents, enabling them to coordinate actions across multiple systems, maintain context, and execute complex workflows.
+                    </div>
+                </div>
+                <div class="card" onclick="expandCard(this)">
+                    <h3 class="card-title">🔄 Context-Aware Interactions</h3>
+                    <div class="card-content">
+                        Moving beyond simple data transfers to intelligent, context-driven interactions where AI agents understand business rules, data relationships, and can make decisions based on comprehensive system states.
+                    </div>
+                </div>
+                <div class="card" onclick="expandCard(this)">
+                    <h3 class="card-title">🛡️ Security & Governance Layer</h3>
+                    <div class="card-content">
+                        Integration platforms provide critical security boundaries, ensuring AI agents operate within defined permissions, audit trails are maintained, and sensitive data is protected.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Evolution Timeline</h2>
+            <div class="evolution-timeline">
+                <div class="timeline-line"></div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: #ff6b6b; margin-bottom: 10px;">Traditional Integration</h4>
+                        <p>Point-to-point connections, ETL processes, and batch data transfers</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: #f06292; margin-bottom: 10px;">API-First Era</h4>
+                        <p>REST APIs, microservices, and real-time data synchronization</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: #ba68c8; margin-bottom: 10px;">AI-Centric Integration</h4>
+                        <p>Semantic layers, self-describing APIs, and agent-friendly interfaces</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Primary Integration Technologies</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-category">API Technologies</div>
+                    <div class="tech-name">Enhanced API Platforms</div>
+                    <div class="tech-description">GraphQL, gRPC, and REST APIs with semantic descriptions and real-time streaming capabilities</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-category">Event Streaming</div>
+                    <div class="tech-name">Apache Kafka & Pulsar</div>
+                    <div class="tech-description">Real-time event streaming for agent interactions and distributed state management</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-category">iPaaS Evolution</div>
+                    <div class="tech-name">Agentic iPaaS</div>
+                    <div class="tech-description">MuleSoft, Boomi, Workato evolving with AI-specific features and semantic layers</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-category">Semantic Layer</div>
+                    <div class="tech-name">Knowledge Graphs</div>
+                    <div class="tech-description">Graph databases and semantic layers helping AI understand system relationships</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-category">Low-Code/No-Code</div>
+                    <div class="tech-name">AI-Ready Builders</div>
+                    <div class="tech-description">Rapid integration development with natural language descriptions and auto-documentation</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-category">Data Infrastructure</div>
+                    <div class="tech-name">Vector Databases</div>
+                    <div class="tech-description">Specialized databases for AI embeddings and semantic search across enterprise data</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">Interactive Demo: AI Agent Integration Flow</h2>
+            <div class="interactive-demo">
+                <p style="margin-bottom: 20px;">Click to simulate how an AI agent interacts with enterprise systems:</p>
+                <button class="demo-button" onclick="simulateAgentFlow('customer')">Customer Service Agent</button>
+                <button class="demo-button" onclick="simulateAgentFlow('inventory')">Inventory Management Agent</button>
+                <button class="demo-button" onclick="simulateAgentFlow('analytics')">Analytics Agent</button>
+                <button class="demo-button" onclick="simulateAgentFlow('openai')">OpenAI SDK Integration</button>
+                <button class="demo-button" onclick="simulateAgentFlow('google')">Google AI SDK</button>
+                <button class="demo-button" onclick="simulateAgentFlow('azure')">Azure AI Services</button>
+                <button class="demo-button" onclick="simulateAgentFlow('rcm')">Healthcare RCM Agent</button>
+                <button class="demo-button" onclick="simulateAgentFlow('autogen')">AutoGen Framework</button>
+                <button class="demo-button" onclick="simulateAgentFlow('crewai')">CrewAI Platform</button>
+                <button class="demo-button" onclick="simulateAgentFlow('mcp')">Anthropic MCP</button>
+                <button class="demo-button" onclick="simulateAgentFlow('langgraph')">LangGraph</button>
+                <button class="demo-button" onclick="simulateAgentFlow('langflow')">Langflow</button>
+                <div class="demo-output" id="demoOutput"></div>
+            </div>
+        </section>
+
+        <section class="workflow-section" id="workflowSection">
+            <h2 class="section-title">OpenAI SDK Integration Workflow</h2>
+            <div class="workflow-diagram">
+                <div class="workflow-row">
+                    <div class="workflow-node">
+                        <h4>🔐 Authentication</h4>
+                        <p>API Key Validation & Environment Setup</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>🔧 Configuration</h4>
+                        <p>Model Selection & Parameters</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>📚 Context Loading</h4>
+                        <p>Enterprise Data & Instructions</p>
+                    </div>
+                </div>
+                
+                <span class="workflow-arrow">↓</span>
+                
+                <div class="workflow-row">
+                    <div class="workflow-branch">
+                        <div class="workflow-node">
+                            <h4>🛠️ Function Registry</h4>
+                            <p>Define Available Tools & APIs</p>
+                        </div>
+                        <span class="workflow-arrow">↓</span>
+                        <div class="workflow-node">
+                            <h4>🔗 Integration Mapping</h4>
+                            <p>Connect to Enterprise Systems</p>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-branch">
+                        <div class="workflow-node">
+                            <h4>💭 Assistant Creation</h4>
+                            <p>Initialize AI Assistant Instance</p>
+                        </div>
+                        <span class="workflow-arrow">↓</span>
+                        <div class="workflow-node">
+                            <h4>🧵 Thread Management</h4>
+                            <p>Conversation State Handling</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <span class="workflow-arrow">↓</span>
+                
+                <div class="workflow-row">
+                    <div class="workflow-node">
+                        <h4>💬 Message Processing</h4>
+                        <p>Natural Language Understanding</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>⚡ Function Execution</h4>
+                        <p>API Calls & Data Processing</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>📊 Response Generation</h4>
+                        <p>Structured Output & Citations</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="workflow-section" id="rcmWorkflowSection">
+            <h2 class="section-title">Healthcare RCM Agent Workflow</h2>
+            <div class="workflow-diagram">
+                <div class="workflow-row">
+                    <div class="workflow-node">
+                        <h4>🏥 Patient Registration</h4>
+                        <p>Demographics & Insurance Verification</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>✅ Eligibility Check</h4>
+                        <p>Real-time Benefits Verification</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>🔐 Authorization</h4>
+                        <p>Prior Auth & Medical Necessity</p>
+                    </div>
+                </div>
+                
+                <span class="workflow-arrow">↓</span>
+                
+                <div class="workflow-row">
+                    <div class="workflow-branch">
+                        <div class="workflow-node">
+                            <h4>📋 Clinical Documentation</h4>
+                            <p>ICD-10, CPT Coding & Compliance</p>
+                        </div>
+                        <span class="workflow-arrow">↓</span>
+                        <div class="workflow-node">
+                            <h4>🔍 Coding Validation</h4>
+                            <p>AI-Powered Accuracy Check</p>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-branch">
+                        <div class="workflow-node">
+                            <h4>💰 Charge Capture</h4>
+                            <p>Service Line Reconciliation</p>
+                        </div>
+                        <span class="workflow-arrow">↓</span>
+                        <div class="workflow-node">
+                            <h4>📄 Claim Generation</h4>
+                            <p>EDI 837 File Creation</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <span class="workflow-arrow">↓</span>
+                
+                <div class="workflow-row">
+                    <div class="workflow-node">
+                        <h4>🚀 Claim Submission</h4>
+                        <p>Clearinghouse Processing</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>💳 Payment Processing</h4>
+                        <p>ERA/EOB Reconciliation</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>📊 Denial Management</h4>
+                        <p>Appeals & Resubmission</p>
+                    </div>
+                </div>
+                
+                <span class="workflow-arrow">↓</span>
+                
+                <div class="workflow-row">
+                    <div class="workflow-node">
+                        <h4>💸 Patient Collections</h4>
+                        <p>Balance Billing & Payment Plans</p>
+                    </div>
+                    <span class="workflow-arrow">→</span>
+                    <div class="workflow-node">
+                        <h4>📈 Analytics & Reporting</h4>
+                        <p>KPIs, A/R Days, Collection Rate</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function expandCard(card) {
+            card.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+                card.style.transform = '';
+            }, 200);
+        }
+
+        function simulateAgentFlow(agentType) {
+            const output = document.getElementById('demoOutput');
+            const workflowSection = document.getElementById('workflowSection');
+            const rcmWorkflowSection = document.getElementById('rcmWorkflowSection');
+            output.style.display = 'block';
+            output.innerHTML = '<p style="color: #ba68c8;">Initializing agent...</p>';
+
+            // Hide all workflow sections initially
+            workflowSection.style.display = 'none';
+            rcmWorkflowSection.style.display = 'none';
+
+            const flows = {
+                customer: [
+                    { delay: 500, text: '🔍 Accessing CRM via GraphQL API...', color: '#ff6b6b' },
+                    { delay: 1000, text: '📊 Retrieving customer history from data warehouse...', color: '#f06292' },
+                    { delay: 1500, text: '🎫 Checking support tickets via REST API...', color: '#ba68c8' },
+                    { delay: 2000, text: '🧠 Analyzing sentiment using vector embeddings...', color: '#9575cd' },
+                    { delay: 2500, text: '✅ Orchestrating response across systems...', color: '#7986cb' }
+                ],
+                inventory: [
+                    { delay: 500, text: '📦 Connecting to ERP system...', color: '#ff6b6b' },
+                    { delay: 1000, text: '🏭 Streaming real-time inventory events via Kafka...', color: '#f06292' },
+                    { delay: 1500, text: '📈 Analyzing demand patterns...', color: '#ba68c8' },
+                    { delay: 2000, text: '🚚 Checking supply chain APIs...', color: '#9575cd' },
+                    { delay: 2500, text: '✅ Triggering automated reorder workflow...', color: '#7986cb' }
+                ],
+                analytics: [
+                    { delay: 500, text: '🔗 Establishing semantic layer connections...', color: '#ff6b6b' },
+                    { delay: 1000, text: '📊 Aggregating data from 5 systems...', color: '#f06292' },
+                    { delay: 1500, text: '🧮 Processing through knowledge graph...', color: '#ba68c8' },
+                    { delay: 2000, text: '🎯 Generating insights via ML pipeline...', color: '#9575cd' },
+                    { delay: 2500, text: '✅ Publishing results to dashboard API...', color: '#7986cb' }
+                ],
+                rcm: [
+                    { delay: 500, text: '🏥 Step 1: Initializing Healthcare RCM Agent...', color: '#ff6b6b' },
+                    { delay: 1000, text: '🔐 Step 2: Authenticating with HIPAA-compliant security protocols...', color: '#f06292' },
+                    { delay: 1500, text: '🔗 Step 3: Connecting to Electronic Health Records (EHR) system...', color: '#ba68c8' },
+                    { delay: 2000, text: '📊 Step 4: Accessing Practice Management System (PMS)...', color: '#9575cd' },
+                    { delay: 2500, text: '💳 Step 5: Establishing payer portal connections...', color: '#7986cb' },
+                    { delay: 3000, text: '👤 Step 6: Loading patient demographics and insurance data...', color: '#ff6b6b' },
+                    { delay: 3500, text: '✅ Step 7: Running real-time eligibility verification (270/271 EDI)...', color: '#f06292' },
+                    { delay: 4000, text: '📋 Step 8: Checking coverage details and co-pay information...', color: '#ba68c8' },
+                    { delay: 4500, text: '🔍 Step 9: Identifying prior authorization requirements...', color: '#9575cd' },
+                    { delay: 5000, text: '📑 Step 10: Submitting prior authorization requests via payer APIs...', color: '#7986cb' },
+                    { delay: 5500, text: '🏨 Step 11: Capturing clinical documentation from provider notes...', color: '#ff6b6b' },
+                    { delay: 6000, text: '🔤 Step 12: AI-powered ICD-10-CM code assignment...', color: '#f06292' },
+                    { delay: 6500, text: '💉 Step 13: CPT/HCPCS procedure code validation...', color: '#ba68c8' },
+                    { delay: 7000, text: '🧮 Step 14: Running NCCI edits and LCD/NCD compliance checks...', color: '#9575cd' },
+                    { delay: 7500, text: '💰 Step 15: Calculating charge capture and fee schedules...', color: '#7986cb' },
+                    { delay: 8000, text: '📄 Step 16: Generating clean claim in EDI 837 format...', color: '#ff6b6b' },
+                    { delay: 8500, text: '🔒 Step 17: Performing claim scrubbing and validation...', color: '#f06292' },
+                    { delay: 9000, text: '🚀 Step 18: Submitting claims to clearinghouse...', color: '#ba68c8' },
+                    { delay: 9500, text: '📡 Step 19: Receiving 277CA acknowledgments...', color: '#9575cd' },
+                    { delay: 10000, text: '💳 Step 20: Processing ERA/835 remittance advice...', color: '#7986cb' },
+                    { delay: 10500, text: '🔍 Step 21: Identifying claim denials and rejection codes...', color: '#ff6b6b' },
+                    { delay: 11000, text: '🔄 Step 22: Initiating automated denial management workflow...', color: '#f06292' },
+                    { delay: 11500, text: '📝 Step 23: Generating appeal letters with supporting documentation...', color: '#ba68c8' },
+                    { delay: 12000, text: '💸 Step 24: Calculating patient responsibility and deductibles...', color: '#9575cd' },
+                    { delay: 12500, text: '📧 Step 25: Sending patient statements and payment reminders...', color: '#7986cb' },
+                    { delay: 13000, text: '📱 Step 26: Enabling payment plan options via patient portal...', color: '#ff6b6b' },
+                    { delay: 13500, text: '🏦 Step 27: Processing credit card and ACH payments...', color: '#f06292' },
+                    { delay: 14000, text: '📊 Step 28: Updating A/R aging reports in real-time...', color: '#ba68c8' },
+                    { delay: 14500, text: '📈 Step 29: Calculating KPIs: Days in A/R, Collection Rate, Denial Rate...', color: '#9575cd' },
+                    { delay: 15000, text: '🎯 Step 30: Generating executive dashboard with revenue insights...', color: '#7986cb' },
+                    { delay: 15500, text: '✅ Step 31: RCM cycle completed - $847,293 collected this month!', color: '#ff6b6b' }
+                ],
+                openai: [
+                    { delay: 500, text: '🔐 Step 1: Authenticating with OpenAI API key...', color: '#ff6b6b' },
+                    { delay: 1000, text: '🔑 Step 2: Validating API key permissions and rate limits...', color: '#f06292' },
+                    { delay: 1500, text: '⚙️ Step 3: Configuring model parameters (GPT-4, temperature: 0.7)...', color: '#ba68c8' },
+                    { delay: 2000, text: '🔄 Step 4: Initializing Assistant API with enterprise context...', color: '#9575cd' },
+                    { delay: 2500, text: '📚 Step 5: Loading enterprise knowledge base and instructions...', color: '#7986cb' },
+                    { delay: 3000, text: '📝 Step 6: Creating function definitions for ERP system...', color: '#ff6b6b' },
+                    { delay: 3500, text: '📝 Step 7: Creating function definitions for CRM system...', color: '#f06292' },
+                    { delay: 4000, text: '📝 Step 8: Creating function definitions for SCM system...', color: '#ba68c8' },
+                    { delay: 4500, text: '🛠️ Step 9: Registering SQL query tool with schema validation...', color: '#9575cd' },
+                    { delay: 5000, text: '🛠️ Step 10: Registering API call tool with authentication...', color: '#7986cb' },
+                    { delay: 5500, text: '🛠️ Step 11: Registering file operation tool with permissions...', color: '#ff6b6b' },
+                    { delay: 6000, text: '🧵 Step 12: Creating conversation thread with unique ID...', color: '#f06292' },
+                    { delay: 6500, text: '💾 Step 13: Initializing vector store for RAG capabilities...', color: '#ba68c8' },
+                    { delay: 7000, text: '📊 Step 14: Loading enterprise data into vector store...', color: '#9575cd' },
+                    { delay: 7500, text: '💬 Step 15: Processing natural language request...', color: '#7986cb' },
+                    { delay: 8000, text: '🧠 Step 16: GPT-4 analyzing request and planning actions...', color: '#ff6b6b' },
+                    { delay: 8500, text: '🎯 Step 17: Identifying required function calls...', color: '#f06292' },
+                    { delay: 9000, text: '⚡ Step 18: Executing CRM query function...', color: '#ba68c8' },
+                    { delay: 9500, text: '⚡ Step 19: Executing ERP inventory check...', color: '#9575cd' },
+                    { delay: 10000, text: '⚡ Step 20: Executing supply chain API call...', color: '#7986cb' },
+                    { delay: 10500, text: '🔄 Step 21: Processing function results...', color: '#ff6b6b' },
+                    { delay: 11000, text: '📝 Step 22: Generating structured response...', color: '#f06292' },
+                    { delay: 11500, text: '🔍 Step 23: Adding source citations and references...', color: '#ba68c8' },
+                    { delay: 12000, text: '✅ Step 24: Returning final response with metadata...', color: '#9575cd' },
+                    { delay: 12500, text: '📊 Step 25: Logging interaction for analytics...', color: '#7986cb' }
+                ],
+                google: [
+                    { delay: 500, text: '🔑 Initializing Google AI Platform credentials...', color: '#ff6b6b' },
+                    { delay: 1000, text: '🧩 Loading Vertex AI Agents with enterprise schemas...', color: '#f06292' },
+                    { delay: 1500, text: '🗃️ Connecting to BigQuery for data retrieval...', color: '#ba68c8' },
+                    { delay: 2000, text: '🔍 Setting up Enterprise Search with custom indexes...', color: '#9575cd' },
+                    { delay: 2500, text: '🤖 Deploying Gemini model with RAG capabilities...', color: '#7986cb' },
+                    { delay: 3000, text: '📊 Streaming responses through Cloud Run endpoints...', color: '#ff6b6b' },
+                    { delay: 3500, text: '✅ Logging interactions to Cloud Operations Suite...', color: '#f06292' }
+                ],
+                azure: [
+                    { delay: 500, text: '☁️ Authenticating with Azure Active Directory...', color: '#ff6b6b' },
+                    { delay: 1000, text: '🧠 Initializing Azure OpenAI Service instance...', color: '#f06292' },
+                    { delay: 1500, text: '🔗 Connecting to Azure Logic Apps workflows...', color: '#ba68c8' },
+                    { delay: 2000, text: '💾 Setting up Cognitive Search with enterprise data...', color: '#9575cd' },
+                    { delay: 2500, text: '🛡️ Applying Azure Policy for data governance...', color: '#7986cb' },
+                    { delay: 3000, text: '📈 Orchestrating through Azure Functions...', color: '#ff6b6b' },
+                    { delay: 3500, text: '📝 Storing conversation history in Cosmos DB...', color: '#f06292' },
+                    { delay: 4000, text: '✅ Publishing events to Event Grid for downstream processing...', color: '#ba68c8' }
+                ],
+                autogen: [
+                    { delay: 500, text: '🤝 Initializing AutoGen multi-agent conversation...', color: '#ff6b6b' },
+                    { delay: 1000, text: '👥 Spawning specialized agents: Planner, Coder, Executor...', color: '#f06292' },
+                    { delay: 1500, text: '🔄 Establishing inter-agent communication protocols...', color: '#ba68c8' },
+                    { delay: 2000, text: '🎯 Defining agent roles and conversation patterns...', color: '#9575cd' },
+                    { delay: 2500, text: '🔌 Connecting agents to enterprise APIs and databases...', color: '#7986cb' },
+                    { delay: 3000, text: '💭 Agents collaborating on task decomposition...', color: '#ff6b6b' },
+                    { delay: 3500, text: '🚀 Executing distributed tasks across systems...', color: '#f06292' },
+                    { delay: 4000, text: '📊 Consolidating results from all agents...', color: '#ba68c8' },
+                    { delay: 4500, text: '✅ Human-in-the-loop approval checkpoint...', color: '#9575cd' }
+                ],
+                crewai: [
+                    { delay: 500, text: '🚢 Initializing CrewAI agent crew...', color: '#ff6b6b' },
+                    { delay: 1000, text: '👨‍✈️ Assigning roles: Manager, Researcher, Developer, QA...', color: '#f06292' },
+                    { delay: 1500, text: '📋 Loading task definitions and workflows...', color: '#ba68c8' },
+                    { delay: 2000, text: '🔧 Configuring agent tools and permissions...', color: '#9575cd' },
+                    { delay: 2500, text: '🗺️ Creating execution plan with dependencies...', color: '#7986cb' },
+                    { delay: 3000, text: '🔄 Agents delegating subtasks autonomously...', color: '#ff6b6b' },
+                    { delay: 3500, text: '💬 Real-time agent collaboration via shared memory...', color: '#f06292' },
+                    { delay: 4000, text: '🎪 Orchestrating complex multi-step workflows...', color: '#ba68c8' },
+                    { delay: 4500, text: '✅ Delivering consolidated crew output...', color: '#9575cd' }
+                ],
+                mcp: [
+                    { delay: 500, text: '🔮 Initializing Anthropic MCP server...', color: '#ff6b6b' },
+                    { delay: 1000, text: '🌐 Establishing secure MCP protocol connection...', color: '#f06292' },
+                    { delay: 1500, text: '📚 Loading context providers and tool definitions...', color: '#ba68c8' },
+                    { delay: 2000, text: '🛠️ Registering enterprise tools: DB, API, File handlers...', color: '#9575cd' },
+                    { delay: 2500, text: '🔐 Setting up permission boundaries and policies...', color: '#7986cb' },
+                    { delay: 3000, text: '💡 Claude analyzing available tools and context...', color: '#ff6b6b' },
+                    { delay: 3500, text: '⚡ Executing tool calls with streaming responses...', color: '#f06292' },
+                    { delay: 4000, text: '🔄 Maintaining stateful conversation context...', color: '#ba68c8' },
+                    { delay: 4500, text: '✅ Returning structured, tool-augmented response...', color: '#9575cd' }
+                ],
+                langgraph: [
+                    { delay: 500, text: '🕸️ Constructing LangGraph state machine...', color: '#ff6b6b' },
+                    { delay: 1000, text: '📍 Defining graph nodes: Input, Process, Decision, Output...', color: '#f06292' },
+                    { delay: 1500, text: '🔀 Creating conditional edges and cyclic flows...', color: '#ba68c8' },
+                    { delay: 2000, text: '💾 Setting up persistent state management...', color: '#9575cd' },
+                    { delay: 2500, text: '🧩 Integrating LangChain components into nodes...', color: '#7986cb' },
+                    { delay: 3000, text: '🎛️ Configuring checkpoints and rollback mechanisms...', color: '#ff6b6b' },
+                    { delay: 3500, text: '🔄 Executing graph with dynamic path selection...', color: '#f06292' },
+                    { delay: 4000, text: '📊 Streaming intermediate results at each node...', color: '#ba68c8' },
+                    { delay: 4500, text: '🔍 Visualizing execution path for debugging...', color: '#9575cd' },
+                    { delay: 5000, text: '✅ Completing graph traversal with final output...', color: '#7986cb' }
+                ],
+                langflow: [
+                    { delay: 500, text: '🎨 Loading Langflow visual workflow...', color: '#ff6b6b' },
+                    { delay: 1000, text: '🔲 Dragging and connecting flow components...', color: '#f06292' },
+                    { delay: 1500, text: '⚙️ Configuring node parameters via UI...', color: '#ba68c8' },
+                    { delay: 2000, text: '🔌 Connecting to external APIs and databases...', color: '#9575cd' },
+                    { delay: 2500, text: '🧪 Testing flow with sample inputs...', color: '#7986cb' },
+                    { delay: 3000, text: '📝 Auto-generating Python code from visual flow...', color: '#ff6b6b' },
+                    { delay: 3500, text: '🚀 Deploying flow as REST API endpoint...', color: '#f06292' },
+                    { delay: 4000, text: '📊 Monitoring flow execution in real-time...', color: '#ba68c8' },
+                    { delay: 4500, text: '🔄 Hot-reloading flow changes without downtime...', color: '#9575cd' },
+                    { delay: 5000, text: '✅ Flow executed successfully with traced outputs...', color: '#7986cb' }
+                ]
+            };
+
+            const selectedFlow = flows[agentType];
+            let html = '';
+
+            selectedFlow.forEach((step, index) => {
+                setTimeout(() => {
+                    html += `<p style="color: ${step.color}; margin: 10px 0; opacity: 0; animation: fadeIn 0.5s forwards; text-shadow: 0 0 10px ${step.color};">${step.text}</p>`;
+                    output.innerHTML = html;
+                    output.scrollTop = output.scrollHeight;
+                    
+                    // Show workflow diagram for OpenAI after completion
+                    if (agentType === 'openai' && index === selectedFlow.length - 1) {
+                        setTimeout(() => {
+                            workflowSection.style.display = 'block';
+                            workflowSection.scrollIntoView({ behavior: 'smooth' });
+                        }, 500);
+                    } else if (agentType === 'rcm' && index === selectedFlow.length - 1) {
+                        setTimeout(() => {
+                            rcmWorkflowSection.style.display = 'block';
+                            rcmWorkflowSection.scrollIntoView({ behavior: 'smooth' });
+                        }, 500);
+                    }
+                }, step.delay);
+            });
+        }
+
+        // Add some interactive effects
+        document.querySelectorAll('.tech-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
