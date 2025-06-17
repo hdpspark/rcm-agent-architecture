@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - RCM Agent Architecture</title>
+    <style>
+        :root {
+            --primary: #00ff00;
+            --bg-dark: #0a0a0a;
+            --bg-light: #1a1a1a;
+            --text: #e0e0e0;
+            --accent: #00cc00;
+            --code-bg: #2a2a2a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            background: var(--bg-light);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            position: sticky;
+            top: 6rem;
+            height: fit-content;
+        }
+        
+        .sidebar h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar a {
+            color: var(--text);
+            text-decoration: none;
+            display: block;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background: var(--bg-light);
+            color: var(--primary);
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .content h1 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+        
+        .content h2 {
+            color: var(--primary);
+            margin: 2rem 0 1rem;
+            font-size: 2rem;
+        }
+        
+        .content h3 {
+            color: var(--accent);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .content p {
+            margin-bottom: 1rem;
+        }
+        
+        .content code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--primary);
+        }
+        
+        .content pre {
+            background: var(--code-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--primary);
+        }
+        
+        .content pre code {
+            background: none;
+            padding: 0;
+            color: var(--text);
+        }
+        
+        /* Alert boxes */
+        .alert {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 200, 0, 0.1);
+            border-color: #ffc800;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--bg-light);
+        }
+        
+        th {
+            background: var(--bg-light);
+            color: var(--primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">RCM Agent Architecture</a>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#demos">Demos</a></li>
+                <li><a href="documentation.html" class="active">Documentation</a></li>
+                <li><a href="api.html">API</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Documentation</h3>
+            <ul>
+                <li><a href="#getting-started" class="active">Getting Started</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#agents">Agent System</a></li>
+                <li><a href="#workflows">Workflows</a></li>
+                <li><a href="#integration">Integration</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <h1>Documentation</h1>
+            
+            <section id="getting-started">
+                <h2>Getting Started</h2>
+                <p>Welcome to the RCM Agent Architecture documentation. This guide will help you understand and implement our AI-powered revenue cycle management system.</p>
+                
+                <h3>Prerequisites</h3>
+                <ul>
+                    <li>Basic understanding of revenue cycle management</li>
+                    <li>API access credentials</li>
+                    <li>Compatible EHR/Practice Management System</li>
+                </ul>
+                
+                <h3>Quick Start</h3>
+                <pre><code># Install RCM Agent SDK
+npm install @rcm-agent/sdk
+
+# Initialize the client
+import { RCMClient } from '@rcm-agent/sdk';
+
+const client = new RCMClient({
+  apiKey: 'your-api-key',
+  environment: 'production'
+});
+
+// Start processing claims
+const result = await client.processClaim(claimData);</code></pre>
+            </section>
+
+            <section id="architecture">
+                <h2>System Architecture</h2>
+                <p>The RCM Agent Architecture is built on a microservices-based design with multiple specialized AI agents working in concert.</p>
+                
+                <h3>Core Components</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Purpose</th>
+                            <th>Technology</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Agent Orchestrator</td>
+                            <td>Manages agent lifecycle and coordination</td>
+                            <td>Node.js, Kubernetes</td>
+                        </tr>
+                        <tr>
+                            <td>ML Pipeline</td>
+                            <td>Processes and analyzes claim data</td>
+                            <td>Python, TensorFlow</td>
+                        </tr>
+                        <tr>
+                            <td>Message Queue</td>
+                            <td>Handles async communication</td>
+                            <td>RabbitMQ</td>
+                        </tr>
+                        <tr>
+                            <td>Data Store</td>
+                            <td>Persistent storage for claims and analytics</td>
+                            <td>PostgreSQL, Redis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="agents">
+                <h2>Agent System</h2>
+                <p>Our multi-agent system consists of specialized agents, each responsible for specific aspects of the revenue cycle.</p>
+                
+                <h3>Agent Types</h3>
+                <div class="alert alert-info">
+                    <strong>Note:</strong> Agents operate autonomously but can collaborate when complex scenarios require multiple expertise areas.
+                </div>
+                
+                <h4>Eligibility Verification Agent</h4>
+                <p>Automatically verifies patient insurance eligibility in real-time.</p>
+                <ul>
+                    <li>Connects to 5000+ payer systems</li>
+                    <li>Real-time eligibility checks</li>
+                    <li>Benefit details extraction</li>
+                </ul>
+                
+                <h4>Claims Processing Agent</h4>
+                <p>Handles claim creation, validation, and submission.</p>
+                <ul>
+                    <li>Automatic code validation</li>
+                    <li>Modifier optimization</li>
+                    <li>Scrubbing and error detection</li>
+                </ul>
+                
+                <h4>Denial Management Agent</h4>
+                <p>Monitors and manages claim denials with automated appeals.</p>
+                <ul>
+                    <li>Denial pattern recognition</li>
+                    <li>Automated appeal generation</li>
+                    <li>Success rate optimization</li>
+                </ul>
+            </section>
+
+            <section id="workflows">
+                <h2>Workflow Configuration</h2>
+                <p>Customize workflows to match your organization's specific requirements.</p>
+                
+                <pre><code>// Example workflow configuration
+{
+  "workflow": "claims-processing",
+  "steps": [
+    {
+      "id": "eligibility-check",
+      "agent": "eligibility-verification",
+      "timeout": 30000
+    },
+    {
+      "id": "claim-validation",
+      "agent": "claims-processing",
+      "rules": ["medicare-compliance", "modifier-check"]
+    },
+    {
+      "id": "submission",
+      "agent": "claims-submission",
+      "retry": 3
+    }
+  ]
+}</code></pre>
+            </section>
+
+            <section id="integration">
+                <h2>Integration Guide</h2>
+                <p>Integrate RCM Agent Architecture with your existing systems.</p>
+                
+                <h3>Supported Integrations</h3>
+                <ul>
+                    <li>Epic</li>
+                    <li>Cerner</li>
+                    <li>Athenahealth</li>
+                    <li>NextGen</li>
+                    <li>Custom EHR systems via API</li>
+                </ul>
+                
+                <div class="alert alert-warning">
+                    <strong>Important:</strong> Ensure your integration complies with HIPAA requirements and follows our security guidelines.
+                </div>
+            </section>
+
+            <section id="security">
+                <h2>Security & Compliance</h2>
+                <p>RCM Agent Architecture is built with security and compliance at its core.</p>
+                
+                <h3>Security Features</h3>
+                <ul>
+                    <li>End-to-end encryption for all data transmissions</li>
+                    <li>HIPAA-compliant infrastructure</li>
+                    <li>Role-based access control (RBAC)</li>
+                    <li>Audit logging for all operations</li>
+                    <li>Regular security assessments</li>
+                </ul>
+            </section>
+
+            <section id="deployment">
+                <h2>Deployment Options</h2>
+                <p>Choose the deployment option that best fits your organization's needs.</p>
+                
+                <h3>Cloud Deployment</h3>
+                <p>Fully managed SaaS solution with automatic updates and scaling.</p>
+                
+                <h3>On-Premise</h3>
+                <p>Deploy within your own infrastructure for complete control.</p>
+                
+                <h3>Hybrid</h3>
+                <p>Combine cloud and on-premise components for optimal flexibility.</p>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Smooth scrolling and active section highlighting
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Update active state
+                    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Highlight current section on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollY = window.pageYOffset;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+                
+                if (scrollY > sectionTop && scrollY < sectionTop + sectionHeight) {
+                    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+                    document.querySelector(`.sidebar a[href="#${sectionId}"]`)?.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

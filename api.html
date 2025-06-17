@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - RCM Agent Architecture</title>
+    <style>
+        :root {
+            --primary: #00ff00;
+            --bg-dark: #0a0a0a;
+            --bg-light: #1a1a1a;
+            --text: #e0e0e0;
+            --accent: #00cc00;
+            --code-bg: #2a2a2a;
+            --get: #61affe;
+            --post: #49cc90;
+            --put: #fca130;
+            --delete: #f93e3e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            background: var(--bg-light);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+        
+        .intro {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 3rem;
+            border: 1px solid var(--primary);
+        }
+        
+        .intro code {
+            background: var(--code-bg);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            color: var(--primary);
+        }
+        
+        /* API Sections */
+        .api-section {
+            margin-bottom: 3rem;
+        }
+        
+        .api-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+        
+        /* Endpoint */
+        .endpoint {
+            background: var(--bg-light);
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: var(--code-bg);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .endpoint-header:hover {
+            background: #333;
+        }
+        
+        .method {
+            padding: 0.25rem 0.75rem;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-right: 1rem;
+            color: white;
+        }
+        
+        .method-get { background: var(--get); }
+        .method-post { background: var(--post); }
+        .method-put { background: var(--put); }
+        .method-delete { background: var(--delete); }
+        
+        .endpoint-path {
+            font-family: 'Consolas', 'Monaco', monospace;
+            flex: 1;
+        }
+        
+        .endpoint-description {
+            color: var(--text);
+            opacity: 0.8;
+            margin-left: 1rem;
+        }
+        
+        .endpoint-details {
+            padding: 1.5rem;
+            display: none;
+        }
+        
+        .endpoint.active .endpoint-details {
+            display: block;
+        }
+        
+        /* Parameters */
+        .parameters {
+            margin-bottom: 1.5rem;
+        }
+        
+        .parameters h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        .parameter {
+            display: flex;
+            align-items: start;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--code-bg);
+            border-radius: 5px;
+        }
+        
+        .param-name {
+            color: var(--primary);
+            font-family: 'Consolas', 'Monaco', monospace;
+            min-width: 150px;
+            font-weight: bold;
+        }
+        
+        .param-info {
+            flex: 1;
+        }
+        
+        .param-type {
+            color: var(--accent);
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .param-required {
+            background: var(--primary);
+            color: var(--bg-dark);
+            padding: 0.125rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+        
+        /* Code Examples */
+        .code-example {
+            background: var(--code-bg);
+            padding: 1.5rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid #444;
+        }
+        
+        .code-example pre {
+            margin: 0;
+            color: var(--text);
+        }
+        
+        .code-example code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.5;
+        }
+        
+        /* Response */
+        .response-example {
+            margin-top: 1.5rem;
+        }
+        
+        .response-example h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            background: var(--code-bg);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 5px;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+        }
+        
+        .status-200 { background: var(--post); color: white; }
+        .status-400 { background: var(--put); color: white; }
+        .status-401 { background: #ff6b6b; color: white; }
+        .status-500 { background: var(--delete); color: white; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">RCM Agent Architecture</a>
+            <ul class="nav-links">
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#demos">Demos</a></li>
+                <li><a href="documentation.html">Documentation</a></li>
+                <li><a href="api.html" class="active">API</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>API Reference</h1>
+        
+        <div class="intro">
+            <h3>Base URL</h3>
+            <code>https://api.rcm-agent.com/v1</code>
+            
+            <h3>Authentication</h3>
+            <p>All API requests require authentication using an API key in the header:</p>
+            <code>Authorization: Bearer YOUR_API_KEY</code>
+        </div>
+
+        <!-- Claims Section -->
+        <section class="api-section">
+            <h2>Claims</h2>
+            
+            <!-- Submit Claim -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/claims</span>
+                    <span class="endpoint-description">Submit a new claim for processing</span>
+                </div>
+                <div class="endpoint-details">
+                    <div class="parameters">
+                        <h4>Request Body Parameters</h4>
+                        <div class="parameter">
+                            <div class="param-name">patient_id</div>
+                            <div class="param-info">
+                                <div class="param-type">string <span class="param-required">required</span></div>
+                                <div>Unique identifier for the patient</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">provider_id</div>
+                            <div class="param-info">
+                                <div class="param-type">string <span class="param-required">required</span></div>
+                                <div>Unique identifier for the healthcare provider</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">services</div>
+                            <div class="param-info">
+                                <div class="param-type">array <span class="param-required">required</span></div>
+                                <div>Array of service objects including CPT codes, modifiers, and charges</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">insurance_info</div>
+                            <div class="param-info">
+                                <div class="param-type">object <span class="param-required">required</span></div>
+                                <div>Insurance details including payer ID and member information</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>Example Request</h4>
+                    <div class="code-example">
+                        <pre><code>{
+  "patient_id": "PT-123456",
+  "provider_id": "PRV-789012",
+  "services": [
+    {
+      "cpt_code": "99213",
+      "modifiers": ["25"],
+      "units": 1,
+      "charge": 150.00,
+      "diagnosis_codes": ["Z00.00"]
+    }
+  ],
+  "insurance_info": {
+    "payer_id": "BCBS001",
+    "member_id": "XYZ123456789",
+    "group_number": "GRP001"
+  }
+}</code></pre>
+                    </div>
+                    
+                    <div class="response-example">
+                        <h4>Response</h4>
+                        <div class="status-badge status-200">200 OK</div>
+                        <div class="code-example">
+                            <pre><code>{
+  "claim_id": "CLM-2024-001234",
+  "status": "submitted",
+  "estimated_reimbursement": 120.00,
+  "submission_timestamp": "2024-01-15T14:30:00Z",
+  "tracking_url": "https://portal.rcm-agent.com/claims/CLM-2024-001234"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Get Claim Status -->
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-path">/claims/{claim_id}</span>
+                    <span class="endpoint-description">Retrieve claim status and details</span>
+                </div>
+                <div class="endpoint-details">
+                    <div class="parameters">
+                        <h4>Path Parameters</h4>
+                        <div class="parameter">
+                            <div class="param-name">claim_id</div>
+                            <div class="param-info">
+                                <div class="param-type">string <span class="param-required">required</span></div>
+                                <div>The unique identifier of the claim</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>Example Request</h4>
+                    <div class="code-example">
+                        <pre><code>GET /v1/claims/CLM-2024-001234
+Authorization: Bearer YOUR_API_KEY</code></pre>
+                    </div>
+                    
+                    <div class="response-example">
+                        <h4>Response</h4>
+                        <div class="status-badge status-200">200 OK</div>
+                        <div class="code-example">
+                            <pre><code>{
+  "claim_id": "CLM-2024-001234",
+  "status": "paid",
+  "patient_id": "PT-123456",
+  "total_charge": 150.00,
+  "allowed_amount": 120.00,
+  "paid_amount": 96.00,
+  "patient_responsibility": 24.00,
+  "processing_history": [
+    {
+      "timestamp": "2024-01-15T14:30:00Z",
+      "status": "submitted",
+      "agent": "claims-processing"
+    },
+    {
+      "timestamp": "2024-01-15T14:35:00Z",
+      "status": "accepted",
+      "agent": "payer-integration"
+    },
+    {
+      "timestamp": "2024-01-20T09:15:00Z",
+      "status": "paid",
+      "agent": "payment-posting"
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Eligibility Section -->
+        <section class="api-section">
+            <h2>Eligibility Verification</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/eligibility/verify</span>
+                    <span class="endpoint-description">Verify patient insurance eligibility</span>
+                </div>
+                <div class="endpoint-details">
+                    <div class="parameters">
+                        <h4>Request Body Parameters</h4>
+                        <div class="parameter">
+                            <div class="param-name">patient</div>
+                            <div class="param-info">
+                                <div class="param-type">object <span class="param-required">required</span></div>
+                                <div>Patient demographic information</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">insurance</div>
+                            <div class="param-info">
+                                <div class="param-type">object <span class="param-required">required</span></div>
+                                <div>Insurance information to verify</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">service_types</div>
+                            <div class="param-info">
+                                <div class="param-type">array</div>
+                                <div>Specific service types to check eligibility for</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>Example Request</h4>
+                    <div class="code-example">
+                        <pre><code>{
+  "patient": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "date_of_birth": "1980-01-15",
+    "gender": "M"
+  },
+  "insurance": {
+    "payer_id": "BCBS001",
+    "member_id": "XYZ123456789"
+  },
+  "service_types": ["30", "98"]
+}</code></pre>
+                    </div>
+                    
+                    <div class="response-example">
+                        <h4>Response</h4>
+                        <div class="status-badge status-200">200 OK</div>
+                        <div class="code-example">
+                            <pre><code>{
+  "eligible": true,
+  "coverage_active": true,
+  "plan_details": {
+    "plan_name": "Blue Choice PPO",
+    "effective_date": "2024-01-01",
+    "termination_date": null
+  },
+  "benefits": {
+    "deductible": {
+      "individual": 1500.00,
+      "individual_met": 750.00,
+      "family": 3000.00,
+      "family_met": 1200.00
+    },
+    "out_of_pocket_max": {
+      "individual": 5000.00,
+      "individual_met": 1000.00
+    },
+    "copay": {
+      "primary_care": 25.00,
+      "specialist": 45.00
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section class="api-section">
+            <h2>Analytics</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method method-get">GET</span>
+                    <span class="endpoint-path">/analytics/summary</span>
+                    <span class="endpoint-description">Get revenue cycle performance summary</span>
+                </div>
+                <div class="endpoint-details">
+                    <div class="parameters">
+                        <h4>Query Parameters</h4>
+                        <div class="parameter">
+                            <div class="param-name">start_date</div>
+                            <div class="param-info">
+                                <div class="param-type">string (ISO 8601)</div>
+                                <div>Start date for the analytics period</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">end_date</div>
+                            <div class="param-info">
+                                <div class="param-type">string (ISO 8601)</div>
+                                <div>End date for the analytics period</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">provider_id</div>
+                            <div class="param-info">
+                                <div class="param-type">string</div>
+                                <div>Filter by specific provider</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>Example Request</h4>
+                    <div class="code-example">
+                        <pre><code>GET /v1/analytics/summary?start_date=2024-01-01&end_date=2024-01-31
+Authorization: Bearer YOUR_API_KEY</code></pre>
+                    </div>
+                    
+                    <div class="response-example">
+                        <h4>Response</h4>
+                        <div class="status-badge status-200">200 OK</div>
+                        <div class="code-example">
+                            <pre><code>{
+  "period": {
+    "start": "2024-01-01",
+    "end": "2024-01-31"
+  },
+  "claims_metrics": {
+    "total_submitted": 1543,
+    "total_value": 425750.00,
+    "average_value": 275.89,
+    "acceptance_rate": 0.94,
+    "first_pass_rate": 0.87
+  },
+  "revenue_metrics": {
+    "collected": 385200.00,
+    "outstanding": 40550.00,
+    "collection_rate": 0.905,
+    "days_in_ar": 28.5
+  },
+  "denial_metrics": {
+    "total_denials": 92,
+    "denial_rate": 0.06,
+    "overturned": 67,
+    "appeal_success_rate": 0.728
+  },
+  "agent_performance": {
+    "eligibility_verification": {
+      "processed": 2156,
+      "average_time_ms": 850
+    },
+    "claims_processing": {
+      "processed": 1543,
+      "average_time_ms": 1200
+    },
+    "denial_management": {
+      "processed": 92,
+      "average_time_ms": 3500
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Webhooks Section -->
+        <section class="api-section">
+            <h2>Webhooks</h2>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <span class="method method-post">POST</span>
+                    <span class="endpoint-path">/webhooks</span>
+                    <span class="endpoint-description">Register a webhook endpoint</span>
+                </div>
+                <div class="endpoint-details">
+                    <div class="parameters">
+                        <h4>Request Body Parameters</h4>
+                        <div class="parameter">
+                            <div class="param-name">url</div>
+                            <div class="param-info">
+                                <div class="param-type">string <span class="param-required">required</span></div>
+                                <div>HTTPS URL to receive webhook events</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">events</div>
+                            <div class="param-info">
+                                <div class="param-type">array <span class="param-required">required</span></div>
+                                <div>List of event types to subscribe to</div>
+                            </div>
+                        </div>
+                        <div class="parameter">
+                            <div class="param-name">secret</div>
+                            <div class="param-info">
+                                <div class="param-type">string</div>
+                                <div>Secret key for webhook signature verification</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4>Available Events</h4>
+                    <ul style="margin: 1rem 0; padding-left: 2rem;">
+                        <li><code>claim.submitted</code> - Claim successfully submitted</li>
+                        <li><code>claim.accepted</code> - Claim accepted by payer</li>
+                        <li><code>claim.denied</code> - Claim denied</li>
+                        <li><code>claim.paid</code> - Payment received</li>
+                        <li><code>eligibility.completed</code> - Eligibility check completed</li>
+                        <li><code>appeal.submitted</code> - Appeal submitted</li>
+                        <li><code>appeal.resolved</code> - Appeal resolved</li>
+                    </ul>
+                    
+                    <h4>Example Request</h4>
+                    <div class="code-example">
+                        <pre><code>{
+  "url": "https://your-app.com/webhooks/rcm",
+  "events": ["claim.paid", "claim.denied"],
+  "secret": "your-webhook-secret"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Codes -->
+        <section class="api-section">
+            <h2>Error Codes</h2>
+            
+            <div class="intro">
+                <p>The API uses standard HTTP response codes to indicate success or failure.</p>
+                
+                <div style="margin-top: 1rem;">
+                    <div class="status-badge status-200">200-299</div> Success
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <div class="status-badge status-400">400-499</div> Client errors
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <div class="status-badge status-500">500-599</div> Server errors
+                </div>
+                
+                <h4 style="margin-top: 1.5rem;">Common Error Responses</h4>
+                <div class="code-example">
+                    <pre><code>{
+  "error": {
+    "code": "INVALID_REQUEST",
+    "message": "The request body is missing required fields",
+    "details": {
+      "missing_fields": ["patient_id", "services"]
+    }
+  }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function toggleEndpoint(header) {
+            const endpoint = header.parentElement;
+            endpoint.classList.toggle('active');
+        }
+
+        // Code syntax highlighting (basic)
+        document.querySelectorAll('code').forEach(block => {
+            // Simple JSON syntax highlighting
+            let html = block.innerHTML;
+            html = html.replace(/(".*?")/g, '<span style="color: #98c379;">$1</span>');
+            html = html.replace(/(\b\d+\.?\d*\b)/g, '<span style="color: #d19a66;">$1</span>');
+            html = html.replace(/\b(true|false|null)\b/g, '<span style="color: #56b6c2;">$1</span>');
+            block.innerHTML = html;
+        });
+    </script>
+</body>
+</html>
