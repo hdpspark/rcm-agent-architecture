@@ -7,6 +7,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
+        /* Dark Theme (Default) */
         :root {
             --bg-primary: #0a0a0a;
             --bg-secondary: #111111;
@@ -21,6 +22,29 @@
             --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
             --shadow-glow: 0 0 40px rgba(0, 220, 130, 0.3);
+            --code-bg: #0a0a0a;
+            --nav-bg: rgba(10, 10, 10, 0.8);
+            --nav-bg-solid: rgba(10, 10, 10, 0.95);
+        }
+        
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #495057;
+            --text-tertiary: #6c757d;
+            --accent-primary: #00a865;
+            --accent-secondary: #00dc82;
+            --accent-gradient: linear-gradient(135deg, #00a865 0%, #00dc82 50%, #20d67d 100%);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(0, 0, 0, 0.02);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-glow: 0 0 40px rgba(0, 168, 101, 0.2);
+            --code-bg: #f8f9fa;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg-solid: rgba(255, 255, 255, 0.98);
         }
         
         * {
@@ -37,6 +61,7 @@
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         /* Animated Background */
@@ -50,6 +75,11 @@
                         radial-gradient(circle at 80% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
                         radial-gradient(circle at 40% 40%, rgba(54, 239, 122, 0.05) 0%, transparent 50%);
             z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        [data-theme="light"] .bg-gradient {
+            opacity: 0.3;
         }
         
         /* Navigation */
@@ -58,7 +88,7 @@
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 10, 10, 0.8);
+            background: var(--nav-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-color);
@@ -120,6 +150,53 @@
         .nav-cta:hover {
             transform: translateY(-2px);
             box-shadow: 0 0 30px rgba(0, 220, 130, 0.5);
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--glass-border);
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle svg {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .sun-icon {
+            opacity: 0;
+            transform: rotate(-90deg);
+            color: var(--text-primary);
+        }
+        
+        .moon-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .sun-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+        
+        [data-theme="light"] .moon-icon {
+            opacity: 0;
+            transform: rotate(90deg);
         }
         
         /* Hero Section */
@@ -347,7 +424,7 @@
         }
         
         .code-block {
-            background: var(--bg-primary);
+            background: var(--code-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 1.5rem;
@@ -579,6 +656,24 @@
                 <li><a href="api.html">API</a></li>
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="#demos">Demos</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </li>
                 <li><a href="#" class="nav-cta">Get Started</a></li>
             </ul>
         </div>
@@ -833,13 +928,27 @@
             });
         });
 
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+        
+        // Load saved theme preference or default to dark theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
         // Add scroll effect to nav
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
-                nav.style.background = 'rgba(10, 10, 10, 0.95)';
+                nav.style.background = 'var(--nav-bg-solid)';
             } else {
-                nav.style.background = 'rgba(10, 10, 10, 0.8)';
+                nav.style.background = 'var(--nav-bg)';
             }
         });
 
