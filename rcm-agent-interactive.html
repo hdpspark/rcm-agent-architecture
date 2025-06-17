@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCM Agent Architecture - Interactive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+        }
+        
+        .container {
+            width: 98%;
+            max-width: 1800px;
+            background: #111;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.1);
+            margin: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #00ff00;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+        
+        .architecture {
+            position: relative;
+            min-height: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .agent-block {
+            position: absolute;
+            background: #1a1a1a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            width: 220px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .agent-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.3);
+            border-color: #00ff88;
+            background: #1f1f1f;
+            z-index: 100;
+        }
+        
+        .agent-block h3 {
+            color: #00ff00;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .agent-block p {
+            color: #aaa;
+            font-size: 0.8em;
+            line-height: 1.3;
+        }
+        
+        /* Positioning for each agent */
+        #orchestrator {
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Second tier - Pre-visit agents */
+        #scheduling {
+            top: 150px;
+            left: 5%;
+        }
+        
+        #no-show {
+            top: 150px;
+            left: 20%;
+        }
+        
+        #prior-auth {
+            top: 150px;
+            left: 35%;
+        }
+        
+        /* Third tier - Visit agents */
+        #patient-reg {
+            top: 300px;
+            left: 2%;
+        }
+        
+        #insurance-verify {
+            top: 300px;
+            left: 17%;
+        }
+        
+        #medical-coding {
+            top: 300px;
+            left: 32%;
+        }
+        
+        #charge-capture {
+            top: 300px;
+            left: 47%;
+        }
+        
+        /* Fourth tier - Post-visit agents */
+        #claims-submit {
+            top: 450px;
+            left: 5%;
+        }
+        
+        #denial-mgmt {
+            top: 450px;
+            left: 20%;
+        }
+        
+        #payment-posting {
+            top: 450px;
+            left: 35%;
+        }
+        
+        #ar-followup {
+            top: 450px;
+            left: 50%;
+        }
+        
+        /* Fifth tier - Support agents */
+        #analytics {
+            top: 700px;
+            left: 8%;
+        }
+        
+        #compliance {
+            top: 700px;
+            left: 23%;
+        }
+        
+        #patient-portal {
+            top: 700px;
+            left: 38%;
+        }
+        
+        #audit-quality {
+            top: 700px;
+            left: 53%;
+        }
+        
+        /* Right side agents */
+        #referral-mgmt {
+            top: 150px;
+            right: 10%;
+        }
+        
+        #contract-mgmt {
+            top: 300px;
+            right: 10%;
+        }
+        
+        #credentialing {
+            top: 450px;
+            right: 10%;
+        }
+        
+        #patient-collections {
+            top: 700px;
+            right: 10%;
+        }
+        
+        /* Remove arrow-related styles */
+        .flow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .tier-label {
+            position: absolute;
+            left: -80px;
+            font-size: 0.8em;
+            color: #00ff00;
+            opacity: 0.3;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+        
+        .vertical-label {
+            position: absolute;
+            font-size: 0.8em;
+            color: #00ff00;
+            opacity: 0.3;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+        
+        /* Add visual grouping with subtle backgrounds */
+        .agent-block {
+            position: absolute;
+            background: linear-gradient(135deg, #1a1a1a 0%, #151515 100%);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            width: 220px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 255, 0, 0.1);
+        }
+        
+        /* Color coding by tier */
+        #orchestrator {
+            border-color: #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        /* Pre-visit agents - lighter green */
+        #scheduling, #no-show, #prior-auth {
+            border-color: #00ff88;
+        }
+        
+        /* Visit agents - standard green */
+        #patient-reg, #insurance-verify, #medical-coding, #charge-capture {
+            border-color: #00ff00;
+        }
+        
+        /* Post-visit agents - darker green */
+        #claims-submit, #denial-mgmt, #payment-posting, #ar-followup {
+            border-color: #00cc00;
+        }
+        
+        /* Support agents - teal */
+        #analytics, #compliance, #patient-portal, #audit-quality {
+            border-color: #00ffcc;
+        }
+        
+        /* Specialized agents - yellow-green */
+        #referral-mgmt, #contract-mgmt, #credentialing, #patient-collections {
+            border-color: #ccff00;
+        }
+        
+        .code-popup {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 380px;
+            background: #0d0d0d;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 10px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 255, 0, 0.4);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .agent-block:hover .code-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .code-header {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        .code-content {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            line-height: 1.5;
+            text-align: left;
+        }
+        
+        .keyword {
+            color: #ff79c6;
+            font-weight: bold;
+        }
+        
+        .function {
+            color: #50fa7b;
+        }
+        
+        .string {
+            color: #f1fa8c;
+        }
+        
+        .comment {
+            color: #6272a4;
+            font-style: italic;
+        }
+        
+        .decorator {
+            color: #ff79c6;
+        }
+        
+        .variable {
+            color: #8be9fd;
+        }
+        
+        @media (max-width: 1400px) {
+            .agent-block {
+                width: 180px;
+                font-size: 0.85em;
+            }
+            
+            .code-popup {
+                width: 320px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Comprehensive RCM AI Agent Architecture</h1>
+        
+        <div class="architecture">
+            <!-- Flow indicators without arrows -->
+            <div class="flow-container">
+                <div class="tier-label" style="top: 120px;">PRE-VISIT</div>
+                <div class="tier-label" style="top: 280px;">VISIT</div>
+                <div class="tier-label" style="top: 430px;">POST-VISIT</div>
+                <div class="tier-label" style="top: 680px;">SUPPORT & ANALYTICS</div>
+                <div class="vertical-label" style="right: 5px; top: 400px;">SPECIALIZED SERVICES</div>
+            </div>
+            
+            <!-- Agent Blocks -->
+            <div id="orchestrator" class="agent-block">
+                <h3>RCM Orchestrator Agent</h3>
+                <p>Master controller coordinating all sub-agents</p>
+                <div class="code-popup">
+                    <div class="code-header"># RCM_Orchestrator.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@ai_agent</span><br>
+                        <span class="keyword">class</span> <span class="function">RCMOrchestrator</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.agents = []<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.workflow_engine = WorkflowEngine()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.decision_tree = DecisionTree()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">async def</span> <span class="function">process_claim</span>(<span class="variable">self</span>, claim_data):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Intelligent routing based on claim type</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;claim_type = <span class="variable">self</span>.analyze_claim(claim_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;agents = <span class="variable">self</span>.select_agents(claim_type)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> agent <span class="keyword">in</span> agents:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">await</span> agent.execute(claim_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.compile_results()
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pre-visit Agents -->
+            <div id="scheduling" class="agent-block">
+                <h3>Appointment Scheduling Agent</h3>
+                <p>Intelligent appointment optimization</p>
+                <div class="code-popup">
+                    <div class="code-header"># Appointment_Scheduling_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@optimization_engine</span><br>
+                        <span class="keyword">class</span> <span class="function">AppointmentSchedulingAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.calendar_optimizer = CalendarOptimizer()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.patient_predictor = PatientBehaviorModel()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.resource_manager = ResourceManager()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">schedule_appointment</span>(<span class="variable">self</span>, patient, provider):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Predict optimal time slots</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;patient_prefs = <span class="variable">self</span>.patient_predictor.analyze(patient)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;available_slots = <span class="variable">self</span>.calendar_optimizer.find_slots(provider)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Minimize wait times and maximize efficiency</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;optimal_slot = <span class="variable">self</span>.optimize_schedule(patient_prefs, available_slots)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.book_appointment(optimal_slot)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="no-show" class="agent-block">
+                <h3>No-Show Prediction Agent</h3>
+                <p>Predicts and prevents appointment no-shows</p>
+                <div class="code-popup">
+                    <div class="code-header"># NoShow_Prediction_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@predictive_analytics</span><br>
+                        <span class="keyword">class</span> <span class="function">NoShowPredictionAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.ml_model = load_model(<span class="string">'xgboost_noshow_v3'</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.reminder_engine = ReminderEngine()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.intervention_system = InterventionSystem()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">predict_no_show</span>(<span class="variable">self</span>, appointment):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Extract features: history, weather, distance, etc.</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;features = <span class="variable">self</span>.extract_features(appointment)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;risk_score = <span class="variable">self</span>.ml_model.predict_proba(features)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> risk_score > 0.7:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># High risk - implement interventions</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.reminder_engine.send_multiple_reminders(appointment)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.intervention_system.offer_transportation(appointment)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.suggest_double_booking(appointment)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="prior-auth" class="agent-block">
+                <h3>Prior Authorization Agent</h3>
+                <p>Automates prior auth submissions</p>
+                <div class="code-popup">
+                    <div class="code-header"># Prior_Authorization_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@rules_engine</span><br>
+                        <span class="keyword">class</span> <span class="function">PriorAuthorizationAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.payer_rules = PayerRulesEngine()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.clinical_validator = ClinicalValidator()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.auto_submitter = AutoSubmitter()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">async def</span> <span class="function">process_auth</span>(<span class="variable">self</span>, procedure, insurance):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Check if prior auth required</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;auth_required = <span class="variable">self</span>.payer_rules.check_requirement(procedure, insurance)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> auth_required:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;clinical_docs = <span class="variable">self</span>.clinical_validator.gather_documentation()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auth_request = <span class="variable">self</span>.build_auth_request(clinical_docs)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return await</span> <span class="variable">self</span>.auto_submitter.submit(auth_request)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visit Agents -->
+            <div id="patient-reg" class="agent-block">
+                <h3>Patient Registration Agent</h3>
+                <p>Validates patient demographics</p>
+                <div class="code-popup">
+                    <div class="code-header"># PatientRegistration_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@ml_powered</span><br>
+                        <span class="keyword">class</span> <span class="function">PatientRegistrationAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.nlp_engine = NLPEngine()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.validation_model = load_model(<span class="string">'patient_val_v2'</span>)<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">validate_patient</span>(<span class="variable">self</span>, patient_data):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># AI-powered data validation</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;confidence = <span class="variable">self</span>.validation_model.predict(patient_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> confidence > 0.95:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.auto_register(patient_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.flag_for_review(patient_data)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="insurance-verify" class="agent-block">
+                <h3>Insurance Verification Agent</h3>
+                <p>Real-time eligibility checking</p>
+                <div class="code-popup">
+                    <div class="code-header"># Insurance_Verification_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@async_agent</span><br>
+                        <span class="keyword">class</span> <span class="function">InsuranceVerificationAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.api_connector = APIConnector()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.cache = RedisCache()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.ml_predictor = BenefitPredictor()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">async def</span> <span class="function">verify_coverage</span>(<span class="variable">self</span>, insurance_info):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Check cache first for performance</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;cached = <span class="keyword">await</span> <span class="variable">self</span>.cache.get(insurance_info.id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> cached:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> cached<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Real-time API verification</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;result = <span class="keyword">await</span> <span class="variable">self</span>.api_connector.verify(insurance_info)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.ml_predictor.enhance(result)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="medical-coding" class="agent-block">
+                <h3>Medical Coding Agent</h3>
+                <p>Automated ICD-10/CPT coding</p>
+                <div class="code-popup">
+                    <div class="code-header"># Medical_Coding_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@transformer_based</span><br>
+                        <span class="keyword">class</span> <span class="function">MedicalCodingAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.bert_model = load_pretrained(<span class="string">'medical-bert'</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.icd10_mapper = ICD10Mapper()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.cpt_engine = CPTEngine()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">auto_code</span>(<span class="variable">self</span>, clinical_notes):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Extract medical entities using BERT</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;entities = <span class="variable">self</span>.bert_model.extract_entities(clinical_notes)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Map to appropriate codes</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;icd_codes = <span class="variable">self</span>.icd10_mapper.map(entities.diagnoses)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;cpt_codes = <span class="variable">self</span>.cpt_engine.map(entities.procedures)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> {<span class="string">'icd10'</span>: icd_codes, <span class="string">'cpt'</span>: cpt_codes}
+                    </div>
+                </div>
+            </div>
+            
+            <div id="charge-capture" class="agent-block">
+                <h3>Charge Capture Agent</h3>
+                <p>Ensures no missed charges</p>
+                <div class="code-popup">
+                    <div class="code-header"># Charge_Capture_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@real_time_monitoring</span><br>
+                        <span class="keyword">class</span> <span class="function">ChargeCaptureAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.ehr_monitor = EHRMonitor()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.charge_validator = ChargeValidator()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.revenue_optimizer = RevenueOptimizer()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">capture_charges</span>(<span class="variable">self</span>, encounter):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Monitor all billable events</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;services = <span class="variable">self</span>.ehr_monitor.extract_services(encounter)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;supplies = <span class="variable">self</span>.ehr_monitor.extract_supplies(encounter)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Validate against fee schedule</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;validated_charges = <span class="variable">self</span>.charge_validator.validate(services, supplies)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Optimize revenue capture</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.revenue_optimizer.maximize(validated_charges)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Post-visit Agents -->
+            <div id="claims-submit" class="agent-block">
+                <h3>Claims Submission Agent</h3>
+                <p>Electronic claim generation</p>
+                <div class="code-popup">
+                    <div class="code-header"># Claims_Submission_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@queue_based</span><br>
+                        <span class="keyword">class</span> <span class="function">ClaimsSubmissionAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.edi_generator = EDI837Generator()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.submission_queue = PriorityQueue()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.error_predictor = ErrorPredictionModel()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">submit_claim</span>(<span class="variable">self</span>, claim_data):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Predict potential errors before submission</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;error_prob = <span class="variable">self</span>.error_predictor.analyze(claim_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> error_prob < 0.1:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edi_file = <span class="variable">self</span>.edi_generator.create(claim_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.submit_to_clearinghouse(edi_file)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">else</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.route_to_review(claim_data)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="denial-mgmt" class="agent-block">
+                <h3>Denial Management Agent</h3>
+                <p>Automated denial appeals</p>
+                <div class="code-popup">
+                    <div class="code-header"># Denial_Management_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@reinforcement_learning</span><br>
+                        <span class="keyword">class</span> <span class="function">DenialManagementAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.denial_classifier = DenialClassifier()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.appeal_generator = AppealGenerator()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.success_tracker = SuccessTracker()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">handle_denial</span>(<span class="variable">self</span>, denial_info):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Classify denial reason using ML</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;denial_type = <span class="variable">self</span>.denial_classifier.classify(denial_info)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Generate optimal appeal strategy</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;appeal_strategy = <span class="variable">self</span>.get_best_strategy(denial_type)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;appeal_letter = <span class="variable">self</span>.appeal_generator.create(appeal_strategy)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.submit_appeal(appeal_letter)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="payment-posting" class="agent-block">
+                <h3>Payment Posting Agent</h3>
+                <p>Automated reconciliation</p>
+                <div class="code-popup">
+                    <div class="code-header"># Payment_Posting_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@real_time_processing</span><br>
+                        <span class="keyword">class</span> <span class="function">PaymentPostingAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.ocr_engine = OCREngine()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.matching_algorithm = FuzzyMatcher()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.ledger_system = GeneralLedger()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">async def</span> <span class="function">process_payment</span>(<span class="variable">self</span>, payment_data):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Extract payment details using OCR if needed</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> payment_data.is_image:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;payment_data = <span class="variable">self</span>.ocr_engine.extract(payment_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Match payments to claims</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;matched_claims = <span class="variable">self</span>.matching_algorithm.match(payment_data)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">await</span> <span class="variable">self</span>.ledger_system.post(matched_claims)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="ar-followup" class="agent-block">
+                <h3>A/R Follow-up Agent</h3>
+                <p>Automated aging management</p>
+                <div class="code-popup">
+                    <div class="code-header"># AR_Followup_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@priority_based</span><br>
+                        <span class="keyword">class</span> <span class="function">ARFollowupAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.aging_analyzer = AgingAnalyzer()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.priority_engine = PriorityEngine()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.action_recommender = ActionRecommender()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">manage_ar</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Analyze aging buckets</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;aging_report = <span class="variable">self</span>.aging_analyzer.generate_report()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Prioritize follow-up actions</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;priorities = <span class="variable">self</span>.priority_engine.rank_accounts(aging_report)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Recommend specific actions</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> account <span class="keyword">in</span> priorities:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action = <span class="variable">self</span>.action_recommender.suggest(account)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.execute_action(action)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Support Agents -->
+            <div id="analytics" class="agent-block">
+                <h3>Analytics & Reporting Agent</h3>
+                <p>Real-time KPI monitoring</p>
+                <div class="code-popup">
+                    <div class="code-header"># Analytics_Reporting_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@dashboard_enabled</span><br>
+                        <span class="keyword">class</span> <span class="function">AnalyticsReportingAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.time_series_model = TimeSeriesPredictor()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.anomaly_detector = AnomalyDetector()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.visualization_engine = D3Visualizer()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">generate_insights</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Predict future revenue trends</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;revenue_forecast = <span class="variable">self</span>.time_series_model.forecast(30)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Detect anomalies in billing patterns</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;anomalies = <span class="variable">self</span>.anomaly_detector.detect()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Generate interactive dashboards</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.visualization_engine.render({<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'forecast'</span>: revenue_forecast,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">'anomalies'</span>: anomalies<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;})
+                    </div>
+                </div>
+            </div>
+            
+            <div id="compliance" class="agent-block">
+                <h3>Compliance Monitoring Agent</h3>
+                <p>HIPAA and regulatory compliance</p>
+                <div class="code-popup">
+                    <div class="code-header"># Compliance_Monitoring_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@audit_trail</span><br>
+                        <span class="keyword">class</span> <span class="function">ComplianceMonitoringAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.hipaa_validator = HIPAAValidator()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.audit_logger = AuditLogger()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.risk_assessor = RiskAssessor()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">monitor_compliance</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Continuous HIPAA monitoring</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;violations = <span class="variable">self</span>.hipaa_validator.scan_all_systems()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Log all access and changes</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.audit_logger.log_activities()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Assess and mitigate risks</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;risk_score = <span class="variable">self</span>.risk_assessor.calculate()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> risk_score > threshold:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.implement_safeguards()
+                    </div>
+                </div>
+            </div>
+            
+            <div id="patient-portal" class="agent-block">
+                <h3>Patient Portal Agent</h3>
+                <p>Self-service patient interactions</p>
+                <div class="code-popup">
+                    <div class="code-header"># Patient_Portal_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@chatbot_enabled</span><br>
+                        <span class="keyword">class</span> <span class="function">PatientPortalAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.nlp_chatbot = NLPChatbot()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.payment_processor = PaymentProcessor()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.document_manager = DocumentManager()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">async def</span> <span class="function">handle_patient_request</span>(<span class="variable">self</span>, request):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Understand patient intent</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;intent = <span class="variable">self</span>.nlp_chatbot.classify_intent(request)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">match</span> intent:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">case</span> <span class="string">'payment'</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return await</span> <span class="variable">self</span>.payment_processor.process()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">case</span> <span class="string">'documents'</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.document_manager.retrieve()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">case</span> <span class="string">'estimate'</span>:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.generate_cost_estimate()
+                    </div>
+                </div>
+            </div>
+            
+            <div id="audit-quality" class="agent-block">
+                <h3>Audit & Quality Agent</h3>
+                <p>Continuous quality improvement</p>
+                <div class="code-popup">
+                    <div class="code-header"># Audit_Quality_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@quality_assurance</span><br>
+                        <span class="keyword">class</span> <span class="function">AuditQualityAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.audit_sampler = StatisticalSampler()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.quality_scorer = QualityScorer()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.improvement_engine = ImprovementEngine()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">conduct_audit</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Statistical sampling of claims</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sample = <span class="variable">self</span>.audit_sampler.select_claims()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Score quality metrics</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;quality_scores = <span class="variable">self</span>.quality_scorer.evaluate(sample)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Generate improvement recommendations</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;improvements = <span class="variable">self</span>.improvement_engine.recommend(quality_scores)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.implement_improvements(improvements)
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Side Agents -->
+            <div id="referral-mgmt" class="agent-block">
+                <h3>Referral Management Agent</h3>
+                <p>Tracks and manages referrals</p>
+                <div class="code-popup">
+                    <div class="code-header"># Referral_Management_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@network_aware</span><br>
+                        <span class="keyword">class</span> <span class="function">ReferralManagementAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.network_validator = NetworkValidator()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.referral_tracker = ReferralTracker()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.loop_closer = LoopCloser()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">manage_referral</span>(<span class="variable">self</span>, referral):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Validate in-network status</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;in_network = <span class="variable">self</span>.network_validator.check(referral.specialist)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Track referral lifecycle</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.referral_tracker.create(referral)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.referral_tracker.monitor_status()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Ensure loop closure</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.loop_closer.follow_up(referral)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="contract-mgmt" class="agent-block">
+                <h3>Contract Management Agent</h3>
+                <p>Payer contract optimization</p>
+                <div class="code-popup">
+                    <div class="code-header"># Contract_Management_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@contract_analyzer</span><br>
+                        <span class="keyword">class</span> <span class="function">ContractManagementAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.rate_analyzer = RateAnalyzer()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.performance_tracker = PerformanceTracker()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.negotiation_ai = NegotiationAI()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">optimize_contracts</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Analyze reimbursement rates</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;rate_analysis = <span class="variable">self</span>.rate_analyzer.compare_to_market()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Track contract performance</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;performance = <span class="variable">self</span>.performance_tracker.evaluate()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># AI-powered negotiation suggestions</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;negotiation_points = <span class="variable">self</span>.negotiation_ai.suggest(rate_analysis)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> negotiation_points
+                    </div>
+                </div>
+            </div>
+            
+            <div id="credentialing" class="agent-block">
+                <h3>Credentialing Agent</h3>
+                <p>Provider credential management</p>
+                <div class="code-popup">
+                    <div class="code-header"># Credentialing_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@automated_verification</span><br>
+                        <span class="keyword">class</span> <span class="function">CredentialingAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.credential_verifier = CredentialVerifier()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.expiration_monitor = ExpirationMonitor()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.application_manager = ApplicationManager()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">manage_credentials</span>(<span class="variable">self</span>, provider):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Verify all credentials</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;verification = <span class="variable">self</span>.credential_verifier.verify_all(provider)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Monitor expiration dates</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;expiring = <span class="variable">self</span>.expiration_monitor.check_60_days()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Auto-submit applications</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> credential <span class="keyword">in</span> expiring:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.application_manager.auto_renew(credential)
+                    </div>
+                </div>
+            </div>
+            
+            <div id="patient-collections" class="agent-block">
+                <h3>Patient Collections Agent</h3>
+                <p>Compassionate collections AI</p>
+                <div class="code-popup">
+                    <div class="code-header"># Patient_Collections_Agent.py</div>
+                    <div class="code-content">
+                        <span class="decorator">@empathetic_ai</span><br>
+                        <span class="keyword">class</span> <span class="function">PatientCollectionsAgent</span>:<br>
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.propensity_model = PropensityToPayModel()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.payment_plan_ai = PaymentPlanAI()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">self</span>.communication_engine = CommunicationEngine()<br><br>
+                        
+                        &nbsp;&nbsp;<span class="keyword">def</span> <span class="function">collect_payment</span>(<span class="variable">self</span>, account):<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Predict payment probability</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;propensity = <span class="variable">self</span>.propensity_model.predict(account)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Create personalized payment plans</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;plan = <span class="variable">self</span>.payment_plan_ai.generate(account, propensity)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Empathetic communication</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;message = <span class="variable">self</span>.communication_engine.craft_message(account, plan)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="variable">self</span>.send_communication(message)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

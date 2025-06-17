@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCM Algorithm Pattern Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff00;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        
+        .terminal-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #0a0a0a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        .algorithm-flow {
+            font-size: 0.9em;
+            line-height: 1.6;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .function-def {
+            color: #ff79c6;
+            font-weight: bold;
+        }
+        
+        .class-name {
+            color: #50fa7b;
+        }
+        
+        .comment {
+            color: #6272a4;
+            font-style: italic;
+        }
+        
+        .string {
+            color: #f1fa8c;
+        }
+        
+        .variable {
+            color: #8be9fd;
+        }
+        
+        .operator {
+            color: #ff79c6;
+        }
+        
+        .number {
+            color: #bd93f9;
+        }
+        
+        .indent-1 { margin-left: 20px; }
+        .indent-2 { margin-left: 40px; }
+        .indent-3 { margin-left: 60px; }
+        .indent-4 { margin-left: 80px; }
+        
+        .section-header {
+            color: #00ffff;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 3px solid #00ffff;
+        }
+        
+        .agent-function {
+            background: rgba(0, 255, 0, 0.05);
+            border: 1px solid rgba(0, 255, 0, 0.2);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .agent-function:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: #00ff00;
+            transform: translateX(5px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+        
+        .flowchart-symbol {
+            color: #00ff00;
+            font-weight: bold;
+        }
+        
+        .async-marker {
+            color: #ff6347;
+            font-weight: bold;
+        }
+        
+        .ml-marker {
+            color: #9370db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <h1>// RCM AGENT ALGORITHM PATTERN //</h1>
+        
+        <div class="algorithm-flow">
+<div class="section-header">## MAIN ORCHESTRATION ALGORITHM</div>
+
+<div class="agent-function">
+<span class="function-def">async def</span> <span class="class-name">process_healthcare_revenue_cycle</span>(patient_encounter):
+    <span class="comment"># Master orchestration algorithm for entire RCM pipeline</span>
+    
+    <span class="flowchart-symbol">┌─────────────────────────────────────┐</span>
+    <span class="flowchart-symbol">│</span> <span class="ml-marker">[ML]</span> ORCHESTRATOR.initialize()     <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">└─────────────────┬───────────────────┘</span>
+                      <span class="flowchart-symbol">│</span>
+                      <span class="flowchart-symbol">▼</span>
+    
+    <span class="comment"># PHASE 1: PRE-VISIT PROCESSING</span>
+    <span class="variable">pre_visit_tasks</span> = [
+        <span class="async-marker">await</span> <span class="class-name">SchedulingAgent</span>.<span class="function-def">optimize_appointment</span>(patient_encounter),
+        <span class="async-marker">await</span> <span class="class-name">NoShowPredictor</span>.<span class="function-def">calculate_risk_score</span>(patient_encounter),
+        <span class="async-marker">await</span> <span class="class-name">PriorAuthAgent</span>.<span class="function-def">check_authorization</span>(patient_encounter)
+    ]
+    
+    <span class="operator">if</span> <span class="variable">pre_visit_tasks</span>[<span class="number">1</span>].<span class="variable">risk_score</span> > <span class="number">0.7</span>:
+        <span class="async-marker">await</span> <span class="class-name">InterventionSystem</span>.<span class="function-def">execute_prevention_protocol</span>()
+</div>
+
+<div class="section-header">## AGENT FUNCTION DEFINITIONS</div>
+
+<div class="agent-function">
+<span class="function-def">class</span> <span class="class-name">SchedulingAgent</span>:
+    <span class="function-def">@optimization_algorithm</span>
+    <span class="function-def">def</span> <span class="class-name">optimize_appointment</span>(self, patient):
+        <span class="flowchart-symbol">┌─────────────────────────────┐</span>
+        <span class="flowchart-symbol">│</span> INPUT: patient_preferences  <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└────────────┬────────────────┘</span>
+                     <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">┌────────────▼────────────────┐</span>
+        <span class="flowchart-symbol">│</span> PROCESS: ML optimization    <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> - Resource allocation       <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> - Wait time minimization    <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> - Provider matching         <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└────────────┬────────────────┘</span>
+                     <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">┌────────────▼────────────────┐</span>
+        <span class="flowchart-symbol">│</span> OUTPUT: optimal_slot        <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└─────────────────────────────┘</span>
+        
+        <span class="variable">constraints</span> = {
+            <span class="string">'provider_availability'</span>: self.get_provider_slots(),
+            <span class="string">'patient_preferences'</span>: patient.preferences,
+            <span class="string">'resource_capacity'</span>: self.check_resources()
+        }
+        
+        <span class="operator">return</span> <span class="ml-marker">OptimizationEngine</span>.solve(constraints)
+</div>
+
+<div class="agent-function">
+<span class="function-def">class</span> <span class="class-name">MedicalCodingAgent</span>:
+    <span class="function-def">@transformer_algorithm</span>
+    <span class="function-def">def</span> <span class="class-name">auto_code_encounter</span>(self, clinical_notes):
+        <span class="comment"># BERT-based NLP pipeline for medical coding</span>
+        
+        <span class="flowchart-symbol">┌──────────────────────────────────┐</span>
+        <span class="flowchart-symbol">│</span> <span class="ml-marker">[BERT]</span> Clinical Text Analysis  <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">├──────────────┬───────────────────┤</span>
+        <span class="flowchart-symbol">│</span>   Diagnoses  <span class="flowchart-symbol">│</span>    Procedures     <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└──────┬───────┴────────┬──────────┘</span>
+               <span class="flowchart-symbol">│</span>                <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">┌──────▼───────┐ ┌──────▼───────┐</span>
+        <span class="flowchart-symbol">│</span> ICD-10 Map   <span class="flowchart-symbol">│</span> <span class="flowchart-symbol">│</span> CPT Map      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└──────┬───────┘ └──────┬───────┘</span>
+               <span class="flowchart-symbol">│</span>                <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">┌──────▼────────────────▼───────┐</span>
+        <span class="flowchart-symbol">│</span>    Validated Code Output      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└───────────────────────────────┘</span>
+        
+        <span class="variable">embeddings</span> = self.<span class="ml-marker">bert_model</span>.encode(clinical_notes)
+        <span class="variable">entities</span> = self.<span class="ml-marker">ner_model</span>.extract_medical_entities(embeddings)
+        
+        <span class="operator">return</span> {
+            <span class="string">'icd10'</span>: self.map_to_icd10(entities.diagnoses),
+            <span class="string">'cpt'</span>: self.map_to_cpt(entities.procedures),
+            <span class="string">'confidence'</span>: entities.confidence_scores
+        }
+</div>
+
+<div class="section-header">## PARALLEL PROCESSING PATTERN</div>
+
+<div class="agent-function">
+<span class="function-def">async def</span> <span class="class-name">execute_visit_phase</span>(encounter):
+    <span class="comment"># Parallel execution of visit-phase agents</span>
+    
+    <span class="flowchart-symbol">          ┌─────────────────┐</span>
+    <span class="flowchart-symbol">          │</span> Visit Encounter <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">          └────────┬────────┘</span>
+    <span class="flowchart-symbol">                   │</span>
+    <span class="flowchart-symbol">      ┌────────────┼────────────┬────────────┐</span>
+    <span class="flowchart-symbol">      ▼            ▼            ▼            ▼</span>
+    <span class="flowchart-symbol">┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐</span>
+    <span class="flowchart-symbol">│</span>Patient  <span class="flowchart-symbol">│</span>  <span class="flowchart-symbol">│</span>Insurance<span class="flowchart-symbol">│</span>  <span class="flowchart-symbol">│</span>Medical  <span class="flowchart-symbol">│</span>  <span class="flowchart-symbol">│</span>Charge   <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">│</span>Reg      <span class="flowchart-symbol">│</span>  <span class="flowchart-symbol">│</span>Verify   <span class="flowchart-symbol">│</span>  <span class="flowchart-symbol">│</span>Coding   <span class="flowchart-symbol">│</span>  <span class="flowchart-symbol">│</span>Capture  <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">└─────────┘  └─────────┘  └─────────┘  └─────────┘</span>
+    
+    <span class="variable">tasks</span> = await asyncio.gather(
+        <span class="class-name">PatientRegAgent</span>.<span class="function-def">validate</span>(encounter),
+        <span class="class-name">InsuranceAgent</span>.<span class="function-def">verify</span>(encounter),
+        <span class="class-name">CodingAgent</span>.<span class="function-def">auto_code</span>(encounter),
+        <span class="class-name">ChargeAgent</span>.<span class="function-def">capture</span>(encounter)
+    )
+    
+    <span class="operator">return</span> <span class="class-name">VisitResults</span>.compile(tasks)
+</div>
+
+<div class="section-header">## MACHINE LEARNING PIPELINE</div>
+
+<div class="agent-function">
+<span class="function-def">class</span> <span class="class-name">DenialManagementAgent</span>:
+    <span class="function-def">@reinforcement_learning</span>
+    <span class="function-def">def</span> <span class="class-name">process_denial</span>(self, denial):
+        <span class="comment"># Q-Learning based denial management</span>
+        
+        <span class="flowchart-symbol">┌────────────────────────────────────┐</span>
+        <span class="flowchart-symbol">│</span>        DENIAL RECEIVED             <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└─────────────┬──────────────────────┘</span>
+                      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">┌─────────────▼──────────────────────┐</span>
+        <span class="flowchart-symbol">│</span> <span class="ml-marker">[ML]</span> Classify Denial Reason      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> • Medical necessity              <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> • Authorization                  <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> • Coding error                   <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> • Timely filing                  <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└─────────────┬──────────────────────┘</span>
+                      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">┌─────────────▼──────────────────────┐</span>
+        <span class="flowchart-symbol">│</span> <span class="ml-marker">[RL]</span> Select Optimal Action      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">│</span> Based on historical success      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└─────────────┬──────────────────────┘</span>
+                      <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">┌─────────────▼──────────────────────┐</span>
+        <span class="flowchart-symbol">│</span>    Generate & Submit Appeal        <span class="flowchart-symbol">│</span>
+        <span class="flowchart-symbol">└────────────────────────────────────┘</span>
+        
+        <span class="variable">state</span> = self.extract_state_features(denial)
+        <span class="variable">action</span> = self.<span class="ml-marker">q_network</span>.predict_best_action(state)
+        <span class="variable">appeal</span> = self.appeal_generator.create(action)
+        
+        <span class="comment"># Update Q-values based on outcome</span>
+        self.<span class="ml-marker">q_network</span>.update(state, action, reward)
+        
+        <span class="operator">return</span> appeal
+</div>
+
+<div class="section-header">## ERROR HANDLING & FALLBACK PATTERN</div>
+
+<div class="agent-function">
+<span class="function-def">def</span> <span class="class-name">intelligent_error_handler</span>(agent_name, error):
+    <span class="flowchart-symbol">┌──────────────────────┐</span>
+    <span class="flowchart-symbol">│</span>   ERROR DETECTED     <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">└──────────┬───────────┘</span>
+               <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">┌──────────▼───────────┐</span>
+    <span class="flowchart-symbol">│</span> Classify Error Type  <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">└──────────┬───────────┘</span>
+               <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">┌──────────▼───────────────────────┐</span>
+    <span class="flowchart-symbol">│</span> <span class="operator">if</span> recoverable:                <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">│</span>   → Retry with backoff          <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">│</span> <span class="operator">elif</span> partial_failure:          <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">│</span>   → Continue with degraded mode <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">│</span> <span class="operator">else</span>:                          <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">│</span>   → Escalate to human review    <span class="flowchart-symbol">│</span>
+    <span class="flowchart-symbol">└──────────────────────────────────┘</span>
+    
+    <span class="operator">try</span>:
+        <span class="operator">return</span> fallback_strategies[agent_name](error)
+    <span class="operator">except</span>:
+        <span class="operator">return</span> <span class="class-name">HumanReviewQueue</span>.add(error)
+</div>
+
+<div class="section-header">## PERFORMANCE MONITORING</div>
+
+<div class="agent-function">
+<span class="variable">METRICS</span> = {
+    <span class="string">'throughput'</span>: <span class="string">'claims/hour'</span>,
+    <span class="string">'accuracy'</span>: <span class="string">'error_rate < 0.01'</span>,
+    <span class="string">'latency'</span>: <span class="string">'p99 < 100ms'</span>,
+    <span class="string">'cost_savings'</span>: <span class="string">'automation_rate > 95%'</span>
+}
+</div>
+        </div>
+    </div>
+</body>
+</html>
