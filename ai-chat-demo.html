@@ -718,7 +718,7 @@
                 </div>
                 <div class="status-card">
                     <div class="status-label">Session ID</div>
-                    <div class="status-value">RCM-2024-" + Math.random().toString(36).substr(2, 9).toUpperCase()</div>
+                    <div class="status-value" id="sessionId">RCM-2024-DEMO123</div>
                 </div>
             </div>
 
@@ -1014,6 +1014,10 @@ I can help you generate the appeal letter. Would you like me to proceed?`,
 
         // Initialize
         document.getElementById('chatInput').focus();
+        
+        // Generate random session ID
+        const sessionId = 'RCM-2024-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        document.getElementById('sessionId').textContent = sessionId;
     </script>
 </body>
 </html>
