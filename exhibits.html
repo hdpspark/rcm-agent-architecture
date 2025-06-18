@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exhibits - AI Visualization Gallery | RCM Agent</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --accent-primary: #00dc82;
+            --accent-gradient: linear-gradient(135deg, #00dc82 0%, #00ff88 50%, #36ef7a 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        nav {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 120px 2rem 60px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Gallery Grid */
+        .gallery {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 80px;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .exhibit-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .exhibit-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 20px 40px rgba(0, 220, 130, 0.1);
+        }
+        
+        .exhibit-image {
+            height: 250px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .exhibit-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.1; }
+            50% { transform: scale(1.2); opacity: 0.2; }
+        }
+        
+        .exhibit-content {
+            padding: 2rem;
+        }
+        
+        .exhibit-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .exhibit-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .exhibit-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tag {
+            background: rgba(0, 220, 130, 0.1);
+            color: var(--accent-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(0, 220, 130, 0.3);
+        }
+        
+        .exhibit-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .exhibit-link:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 220, 130, 0.3);
+        }
+        
+        /* Category Sections */
+        .category-section {
+            margin-bottom: 4rem;
+        }
+        
+        .category-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .category-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .category-description {
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <span>⚡</span>
+                RCM Agent
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="ai-chat-demo.html">AI Chat</a></li>
+                <li><a href="api-playground.html">API</a></li>
+                <li><a href="analytics-dashboard.html">Analytics</a></li>
+                <li><a href="workflow-builder.html">Workflow</a></li>
+                <li><a href="ai-sandbox.html">Sandbox</a></li>
+                <li><a href="exhibits.html" style="color: var(--accent-primary);">Exhibits</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>AI Visualization Exhibits</h1>
+        <p class="hero-subtitle">
+            Explore our collection of interactive AI demonstrations, advanced visualizations, 
+            and cutting-edge generative AI capabilities
+        </p>
+    </section>
+
+    <!-- Gallery -->
+    <section class="gallery">
+        <!-- AI Agent Visualizations -->
+        <div class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">AI Agent Demonstrations</h2>
+                <p class="category-description">Interactive visualizations showcasing AI agent capabilities and architectures</p>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="exhibit-card">
+                    <div class="exhibit-image">
+                        <span>🚀</span>
+                    </div>
+                    <div class="exhibit-content">
+                        <h3 class="exhibit-title">AI Agent Mastery</h3>
+                        <p class="exhibit-description">
+                            Master the complexities of 1000+ AI agents with our comprehensive code generation platform. 
+                            Explore advanced agent architectures and implementation patterns.
+                        </p>
+                        <div class="exhibit-tags">
+                            <span class="tag">AI Agents</span>
+                            <span class="tag">Code Generation</span>
+                            <span class="tag">Advanced</span>
+                        </div>
+                        <a href="agent-mastery.html" class="exhibit-link">
+                            Explore Mastery
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="exhibit-card">
+                    <div class="exhibit-image">
+                        <span>🤖</span>
+                    </div>
+                    <div class="exhibit-content">
+                        <h3 class="exhibit-title">GenAI LLM EB1A</h3>
+                        <p class="exhibit-description">
+                            Dive deep into Generative AI and Large Language Model capabilities. Experience the power 
+                            of modern language models in action.
+                        </p>
+                        <div class="exhibit-tags">
+                            <span class="tag">LLMs</span>
+                            <span class="tag">Generative AI</span>
+                            <span class="tag">EB1A</span>
+                        </div>
+                        <a href="genai-llm-eb1a.html" class="exhibit-link">
+                            View LLM Demo
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="exhibit-card">
+                    <div class="exhibit-image">
+                        <span>⚡</span>
+                    </div>
+                    <div class="exhibit-content">
+                        <h3 class="exhibit-title">Generative Agents EB1A</h3>
+                        <p class="exhibit-description">
+                            Witness autonomous generative agents in action. See how they collaborate, learn, 
+                            and solve complex problems independently.
+                        </p>
+                        <div class="exhibit-tags">
+                            <span class="tag">Autonomous Agents</span>
+                            <span class="tag">Generative</span>
+                            <span class="tag">EB1A</span>
+                        </div>
+                        <a href="generative-agents-eb1a.html" class="exhibit-link">
+                            Launch Agents
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RCM Specific Visualizations -->
+        <div class="category-section">
+            <div class="category-header">
+                <h2 class="category-title">Revenue Cycle Management AI</h2>
+                <p class="category-description">Specialized AI demonstrations for healthcare revenue cycle optimization</p>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="exhibit-card">
+                    <div class="exhibit-image">
+                        <span>🎯</span>
+                    </div>
+                    <div class="exhibit-content">
+                        <h3 class="exhibit-title">RCM Agent Visualization</h3>
+                        <p class="exhibit-description">
+                            Watch AI agents collaborate in real-time to process complex revenue workflows. 
+                            See how they handle claims, denials, and appeals.
+                        </p>
+                        <div class="exhibit-tags">
+                            <span class="tag">RCM</span>
+                            <span class="tag">Multi-Agent</span>
+                            <span class="tag">Interactive</span>
+                        </div>
+                        <a href="rcm-agent-interactive.html" class="exhibit-link">
+                            Launch Demo
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="exhibit-card">
+                    <div class="exhibit-image">
+                        <span>🧠</span>
+                    </div>
+                    <div class="exhibit-content">
+                        <h3 class="exhibit-title">Algorithm Patterns</h3>
+                        <p class="exhibit-description">
+                            Explore the ML algorithms that power intelligent claim optimization. Understand 
+                            pattern recognition in denial management.
+                        </p>
+                        <div class="exhibit-tags">
+                            <span class="tag">ML Algorithms</span>
+                            <span class="tag">Pattern Recognition</span>
+                            <span class="tag">Claims</span>
+                        </div>
+                        <a href="rcm-algorithm-pattern.html" class="exhibit-link">
+                            View Patterns
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="exhibit-card">
+                    <div class="exhibit-image">
+                        <span>📐</span>
+                    </div>
+                    <div class="exhibit-content">
+                        <h3 class="exhibit-title">Workflow Designer</h3>
+                        <p class="exhibit-description">
+                            Design and visualize custom revenue workflows tailored to your organization. 
+                            Drag-and-drop interface for process optimization.
+                        </p>
+                        <div class="exhibit-tags">
+                            <span class="tag">Workflow</span>
+                            <span class="tag">Visual Design</span>
+                            <span class="tag">Customizable</span>
+                        </div>
+                        <a href="rcm-flow-design.html" class="exhibit-link">
+                            Open Designer
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="exhibit-card">
+                    <div class="exhibit-image">
+                        <span>🔗</span>
+                    </div>
+                    <div class="exhibit-content">
+                        <h3 class="exhibit-title">Enterprise Integration</h3>
+                        <p class="exhibit-description">
+                            See how AI agents integrate with enterprise healthcare systems through 
+                            interactive workflow demonstrations.
+                        </p>
+                        <div class="exhibit-tags">
+                            <span class="tag">Integration</span>
+                            <span class="tag">Enterprise</span>
+                            <span class="tag">Healthcare IT</span>
+                        </div>
+                        <a href="ai-enterprise-integration.html" class="exhibit-link">
+                            Explore Integration
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
