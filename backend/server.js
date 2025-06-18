@@ -238,7 +238,12 @@ Provide accurate, detailed, and actionable responses for healthcare revenue cycl
 }
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`🚀 RCM AI Proxy Server running on port ${PORT}`);
-    console.log(`📍 Health check: http://localhost:${PORT}/health`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🚀 RCM AI Proxy Server running on port ${PORT}`);
+        console.log(`📍 Health check: http://localhost:${PORT}/health`);
+    });
+}
+
+// Export for Vercel
+module.exports = app;
