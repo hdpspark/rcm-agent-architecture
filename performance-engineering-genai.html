@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Engineering with GenAI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #070707;
+            color: #ffffff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, rgba(34, 193, 195, 0.1), rgba(253, 187, 45, 0.1));
+            border-radius: 30px;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #22c1c3, #fdbb2d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .perf-block {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+        }
+        .perf-metric {
+            display: inline-block;
+            padding: 20px;
+            margin: 10px;
+            background: rgba(34, 193, 195, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(34, 193, 195, 0.3);
+            text-align: center;
+        }
+        .perf-metric .value {
+            font-size: 2.5em;
+            color: #22c1c3;
+            font-weight: bold;
+        }
+        .code-analysis {
+            background: #111;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #fdbb2d;
+        }
+        .optimization {
+            background: rgba(253, 187, 45, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>Performance Engineering with GenAI</h1>
+            <p style="font-size: 1.3em; color: #a0a0a0;">AI-powered code optimization and performance analysis</p>
+            <div style="display: inline-block; background: rgba(255, 255, 255, 0.1); padding: 10px 25px; border-radius: 50px; margin-top: 20px;">
+                <strong>Skills:</strong> Data Science & Site Reliability Engineering
+            </div>
+        </div>
+        
+        <div class="perf-block">
+            <h2 style="color: #22c1c3; margin-bottom: 30px; font-size: 2em;">⚡ AI Performance Analysis in Action</h2>
+            
+            <div class="code-analysis">
+                <strong style="color: #fdbb2d;">AI Analysis:</strong> Found performance bottleneck in OrderService.processPayment()
+                
+                <pre style="margin: 15px 0;">
+// Current implementation - 847ms average
+for (Order order : orders) {
+    PaymentResult result = paymentAPI.charge(order);
+    database.save(result);
+    emailService.sendConfirmation(order);
+}
+                </pre>
+            </div>
+            
+            <div class="optimization">
+                <strong>🤖 AI Recommendation:</strong> "This synchronous loop is your bottleneck. Let me optimize it..."
+            </div>
+            
+            <div class="code-analysis">
+                <strong style="color: #22c1c3;">Optimized by AI:</strong>
+                <pre style="margin: 15px 0;">
+// AI-optimized - 124ms average (85% improvement)
+CompletableFuture<?>[] futures = orders.stream()
+    .map(order -> CompletableFuture
+        .supplyAsync(() -> paymentAPI.charge(order))
+        .thenCompose(result -> CompletableFuture.allOf(
+            CompletableFuture.runAsync(() -> database.save(result)),
+            CompletableFuture.runAsync(() -> emailService.sendConfirmation(order))
+        )))
+    .toArray(CompletableFuture[]::new);
+
+CompletableFuture.allOf(futures).join();
+                </pre>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div class="perf-metric">
+                    <div class="value">85%</div>
+                    <div>Faster</div>
+                </div>
+                <div class="perf-metric">
+                    <div class="value">124ms</div>
+                    <div>Response Time</div>
+                </div>
+                <div class="perf-metric">
+                    <div class="value">10x</div>
+                    <div>Throughput</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="perf-block">
+            <h2 style="color: #fdbb2d; margin-bottom: 30px; font-size: 2em;">🎯 GenAI Performance Features</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="padding: 20px; background: rgba(34, 193, 195, 0.1); border-radius: 15px;">
+                    <h3 style="color: #22c1c3; margin-bottom: 10px;">Code Analysis</h3>
+                    <p>AI reviews every PR for performance issues before merge</p>
+                </div>
+                <div style="padding: 20px; background: rgba(253, 187, 45, 0.1); border-radius: 15px;">
+                    <h3 style="color: #fdbb2d; margin-bottom: 10px;">Load Test Generation</h3>
+                    <p>Creates realistic traffic patterns from production data</p>
+                </div>
+                <div style="padding: 20px; background: rgba(34, 193, 195, 0.1); border-radius: 15px;">
+                    <h3 style="color: #22c1c3; margin-bottom: 10px;">Auto-Optimization</h3>
+                    <p>Suggests and implements performance improvements</p>
+                </div>
+                <div style="padding: 20px; background: rgba(253, 187, 45, 0.1); border-radius: 15px;">
+                    <h3 style="color: #fdbb2d; margin-bottom: 10px;">Resource Tuning</h3>
+                    <p>Optimizes JVM, database, and container settings</p>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 40px; font-size: 1.2em; color: #888;">
+                "Reduced P99 latency by 73% across 200+ microservices using AI-driven optimization"
+            </p>
+        </div>
+    </div>
+</body>
+</html>

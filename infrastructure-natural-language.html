@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infrastructure as Natural Language</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f0f1f;
+            color: #ffffff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, rgba(130, 87, 230, 0.1), rgba(255, 183, 77, 0.1));
+            border-radius: 30px;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #8257e6, #ffb74d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .demo-block {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+        }
+        .chat-interface {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(130, 87, 230, 0.3);
+        }
+        .chat-message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .user-message {
+            background: rgba(130, 87, 230, 0.2);
+            text-align: right;
+        }
+        .ai-message {
+            background: rgba(255, 183, 77, 0.1);
+            border-left: 3px solid #ffb74d;
+        }
+        .code-output {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+        .impact-stat {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(130, 87, 230, 0.2), rgba(255, 183, 77, 0.2));
+            border-radius: 30px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>Infrastructure as Natural Language</h1>
+            <p style="font-size: 1.3em; color: #a0a0a0;">Speak to your infrastructure, and it listens</p>
+            <div style="display: inline-block; background: rgba(255, 255, 255, 0.1); padding: 10px 25px; border-radius: 50px; margin-top: 20px;">
+                <strong>Skills:</strong> Data Science & Site Reliability Engineering
+            </div>
+        </div>
+        
+        <div class="demo-block">
+            <h2 style="color: #8257e6; margin-bottom: 20px; font-size: 2em;">🎙️ Voice-Controlled Operations</h2>
+            
+            <div class="chat-interface">
+                <div class="chat-message user-message">
+                    <strong>Engineer:</strong> "Hey AI, our payment service is getting slow. Can you scale it up by 50%?"
+                </div>
+                
+                <div class="chat-message ai-message">
+                    <strong>AI SRE:</strong> "I'll scale the payment service for you. Let me check the current status first..."
+                    
+                    <div class="code-output">
+Current: 4 instances (t3.large)
+CPU: 78% average
+Memory: 62% average
+Request rate: 1,200 req/s
+
+Scaling to: 6 instances
+Estimated completion: 2 minutes
+                    </div>
+                    
+                    "Scaling initiated. I'm also noticing high CPU usage. Would you like me to upgrade to t3.xlarge instances for better performance?"
+                </div>
+                
+                <div class="chat-message user-message">
+                    <strong>Engineer:</strong> "Yes, and also set up auto-scaling for the future"
+                </div>
+                
+                <div class="chat-message ai-message">
+                    <strong>AI SRE:</strong> "Done! Here's what I've configured:"
+                    
+                    <div class="code-output">
+✓ Upgraded to t3.xlarge (6 instances)
+✓ Auto-scaling enabled:
+  - Scale up: CPU > 70% for 5 min
+  - Scale down: CPU < 30% for 10 min
+  - Min: 4, Max: 20 instances
+✓ CloudWatch alarms configured
+✓ Estimated monthly savings: $1,200
+
+Terraform code generated and applied.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-block">
+            <h2 style="color: #ffb74d; margin-bottom: 30px; font-size: 2em;">🚀 Natural Language to Infrastructure</h2>
+            
+            <p style="margin-bottom: 20px; font-size: 1.1em;">Transform conversations into production-ready infrastructure:</p>
+            
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 15px; padding-left: 30px;">💬 <strong>"Create a Kubernetes cluster for our new microservice"</strong> → Complete K8s setup with best practices</li>
+                <li style="margin-bottom: 15px; padding-left: 30px;">🔧 <strong>"Set up monitoring for all our databases"</strong> → Prometheus + Grafana deployed</li>
+                <li style="margin-bottom: 15px; padding-left: 30px;">🛡️ <strong>"Implement zero-trust networking"</strong> → Service mesh with mTLS configured</li>
+                <li style="margin-bottom: 15px; padding-left: 30px;">📊 <strong>"Show me why we're spending so much on AWS"</strong> → Cost analysis dashboard created</li>
+            </ul>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <div class="impact-stat">95% faster deployment</div>
+                <div class="impact-stat">Zero YAML writing</div>
+                <div class="impact-stat">100% GitOps integrated</div>
+                <div class="impact-stat">80% fewer errors</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

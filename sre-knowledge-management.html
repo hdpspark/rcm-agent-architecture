@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRE Knowledge Management with AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d0d1a;
+            color: #ffffff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, rgba(88, 86, 214, 0.1), rgba(255, 121, 63, 0.1));
+            border-radius: 30px;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #5856d6, #ff793f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .knowledge-block {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+        }
+        .chat-box {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid rgba(88, 86, 214, 0.3);
+        }
+        .knowledge-item {
+            background: rgba(88, 86, 214, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 4px solid #5856d6;
+        }
+        .metric-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(88, 86, 214, 0.2), rgba(255, 121, 63, 0.2));
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>SRE Knowledge Management</h1>
+            <p style="font-size: 1.3em; color: #a0a0a0;">Living documentation that learns and evolves</p>
+            <div style="display: inline-block; background: rgba(255, 255, 255, 0.1); padding: 10px 25px; border-radius: 50px; margin-top: 20px;">
+                <strong>Skills:</strong> Data Science & Site Reliability Engineering
+            </div>
+        </div>
+        
+        <div class="knowledge-block">
+            <h2 style="color: #5856d6; margin-bottom: 30px; font-size: 2em;">🧠 AI Knowledge Assistant Demo</h2>
+            
+            <div class="chat-box">
+                <p style="color: #aaa; margin-bottom: 10px;">Engineer asks:</p>
+                <p style="font-size: 1.1em;">"How do we handle database connection pool exhaustion?"</p>
+            </div>
+            
+            <div class="chat-box" style="background: rgba(88, 86, 214, 0.1);">
+                <p style="color: #5856d6; margin-bottom: 15px;"><strong>AI Knowledge Base:</strong></p>
+                <p>Based on your team's history, here's what worked:</p>
+                
+                <div class="knowledge-item">
+                    <strong>📅 Last occurred:</strong> 2 weeks ago in payment-service<br>
+                    <strong>🔧 Solution:</strong> Increased pool size from 20 to 50 connections<br>
+                    <strong>👤 Resolved by:</strong> Sarah Chen<br>
+                    <strong>⏱️ Time to fix:</strong> 12 minutes
+                </div>
+                
+                <div class="knowledge-item">
+                    <strong>📚 Related runbook:</strong> DB-CONN-001 (auto-updated 3 days ago)<br>
+                    <strong>🎯 Quick fix:</strong> <code>kubectl set env deployment/app DB_POOL_SIZE=50</code><br>
+                    <strong>🔄 Long-term:</strong> Implement connection pooling with HikariCP
+                </div>
+                
+                <p style="margin-top: 20px;">Want me to apply the fix now or see other solutions from similar incidents?</p>
+            </div>
+        </div>
+        
+        <div class="knowledge-block">
+            <h2 style="color: #ff793f; margin-bottom: 30px; font-size: 2em;">📊 Living Documentation Impact</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                <div>
+                    <h3 style="color: #5856d6; margin-bottom: 20px;">Auto-Maintained Resources</h3>
+                    <div class="knowledge-item">
+                        <strong>500+ Runbooks</strong> - Updated in real-time from incidents
+                    </div>
+                    <div class="knowledge-item">
+                        <strong>10,000+ Solutions</strong> - Captured from Slack, tickets, PRs
+                    </div>
+                    <div class="knowledge-item">
+                        <strong>50+ Architecture Diagrams</strong> - Always current with deployments
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="color: #ff793f; margin-bottom: 20px;">Knowledge Metrics</h3>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <div class="metric-badge" style="font-size: 1.2em;">90% faster onboarding</div>
+                        <div class="metric-badge" style="font-size: 1.2em;">75% fewer repeat incidents</div>
+                        <div class="metric-badge" style="font-size: 1.2em;">100% runbook accuracy</div>
+                        <div class="metric-badge" style="font-size: 1.2em;">Zero tribal knowledge loss</div>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 40px; font-size: 1.1em; color: #888;">
+                "AI captures every solution, learns from every incident, and shares knowledge instantly across the team"
+            </p>
+        </div>
+    </div>
+</body>
+</html>

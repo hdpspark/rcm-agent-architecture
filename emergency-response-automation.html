@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Response Automation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(241, 196, 15, 0.1));
+            border-radius: 30px;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            background: linear-gradient(135deg, #e74c3c, #f1c40f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+        .emergency-block {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .incident-timeline {
+            background: #111;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            border-left: 4px solid #e74c3c;
+        }
+        .timeline-entry {
+            margin: 15px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .timeline-entry::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #f1c40f;
+            font-size: 20px;
+        }
+        .critical { color: #e74c3c; }
+        .warning { color: #f1c40f; }
+        .success { color: #2ecc71; }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .status-card {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(241, 196, 15, 0.1));
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>Emergency Response Automation</h1>
+            <p style="font-size: 1.3em; color: #a0a0a0;">AI-orchestrated disaster recovery and crisis management</p>
+            <div style="display: inline-block; background: rgba(255, 255, 255, 0.1); padding: 10px 25px; border-radius: 50px; margin-top: 20px;">
+                <strong>Skills:</strong> Data Science & Site Reliability Engineering
+            </div>
+        </div>
+        
+        <div class="emergency-block">
+            <h2 style="color: #e74c3c; margin-bottom: 30px; font-size: 2em;">🚨 Live Emergency Response Demo</h2>
+            
+            <div class="incident-timeline">
+                <h3 class="critical">CRITICAL: Major Outage Detected - Payment System Down</h3>
+                
+                <div class="timeline-entry">
+                    <span class="critical">[00:00:00]</span> <strong>AI Crisis Commander:</strong> Critical failure detected. Initiating emergency response protocol.
+                </div>
+                
+                <div class="timeline-entry">
+                    <span class="warning">[00:00:02]</span> <strong>Impact Analysis:</strong> 15,000 transactions/min affected, $125K/min revenue at risk
+                </div>
+                
+                <div class="timeline-entry">
+                    <span class="success">[00:00:05]</span> <strong>Auto-Escalation:</strong> Paging on-call team, CTO, and VP Engineering
+                </div>
+                
+                <div class="timeline-entry">
+                    <span class="success">[00:00:10]</span> <strong>Failover Initiated:</strong> Switching to secondary payment provider
+                </div>
+                
+                <div class="timeline-entry">
+                    <span class="warning">[00:00:15]</span> <strong>Customer Comms:</strong> Status page updated, support team notified
+                </div>
+                
+                <div class="timeline-entry">
+                    <span class="success">[00:00:45]</span> <strong>Partial Recovery:</strong> 60% traffic restored via failover
+                </div>
+                
+                <div class="timeline-entry">
+                    <span class="success">[00:02:30]</span> <strong>Root Cause Found:</strong> Database deadlock from deployment
+                </div>
+                
+                <div class="timeline-
