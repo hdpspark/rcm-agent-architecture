@@ -1427,7 +1427,7 @@ Try one of the examples above or ask me anything about RCM!</div>
         // Real LLM API Calls (via backend proxy)
         async function callRealLLM(message) {
             // Check if we're using backend proxy or direct API calls
-            const useBackendProxy = true; // Set to false to use direct API calls (requires API keys in frontend)
+            const useBackendProxy = true; // Set to true when backend is deployed
             
             if (useBackendProxy) {
                 return await callBackendProxy(message);
