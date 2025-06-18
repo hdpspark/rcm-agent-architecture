@@ -1416,30 +1416,71 @@ Try one of the examples above or ask me anything about RCM!</div>
             document.querySelector('.model-status span:last-child').textContent = statusText;
         }
 
-        // Real LLM API Calls
-        async function callRealLLM(message) {
-            const apiKey = getApiKeyForModel(currentModel);
-            if (!apiKey) return null;
+        // Backend proxy URL - Update this to your backend server URL
+        const BACKEND_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3001' 
+            : 'https://your-backend-url.com'; // Replace with your deployed backend URL
 
-            try {
-                switch (currentModel) {
-                    case 'gpt-4':
-                        return await callOpenAI(message);
-                    case 'claude-3':
-                        return await callClaude(message);
-                    case 'google-gemini':
-                        return await callGoogleAI(message);
-                    case 'mistral-large':
-                        return await callMistral(message);
-                    case 'openrouter-gpt4':
-                        return await callOpenRouter(message);
-                    case 'groq-llama':
-                        return await callGroq(message);
-                    default:
-                        return null;
+        // Real LLM API Calls (via backend proxy)
+        async function callRealLLM(message) {
+            // Check if we're using backend proxy or direct API calls
+            const useBackendProxy = true; // Set to false to use direct API calls (requires API keys in frontend)
+            
+            if (useBackendProxy) {
+                return await callBackendProxy(message);
+            } else {
+                // Original direct API call logic (requires CORS handling)
+                const apiKey = getApiKeyForModel(currentModel);
+                if (!apiKey) return null;
+
+                try {
+                    switch (currentModel) {
+                        case 'gpt-4':
+                            return await callOpenAI(message);
+                        case 'claude-3':
+                            return await callClaude(message);
+                        case 'google-gemini':
+                            return await callGoogleAI(message);
+                        case 'mistral-large':
+                            return await callMistral(message);
+                        case 'openrouter-gpt4':
+                            return await callOpenRouter(message);
+                        case 'groq-llama':
+                            return await callGroq(message);
+                        default:
+                            return null;
+                    }
+                } catch (error) {
+                    console.error('API call failed:', error);
+                    throw error;
                 }
+            }
+        }
+
+        // Backend Proxy API Call
+        async function callBackendProxy(message) {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        model: currentModel,
+                        settings: settings
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Backend API request failed');
+                }
+
+                const data = await response.json();
+                return data.response;
             } catch (error) {
-                console.error('API call failed:', error);
+                console.error('Backend proxy error:', error);
                 throw error;
             }
         }
