@@ -712,13 +712,13 @@
             <span>Powered by Advanced AI</span>
         </div>
         <h1>
-            Revenue Cycle<br/>
-            <span class="hero-highlight">Reimagined</span>
+            GenerativeAI<br/>
+            <span class="hero-highlight">Agentic Framework</span>
         </h1>
         <p class="hero-description">
-            Transform your healthcare revenue operations with AI-powered automation. 
-            Reduce denials by 45%, accelerate payments by 10 days, and maximize 
-            reimbursements with intelligent claim processing.
+            Build and deploy intelligent autonomous agents powered by cutting-edge AI/LLM/LRM technology. 
+            Transform any industry with self-learning agents that automate complex workflows, 
+            make intelligent decisions, and continuously improve performance.
         </p>
         <div class="hero-actions">
             <a href="exhibits.html" class="btn-primary">
@@ -735,45 +735,45 @@
     <section class="features" id="features">
         <div class="section-header">
             <span class="section-badge">FEATURES</span>
-            <h2>Built for Modern Healthcare</h2>
-            <p>Cutting-edge technology designed to handle the complexity of revenue cycle management</p>
+            <h2>Built for Enterprise AI</h2>
+            <p>Cutting-edge technology designed to handle the complexity of autonomous agent systems</p>
         </div>
         
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon">🤖</div>
-                <h3>AI-Powered Processing</h3>
-                <p>Machine learning algorithms automatically detect and correct claim errors before submission, reducing denials by up to 45%</p>
+                <h3>Autonomous AI Agents</h3>
+                <p>Deploy self-learning agents that can reason, plan, and execute complex tasks across any business domain</p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">⚡</div>
-                <h3>Real-Time Eligibility</h3>
-                <p>Instant verification across 5000+ payers with comprehensive benefit details and authorization requirements</p>
+                <h3>Multi-Model Orchestra</h3>
+                <p>Seamlessly integrate OpenAI, Claude, Gemini, Mistral, and other LLMs with intelligent model routing</p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">🔄</div>
-                <h3>Automated Workflows</h3>
-                <p>Intelligent automation handles routine tasks, freeing your team to focus on complex cases and patient care</p>
+                <h3>Intelligent Workflows</h3>
+                <p>Create sophisticated agent chains that handle multi-step processes with decision trees and error handling</p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">📊</div>
-                <h3>Predictive Analytics</h3>
-                <p>Advanced analytics predict payment patterns, identify revenue opportunities, and optimize collection strategies</p>
+                <h3>Advanced Analytics</h3>
+                <p>Real-time monitoring of agent performance, decision patterns, and system optimization insights</p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">🔒</div>
                 <h3>Enterprise Security</h3>
-                <p>HIPAA-compliant infrastructure with end-to-end encryption, SOC 2 certification, and continuous security monitoring</p>
+                <p>Bank-grade security with end-to-end encryption, compliance frameworks, and comprehensive audit trails</p>
             </div>
             
             <div class="feature-card">
                 <div class="feature-icon">🚀</div>
-                <h3>Seamless Integration</h3>
-                <p>API-first architecture integrates with any EHR, practice management system, or billing platform in days, not months</p>
+                <h3>Universal Integration</h3>
+                <p>API-first architecture connects with any enterprise system, database, or third-party service effortlessly</p>
             </div>
         </div>
     </section>
@@ -783,10 +783,10 @@
         <div class="code-demo-container">
             <div>
                 <span class="section-badge">DEVELOPER FRIENDLY</span>
-                <h2 style="font-size: 2.5rem; margin: 1rem 0;">Simple, Powerful API</h2>
+                <h2 style="font-size: 2.5rem; margin: 1rem 0;">Build Agents in Minutes</h2>
                 <p style="color: var(--text-secondary); margin-bottom: 2rem; font-size: 1.125rem;">
-                    Get started in minutes with our intuitive API. Process claims, verify eligibility, 
-                    and manage your entire revenue cycle programmatically.
+                    Create intelligent autonomous agents with our powerful APIs. Deploy LLM-powered agents 
+                    that can reason, plan, and execute complex workflows across any domain.
                 </p>
                 <a href="api.html" class="btn-primary">Explore API Docs →</a>
             </div>
@@ -797,25 +797,25 @@
                     <span class="code-dot"></span>
                     <span class="code-dot"></span>
                 </div>
-                <pre><code><span class="code-comment">// Submit a claim with automatic validation</span>
-<span class="code-keyword">const</span> <span class="code-function">claim</span> = <span class="code-keyword">await</span> rcm.<span class="code-function">submitClaim</span>({
-  <span class="code-string">patientId</span>: <span class="code-string">"PT-123456"</span>,
-  <span class="code-string">services</span>: [{
-    <span class="code-string">cptCode</span>: <span class="code-string">"99213"</span>,
-    <span class="code-string">modifiers</span>: [<span class="code-string">"25"</span>],
-    <span class="code-string">charge</span>: <span class="code-string">150.00</span>
+                <pre><code><span class="code-comment">// Create an autonomous AI agent</span>
+<span class="code-keyword">const</span> <span class="code-function">agent</span> = <span class="code-keyword">await</span> genai.<span class="code-function">createAgent</span>({
+  <span class="code-string">name</span>: <span class="code-string">"DataProcessor"</span>,
+  <span class="code-string">model</span>: <span class="code-string">"gpt-4"</span>,
+  <span class="code-string">capabilities</span>: [<span class="code-string">"reasoning"</span>, <span class="code-string">"planning"</span>, <span class="code-string">"execution"</span>],
+  <span class="code-string">tools</span>: [{
+    <span class="code-string">name</span>: <span class="code-string">"database_query"</span>,
+    <span class="code-string">description</span>: <span class="code-string">"Query enterprise databases"</span>
   }],
-  <span class="code-string">insurance</span>: {
-    <span class="code-string">payerId</span>: <span class="code-string">"BCBS001"</span>,
-    <span class="code-string">memberId</span>: <span class="code-string">"XYZ789"</span>
+  <span class="code-string">workflow</span>: {
+    <span class="code-string">steps</span>: [<span class="code-string">"analyze"</span>, <span class="code-string">"process"</span>, <span class="code-string">"report"</span>]
   }
 });
 
-<span class="code-comment">// AI automatically handles:</span>
-<span class="code-comment">// ✓ Eligibility verification</span>
-<span class="code-comment">// ✓ Code validation & scrubbing</span>
-<span class="code-comment">// ✓ Prior auth checks</span>
-<span class="code-comment">// ✓ Claim submission</span></code></pre>
+<span class="code-comment">// Agent autonomously handles:</span>
+<span class="code-comment">// ✓ Multi-step reasoning</span>
+<span class="code-comment">// ✓ Dynamic tool selection</span>
+<span class="code-comment">// ✓ Error handling & recovery</span>
+<span class="code-comment">// ✓ Continuous learning</span></code></pre>
             </div>
         </div>
     </section>
@@ -824,26 +824,26 @@
     <section class="metrics">
         <div class="section-header">
             <span class="section-badge">PROVEN RESULTS</span>
-            <h2>Transforming Revenue Cycles</h2>
+            <h2>Transforming Enterprise Operations</h2>
             <p>Real results from organizations using GenerativeAI Agentic Framework</p>
         </div>
         
         <div class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-number">45%</div>
-                <div class="metric-label">Reduction in Denials</div>
+                <div class="metric-number">85%</div>
+                <div class="metric-label">Process Automation</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number">10 Days</div>
-                <div class="metric-label">Faster Payments</div>
+                <div class="metric-number">60%</div>
+                <div class="metric-label">Faster Decision Making</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number">93%</div>
-                <div class="metric-label">First-Pass Rate</div>
+                <div class="metric-number">99.7%</div>
+                <div class="metric-label">Agent Reliability</div>
             </div>
             <div class="metric-card">
-                <div class="metric-number">$2.3M</div>
-                <div class="metric-label">Additional Revenue/Year</div>
+                <div class="metric-number">24/7</div>
+                <div class="metric-label">Autonomous Operation</div>
             </div>
         </div>
     </section>
@@ -877,7 +877,7 @@
     <section class="cta">
         <div class="cta-glow"></div>
         <div class="cta-content">
-            <h2>Ready to Transform Your Revenue Cycle?</h2>
+            <h2>Ready to Deploy Intelligent Agents?</h2>
             <p>Join leading organizations already using GenerativeAI Agentic Framework</p>
             <a href="#" class="btn-primary" style="font-size: 1.125rem; padding: 1.25rem 2.5rem;">
                 Start Free Trial →
