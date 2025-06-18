@@ -961,7 +961,7 @@
                 </h3>
                 <div class="model-list">
                     <div class="model-card active" onclick="selectModel('gpt-4')">
-                        <div class="model-name">GPT-4</div>
+                        <div class="model-name">GPT-4 Turbo</div>
                         <div class="model-provider">OpenAI</div>
                         <div class="model-features">
                             <span class="feature-tag">128k context</span>
@@ -971,7 +971,7 @@
                     </div>
                     
                     <div class="model-card" onclick="selectModel('claude-3')">
-                        <div class="model-name">Claude 3 Opus</div>
+                        <div class="model-name">Claude 3.5 Sonnet</div>
                         <div class="model-provider">Anthropic</div>
                         <div class="model-features">
                             <span class="feature-tag">200k context</span>
@@ -1212,8 +1212,8 @@ Try one of the examples above or ask me anything about RCM!</div>
 
         // Model Information
         const modelInfo = {
-            'gpt-4': { name: 'GPT-4', icon: '🤖', provider: 'OpenAI' },
-            'claude-3': { name: 'Claude 3 Opus', icon: '🌟', provider: 'Anthropic' },
+            'gpt-4': { name: 'GPT-4 Turbo', icon: '🤖', provider: 'OpenAI' },
+            'claude-3': { name: 'Claude 3.5 Sonnet', icon: '🌟', provider: 'Anthropic' },
             'gemini-pro': { name: 'Gemini Pro', icon: '💎', provider: 'Google' },
             'llama-3': { name: 'Llama 3 70B', icon: '🦙', provider: 'Meta' },
             'mixtral': { name: 'Mixtral 8x7B', icon: '🔀', provider: 'Mistral AI' },
@@ -1483,7 +1483,7 @@ Provide accurate, detailed, and actionable responses for healthcare revenue cycl
                     'Authorization': `Bearer ${apiKey}`
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4',
+                    model: 'gpt-4-turbo-preview',
                     messages: [
                         { role: 'system', content: systemPrompt },
                         { role: 'user', content: message }
