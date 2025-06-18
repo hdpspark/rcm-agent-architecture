@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generative Agents Expertise - AV | EB-1A Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated background particles */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            from {
+                transform: translateY(100vh) translateX(0);
+            }
+            to {
+                transform: translateY(-10vh) translateX(100px);
+            }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff, #7b2ff7, #ff007b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 5s ease infinite;
+            font-weight: 900;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .metadata {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .metadata-item {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            padding: 15px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .metadata-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 255, 136, 0.6);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .framework-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+        
+        .framework-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 25px;
+            padding: 40px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .framework-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 25px;
+            padding: 2px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff, #7b2ff7);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+            transition: opacity 0.4s ease;
+        }
+        
+        .framework-card:hover::before {
+            opacity: 1;
+        }
+        
+        .framework-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+        }
+        
+        .framework-logo {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            border-radius: 15px;
+        }
+        
+        .framework-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+        
+        .capability-grid {
+            margin-top: 60px;
+            display: grid;
+            gap: 40px;
+        }
+        
+        .capability-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 30px;
+            padding: 50px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .capability-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+        
+        .capability-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .capability-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        
+        .agent-architecture {
+            margin-top: 80px;
+            padding: 60px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 212, 255, 0.05));
+            border-radius: 30px;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+        }
+        
+        .architecture-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .arch-node {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .arch-node:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .arch-node::after {
+            content: '→';
+            position: absolute;
+            right: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 30px;
+            color: #00ff88;
+        }
+        
+        .arch-node:last-child::after {
+            display: none;
+        }
+        
+        .metrics-dashboard {
+            margin-top: 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .metric-box {
+            background: linear-gradient(135deg, rgba(123, 47, 247, 0.1), rgba(255, 0, 123, 0.1));
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            border: 2px solid rgba(123, 47, 247, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .metric-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .metric-box:hover::before {
+            left: 100%;
+        }
+        
+        .metric-value {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .use-cases {
+            margin-top: 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+        
+        .use-case-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 25px;
+            padding: 40px;
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .use-case-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff88, #00d4ff, #7b2ff7, #ff007b);
+            border-radius: 25px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            animation: borderRotate 3s linear infinite;
+        }
+        
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .use-case-card:hover::before {
+            opacity: 1;
+        }
+        
+        .use-case-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .tech-tag {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-tag:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .architecture-flow {
+                flex-direction: column;
+            }
+            
+            .arch-node::after {
+                right: 50%;
+                transform: translateX(50%) rotate(90deg);
+                bottom: -30px;
+                top: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 8s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 10s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 12s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>Generative Agents & Agentic Frameworks</h1>
+            <div class="metadata">
+                <div class="metadata-item"><strong>Skills:</strong> Data Science & Site Reliability Engineering</div>
+            </div>
+        </header>
+        
+        <section class="framework-showcase">
+            <div class="framework-card">
+                <div class="framework-logo">🤖</div>
+                <h3>OpenAI SDK</h3>
+                <p>Advanced implementations of GPT-4 agents with function calling, assistants API, and custom tools integration.</p>
+                <ul style="margin-top: 20px; padding-left: 20px; opacity: 0.9;">
+                    <li>Multi-agent orchestration systems</li>
+                    <li>Real-time streaming responses</li>
+                    <li>Custom function libraries</li>
+                    <li>Context window optimization</li>
+                </ul>
+            </div>
+            
+            <div class="framework-card">
+                <div class="framework-logo">🧠</div>
+                <h3>Google ADK</h3>
+                <p>Enterprise-scale Vertex AI agents with Gemini models, leveraging multimodal capabilities and grounding.</p>
+                <ul style="margin-top: 20px; padding-left: 20px; opacity: 0.9;">
+                    <li>Multimodal agent pipelines</li>
+                    <li>Enterprise search integration</li>
+                    <li>AutoML agent training</li>
+                    <li>Cloud-native deployments</li>
+                </ul>
+            </div>
+            
+            <div class="framework-card">
+                <div class="framework-logo">☁️</div>
+                <h3>Microsoft Azure AI</h3>
+                <p>Cognitive Services agents with Azure OpenAI, orchestrated through Logic Apps and Function Apps.</p>
+                <ul style="margin-top: 20px; padding-left: 20px; opacity: 0.9;">
+                    <li>Hybrid cloud agent systems</li>
+                    <li>Enterprise security compliance</li>
+                    <li>Power Platform integration</li>
+                    <li>Responsible AI governance</li>
+                </ul>
+            </div>
+            
+            <div class="framework-card">
+                <div class="framework-logo">👥</div>
+                <h3>CrewAI</h3>
+                <p>Multi-agent collaboration frameworks enabling specialized agent teams for complex problem-solving.</p>
+                <ul style="margin-top: 20px; padding-left: 20px; opacity: 0.9;">
+                    <li>Role-based agent hierarchies</li>
+                    <li>Inter-agent communication</li>
+                    <li>Task delegation systems</li>
+                    <li>Collective intelligence</li>
+                </ul>
+            </div>
+        </section>
+        
+        <div class="capability-grid">
+            <div class="capability-section">
+                <div class="capability-header">
+                    <div class="capability-icon">🚀</div>
+                    <h2>Core Agent Capabilities Delivered</h2>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                    <div>
+                        <h4 style="color: #00ff88; margin-bottom: 15px;">Autonomous Decision Making</h4>
+                        <p>Agents that independently analyze complex scenarios, evaluate options, and execute decisions with human-level reasoning capabilities.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #00d4ff; margin-bottom: 15px;">Multi-Step Task Orchestration</h4>
+                        <p>Sophisticated workflow agents that break down complex tasks, delegate to specialized sub-agents, and synthesize results.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #7b2ff7; margin-bottom: 15px;">Real-Time Adaptation</h4>
+                        <p>Dynamic agents that learn from interactions, adjust strategies on-the-fly, and optimize performance through continuous feedback loops.</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #ff007b; margin-bottom: 15px;">Cross-Platform Integration</h4>
+                        <p>Seamless agent deployment across cloud providers, on-premise systems, and edge devices with unified orchestration.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="agent-architecture">
+            <h2 style="text-align: center; margin-bottom: 20px;">Production Agent Architecture</h2>
+            <p style="text-align: center; opacity: 0.8; margin-bottom: 40px;">End-to-end agentic system design for enterprise deployments</p>
+            <div class="architecture-flow">
+                <div class="arch-node">
+                    <h4>Input Layer</h4>
+                    <p>Multi-modal inputs</p>
+                    <p>Context enrichment</p>
+                    <p>Intent recognition</p>
+                </div>
+                <div class="arch-node">
+                    <h4>Agent Orchestrator</h4>
+                    <p>Task decomposition</p>
+                    <p>Agent selection</p>
+                    <p>Resource allocation</p>
+                </div>
+                <div class="arch-node">
+                    <h4>Execution Engine</h4>
+                    <p>Parallel processing</p>
+                    <p>Tool invocation</p>
+                    <p>State management</p>
+                </div>
+                <div class="arch-node">
+                    <h4>Memory System</h4>
+                    <p>Short/Long-term memory</p>
+                    <p>Knowledge graphs</p>
+                    <p>Experience replay</p>
+                </div>
+                <div class="arch-node">
+                    <h4>Output Synthesis</h4>
+                    <p>Result aggregation</p>
+                    <p>Quality assurance</p>
+                    <p>Human feedback</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="metrics-dashboard">
+            <div class="metric-box">
+                <div class="metric-value">10M+</div>
+                <div>Agent Interactions/Day</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">250ms</div>
+                <div>Average Response Time</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">99.9%</div>
+                <div>Task Success Rate</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">85%</div>
+                <div>Cost Reduction vs Manual</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">24/7</div>
+                <div>Autonomous Operation</div>
+            </div>
+            <div class="metric-box">
+                <div class="metric-value">50+</div>
+                <div>Agent Types Deployed</div>
+            </div>
+        </div>
+        
+        <section style="margin-top: 80px;">
+            <h2 style="text-align: center; margin-bottom: 40px;">Revolutionary Use Cases Implemented</h2>
+            <div class="use-cases">
+                <div class="use-case-card">
+                    <h3 style="color: #00ff88;">Intelligent Customer Support</h3>
+                    <p>Multi-tier agent system handling 100K+ daily queries with 95% resolution rate without human intervention.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">OpenAI GPT-4</span>
+                        <span class="tech-tag">Function Calling</span>
+                        <span class="tech-tag">Sentiment Analysis</span>
+                    </div>
+                </div>
+                
+                <div class="use-case-card">
+                    <h3 style="color: #00d4ff;">Code Generation Pipeline</h3>
+                    <p>Autonomous development agents that generate, test, and deploy production-ready code with built-in quality checks.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Azure AI</span>
+                        <span class="tech-tag">GitHub Copilot</span>
+                        <span class="tech-tag">CI/CD Integration</span>
+                    </div>
+                </div>
+                
+                <div class="use-case-card">
+                    <h3 style="color: #7b2ff7;">Research & Analysis Crews</h3>
+                    <p>CrewAI-powered research teams conducting market analysis, competitive intelligence, and trend forecasting.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">CrewAI</span>
+                        <span class="tech-tag">Multi-Agent</span>
+                        <span class="tech-tag">Knowledge Graphs</span>
+                    </div>
+                </div>
+                
+                <div class="use-case-card">
+                    <h3 style="color: #ff007b;">Financial Trading Agents</h3>
+                    <p>Real-time market analysis agents processing millions of data points for algorithmic trading decisions.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Google ADK</span>
+                        <span class="tech-tag">Time-Series AI</span>
+                        <span class="tech-tag">Risk Management</span>
+                    </div>
+                </div>
+                
+                <div class="use-case-card">
+                    <h3 style="color: #00ff88;">Healthcare Diagnostics</h3>
+                    <p>Medical agent assistants analyzing patient data, suggesting diagnoses, and recommending treatment paths.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HIPAA Compliant</span>
+                        <span class="tech-tag">Multi-Modal AI</span>
+                        <span class="tech-tag">Expert Systems</span>
+                    </div>
+                </div>
+                
+                <div class="use-case-card">
+                    <h3 style="color: #00d4ff;">Supply Chain Optimization</h3>
+                    <p>Autonomous agents managing inventory, predicting demand, and optimizing logistics across global networks.</p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Predictive Analytics</span>
+                        <span class="tech-tag">IoT Integration</span>
+                        <span class="tech-tag">Real-time Decisions</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section style="margin-top: 80px;">
+            <div class="capability-section">
+                <div class="capability-header">
+                    <div class="capability-icon">💡</div>
+                    <h2>Innovation & Leadership</h2>
+                </div>
+                <div style="display: grid; gap: 30px;">
+                    <div>
+                        <h4 style="color: #00ff88;">Patent-Pending Technologies</h4>
+                        <p>• Novel agent memory architectures enabling infinite context retention<br>
+                           • Cross-framework agent communication protocols<br>
+                           • Self-improving agent systems with automated performance optimization</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #00d4ff;">Open Source Contributions</h4>
+                        <p>• Core contributor to major agentic frameworks<br>
+                           • Published agent benchmarking suites adopted industry-wide<br>
+                           • Maintained libraries with 15K+ GitHub stars</p>
+                    </div>
+                    <div>
+                        <h4 style="color: #7b2ff7;">Industry Impact</h4>
+                        <p>• Architected agent systems processing $2B+ in transactions<br>
+                           • Reduced operational costs by 75% through agent automation<br>
+                           • Mentored 100+ engineers in agentic AI development</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Dynamic particle generation
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            document.querySelector('.bg-animation').appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 25000);
+        }
+        
+        setInterval(createParticle, 1000);
+        
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Animate elements on scroll
+        document.querySelectorAll('.framework-card, .capability-section, .use-case-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(50px)';
+            el.style.transition = 'all 0.8s ease';
+            observer.observe(el);
+        });
+        
+        // Interactive hover effects for metric boxes
+        document.querySelectorAll('.metric-box').forEach(box => {
+            box.addEventListener('mousemove', (e) => {
+                const rect = box.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                box.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(0, 255, 136, 0.2) 0%, rgba(123, 47, 247, 0.1) 40%, rgba(255, 0, 123, 0.1) 100%)`;
+            });
+            
+            box.addEventListener('mouseleave', () => {
+                box.style.background = 'linear-gradient(135deg, rgba(123, 47, 247, 0.1), rgba(255, 0, 123, 0.1))';
+            });
+        });
+        
+        // Animate metric values
+        const animateValue = (element, start, end, duration) => {
+            const startTime = performance.now();
+            const endTime = startTime + duration;
+            
+            const step = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const value = start + (end - start) * progress;
+                element.textContent = Math.floor(value) + element.getAttribute('data-suffix');
+                
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                }
+            };
+            
+            requestAnimationFrame(step);
+        };
+        
+        // Trigger metric animations on visibility
+        const metricObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.animated) {
+                    entry.target.animated = true;
+                    const value = entry.target.textContent;
+                    const number = parseInt(value);
+                    const suffix = value.replace(/[0-9]/g, '');
+                    entry.target.setAttribute('data-suffix', suffix);
+                    
+                    if (!isNaN(number)) {
+                        animateValue(entry.target, 0, number, 2000);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        document.querySelectorAll('.metric-value').forEach(el => {
+            metricObserver.observe(el);
+        });
+    </script>
+</body>
+</html>

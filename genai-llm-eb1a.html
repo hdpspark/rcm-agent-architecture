@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI & LLM Expertise - AV | EB-1A Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe, #00f2fe);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .metadata {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .metadata-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .section {
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.4s; }
+        .section:nth-child(4) { animation-delay: 0.6s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .expertise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .expertise-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .expertise-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe, #00f2fe);
+            border-radius: 20px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .expertise-card:hover::before {
+            opacity: 1;
+        }
+        
+        .expertise-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .expertise-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #00f2fe;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, #00f2fe, #4facfe);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timeline-item:nth-child(odd) {
+            justify-content: flex-start;
+            padding-right: 50%;
+        }
+        
+        .timeline-item:nth-child(even) {
+            justify-content: flex-end;
+            padding-left: 50%;
+        }
+        
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            max-width: 400px;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #00f2fe;
+            border-radius: 50%;
+            border: 3px solid #24243e;
+            z-index: 1;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .metric-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00f2fe;
+            margin-bottom: 10px;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .tech-badge {
+            background: rgba(0, 242, 254, 0.1);
+            color: #00f2fe;
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #00f2fe;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .tech-badge:hover {
+            background: rgba(0, 242, 254, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .visual-diagram {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .architecture-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .arch-component {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+        
+        .arch-component::after {
+            content: '→';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #00f2fe;
+        }
+        
+        .arch-component:last-child::after {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                padding-left: 60px !important;
+                padding-right: 20px !important;
+            }
+            
+            .timeline-dot {
+                left: 20px;
+            }
+            
+            .architecture-diagram {
+                grid-template-columns: 1fr;
+            }
+            
+            .arch-component::after {
+                right: 50%;
+                transform: translateX(50%) rotate(90deg);
+                bottom: -25px;
+                top: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Generative AI & LLM Expertise</h1>
+            <div class="metadata">
+                <div class="metadata-item"><strong>Skills:</strong> Data Science & Site Reliability Engineering</div>
+            </div>
+        </header>
+        
+        <section class="section">
+            <h2>Core Expertise in Generative AI & Large Language Models</h2>
+            <div class="expertise-grid">
+                <div class="expertise-card">
+                    <h3>LLM Architecture & Training</h3>
+                    <p>Deep expertise in transformer architectures, attention mechanisms, and distributed training strategies for models ranging from BERT to GPT-4 scale systems.</p>
+                    <ul style="margin-top: 15px; padding-left: 20px;">
+                        <li>Custom transformer implementations</li>
+                        <li>Multi-GPU/TPU training pipelines</li>
+                        <li>Model optimization and quantization</li>
+                    </ul>
+                </div>
+                
+                <div class="expertise-card">
+                    <h3>Production LLM Systems</h3>
+                    <p>Designed and deployed enterprise-scale GenAI systems serving millions of requests daily with sub-second latency requirements.</p>
+                    <ul style="margin-top: 15px; padding-left: 20px;">
+                        <li>Kubernetes-based inference clusters</li>
+                        <li>Dynamic model routing and A/B testing</li>
+                        <li>Cost optimization strategies</li>
+                    </ul>
+                </div>
+                
+                <div class="expertise-card">
+                    <h3>RAG & Vector Databases</h3>
+                    <p>Pioneered retrieval-augmented generation systems combining LLMs with vector search for domain-specific applications.</p>
+                    <ul style="margin-top: 15px; padding-left: 20px;">
+                        <li>Custom embedding pipelines</li>
+                        <li>Hybrid search architectures</li>
+                        <li>Real-time knowledge updates</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>Technical Innovation Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>2024 - Present</h4>
+                        <p><strong>Multi-Modal LLM Platform</strong></p>
+                        <p>Led development of unified platform supporting text, image, and code generation at scale.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>2023</h4>
+                        <p><strong>Enterprise RAG System</strong></p>
+                        <p>Architected retrieval system processing 100M+ documents with 99.9% uptime SLA.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>2022</h4>
+                        <p><strong>Custom LLM Training Framework</strong></p>
+                        <p>Built distributed training system reducing costs by 60% while improving model performance.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>2021</h4>
+                        <p><strong>NLP Pipeline Automation</strong></p>
+                        <p>Pioneered automated MLOps pipelines for continuous model improvement and deployment.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>Impact Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-number">500M+</div>
+                    <div>API Requests Processed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">99.95%</div>
+                    <div>System Uptime</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">60%</div>
+                    <div>Cost Reduction</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">15+</div>
+                    <div>Models Deployed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">3x</div>
+                    <div>Performance Improvement</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">50+</div>
+                    <div>Engineers Mentored</div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>Technical Stack & Tools</h2>
+            <div class="tech-stack">
+                <span class="tech-badge">PyTorch</span>
+                <span class="tech-badge">TensorFlow</span>
+                <span class="tech-badge">Hugging Face</span>
+                <span class="tech-badge">LangChain</span>
+                <span class="tech-badge">Vector DBs</span>
+                <span class="tech-badge">CUDA</span>
+                <span class="tech-badge">Kubernetes</span>
+                <span class="tech-badge">Ray</span>
+                <span class="tech-badge">MLflow</span>
+                <span class="tech-badge">Apache Spark</span>
+                <span class="tech-badge">Redis</span>
+                <span class="tech-badge">Prometheus</span>
+                <span class="tech-badge">Grafana</span>
+                <span class="tech-badge">AWS SageMaker</span>
+                <span class="tech-badge">GCP Vertex AI</span>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>System Architecture Overview</h2>
+            <div class="visual-diagram">
+                <h3>Production LLM Inference Pipeline</h3>
+                <div class="architecture-diagram">
+                    <div class="arch-component">
+                        <h4>Request Layer</h4>
+                        <p>Load Balancer</p>
+                        <p>Rate Limiting</p>
+                        <p>Auth & Security</p>
+                    </div>
+                    <div class="arch-component">
+                        <h4>Processing Layer</h4>
+                        <p>Model Router</p>
+                        <p>Context Window Mgmt</p>
+                        <p>Batch Optimization</p>
+                    </div>
+                    <div class="arch-component">
+                        <h4>Inference Layer</h4>
+                        <p>GPU Clusters</p>
+                        <p>Model Serving</p>
+                        <p>Response Streaming</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="section">
+            <h2>Key Contributions</h2>
+            <div class="expertise-grid">
+                <div class="expertise-card">
+                    <h3>Research Publications</h3>
+                    <p>Published papers on efficient LLM inference, few-shot learning, and production deployment strategies in top-tier conferences.</p>
+                </div>
+                <div class="expertise-card">
+                    <h3>Open Source Leadership</h3>
+                    <p>Maintained critical GenAI libraries with 10K+ GitHub stars, contributing to democratization of AI technology.</p>
+                </div>
+                <div class="expertise-card">
+                    <h3>Industry Innovation</h3>
+                    <p>Patents pending for novel approaches to LLM caching, dynamic batching, and real-time model adaptation.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Add interactive hover effects
+        document.querySelectorAll('.expertise-card, .metric-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(79, 172, 254, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.background = 'rgba(255, 255, 255, 0.05)';
+            });
+        });
+        
+        // Animate numbers on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    const endValue = parseInt(target.textContent);
+                    let startValue = 0;
+                    const duration = 2000;
+                    const increment = endValue / (duration / 16);
+                    
+                    const updateNumber = () => {
+                        startValue += increment;
+                        if (startValue < endValue) {
+                            target.textContent = Math.floor(startValue) + (target.textContent.includes('+') ? '+' : '');
+                            requestAnimationFrame(updateNumber);
+                        } else {
+                            target.textContent = target.getAttribute('data-original');
+                        }
+                    };
+                    
+                    if (!target.getAttribute('data-original')) {
+                        target.setAttribute('data-original', target.textContent);
+                        updateNumber();
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.metric-number').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
