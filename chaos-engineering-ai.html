@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaos Engineering with AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-red: #ff4757;
+            --primary-orange: #ff6348;
+            --primary-yellow: #ffd93d;
+            --primary-purple: #6c5ce7;
+            --accent-green: #00b894;
+            --dark-bg: #0d0d0d;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Chaos particles background */
+        .chaos-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .chaos-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-red);
+            border-radius: 50%;
+            animation: chaos-float 10s infinite linear;
+        }
+        
+        @keyframes chaos-float {
+            0% {
+                transform: translate(0, 100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(200px, -100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 100px 0;
+            position: relative;
+        }
+        
+        .hero-title {
+            font-size: 4.5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-red), var(--primary-orange), var(--primary-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: flame-flicker 3s ease-in-out infinite;
+        }
+        
+        @keyframes flame-flicker {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5em;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        .skills-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 99, 72, 0.1));
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Chaos Features */
+        .chaos-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin: 80px 0;
+        }
+        
+        .chaos-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .chaos-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 71, 87, 0.1) 0%, transparent 70%);
+            animation: chaos-pulse 4s ease-in-out infinite;
+            opacity: 0;
+        }
+        
+        @keyframes chaos-pulse {
+            0%, 100% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1); opacity: 1; }
+        }
+        
+        .chaos-card:hover::before {
+            animation-duration: 2s;
+        }
+        
+        .chaos-card:hover {
+            transform: translateY(-10px) rotate(-1deg);
+            border-color: rgba(255, 71, 87, 0.3);
+        }
+        
+        .chaos-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-red), var(--primary-orange));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 20px;
+            animation: shake 5s ease-in-out infinite;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        /* Chaos Experiment Dashboard */
+        .experiment-dashboard {
+            margin: 100px 0;
+            padding: 60px;
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.05), rgba(108, 92, 231, 0.05));
+            border-radius: 32px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .experiment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .experiment-card {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .experiment-card:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 71, 87, 0.5);
+        }
+        
+        .status-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: status-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes status-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        .status-indicator.active {
+            background: var(--primary-red);
+            animation: status-blink 1s ease-in-out infinite;
+        }
+        
+        @keyframes status-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Interactive Demo */
+        .demo-section {
+            margin: 100px 0;
+            padding: 60px;
+            background: var(--card-bg);
+            border-radius: 32px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .demo-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .demo-btn {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 99, 72, 0.1));
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 71, 87, 0.3);
+            padding: 25px;
+            border-radius: 16px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .demo-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255, 71, 87, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .demo-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.3);
+        }
+        
+        .demo-output {
+            margin-top: 40px;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            text-align: left;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .demo-output.show {
+            opacity: 1;
+        }
+        
+        /* Resilience Visualization */
+        .resilience-viz {
+            margin: 100px 0;
+            padding: 60px;
+            background: var(--card-bg);
+            border-radius: 32px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .system-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .system-node {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.2), rgba(0, 184, 148, 0.1));
+            border: 2px solid var(--accent-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .system-node.failing {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.3), rgba(255, 71, 87, 0.1));
+            border-color: var(--primary-red);
+            animation: fail-shake 0.5s ease-in-out;
+        }
+        
+        @keyframes fail-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .system-node.recovered {
+            background: linear-gradient(135deg, rgba(255, 217, 61, 0.3), rgba(255, 217, 61, 0.1));
+            border-color: var(--primary-yellow);
+            animation: recover-pulse 1s ease-in-out;
+        }
+        
+        @keyframes recover-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Impact Metrics */
+        .impact-metrics {
+            margin: 100px 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .impact-tile {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(255, 71, 87, 0.1));
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .impact-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(108, 92, 231, 0.2);
+        }
+        
+        .impact-value {
+            font-size: 3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        /* Case Studies */
+        .case-studies {
+            margin: 100px 0;
+        }
+        
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+        
+        .case-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+        
+        .case-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 71, 87, 0.15);
+        }
+        
+        .case-header {
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 99, 72, 0.1));
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .case-content {
+            padding: 40px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5em;
+            }
+            
+            .system-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chaos-bg" id="chaosBg"></div>
+    
+    <div class="container">
+        <section class="hero">
+            <h1 class="hero-title">Chaos Engineering with AI</h1>
+            <p class="hero-subtitle">Intelligent Fault Injection for Unbreakable Systems</p>
+            <div class="skills-badge">
+                <strong>Skills:</strong> Data Science & Site Reliability Engineering
+            </div>
+        </section>
+        
+        <section class="chaos-features">
+            <div class="chaos-card">
+                <div class="chaos-icon">💥</div>
+                <h3 style="font-size: 1.8em; margin-bottom: 15px;">Intelligent Fault Injection</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    AI designs chaos experiments to find weaknesses before they cause outages.
+                </p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">✓ Smart failure scenarios</li>
+                    <li style="margin-bottom: 10px;">✓ Risk-aware targeting</li>
+                    <li style="margin-bottom: 10px;">✓ Adaptive intensity</li>
+                    <li style="margin-bottom: 10px;">✓ Safety guardrails</li>
+                </ul>
+            </div>
+            
+            <div class="chaos-card">
+                <div class="chaos-icon">🤖</div>
+                <h3 style="font-size: 1.8em; margin-bottom: 15px;">Automated Resilience Testing</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    GenAI creates novel failure scenarios your team hasn't imagined.
+                </p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">✓ Continuous testing</li>
+                    <li style="margin-bottom: 10px;">✓ Edge case discovery</li>
+                    <li style="margin-bottom: 10px;">✓ Dependency mapping</li>
+                    <li style="margin-bottom: 10px;">✓ Cascade analysis</li>
+                </ul>
+            </div>
+            
+            <div class="chaos-card">
+                <div class="chaos-icon">🔧</div>
+                <h3 style="font-size: 1.8em; margin-bottom: 15px;">Self-Healing Chaos</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Systems that learn from chaos experiments and auto-implement fixes.
+                </p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">✓ Automatic remediation</li>
+                    <li style="margin-bottom: 10px;">✓ Pattern recognition</li>
+                    <li style="margin-bottom: 10px;">✓ Preventive hardening</li>
+                    <li style="margin-bottom: 10px;">✓ Knowledge capture</li>
+                </ul>
+            </div>
+            
+            <div class="chaos-card">
+                <div class="chaos-icon">🎯</div>
+                <h3 style="font-size: 1.8em; margin-bottom: 15px;">Risk-Aware Testing</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    AI knows when and where to safely run chaos experiments.
+                </p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">✓ Business impact analysis</li>
+                    <li style="margin-bottom: 10px;">✓ Traffic-aware scheduling</li>
+                    <li style="margin-bottom: 10px;">✓ Blast radius control</li>
+                    <li style="margin-bottom: 10px;">✓ Rollback automation</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section class="experiment-dashboard">
+            <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;">Active Chaos Experiments</h2>
+            <p style="text-align: center; color: var(--text-secondary);">Real-time view of AI-driven chaos testing</p>
+            
+            <div class="experiment-grid">
+                <div class="experiment-card">
+                    <div class="status-indicator active"></div>
+                    <h4 style="color: var(--primary-red);">Network Latency Injection</h4>
+                    <p style="margin: 15px 0;">Target: Payment Service</p>
+                    <p style="color: var(--text-secondary);">Adding 500ms latency to 10% of requests</p>
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Progress</span>
+                            <span>67%</span>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.1); height: 4px; border-radius: 2px;">
+                            <div style="background: var(--primary-red); height: 100%; width: 67%; border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experiment-card">
+                    <div class="status-indicator"></div>
+                    <h4 style="color: var(--primary-orange);">CPU Stress Test</h4>
+                    <p style="margin: 15px 0;">Target: API Gateway</p>
+                    <p style="color: var(--text-secondary);">Simulating 90% CPU usage</p>
+                    <div style="margin-top: 20px;">
+                        <p style="color: var(--accent-green);">✓ Completed Successfully</p>
+                        <p style="font-size: 0.9em;">System maintained SLA</p>
+                    </div>
+                </div>
+                
+                <div class="experiment-card">
+                    <div class="status-indicator active"></div>
+                    <h4 style="color: var(--primary-purple);">Database Connection Drop</h4>
+                    <p style="margin: 15px 0;">Target: User Service</p>
+                    <p style="color: var(--text-secondary);">Randomly dropping 5% of connections</p>
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Progress</span>
+                            <span>23%</span>
+                        </div>
+                        <div style="background: rgba(255, 255, 255, 0.1); height: 4px; border-radius: 2px;">
+                            <div style="background: var(--primary-purple); height: 100%; width: 23%; border-radius: 2px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="demo-section">
+            <h2 style="font-size: 2.5em; margin-bottom: 20px;">Experience AI-Driven Chaos</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 40px;">
+                See how AI makes your systems antifragile
+            </p>
+            
+            <div class="demo-controls">
+                <button class="demo-btn" onclick="designExperiment()">
+                    <strong>Design Experiment</strong>
+                    <div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 5px;">AI creates chaos test</div>
+                </button>
+                <button class="demo-btn" onclick="runChaos()">
+                    <strong>Run Chaos Test</strong>
+                    <div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 5px;">Execute safely</div>
+                </button>
+                <button class="demo-btn" onclick="analyzeResults()">
+                    <strong>Analyze Results</strong>
+                    <div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 5px;">Learn from chaos</div>
+                </button>
+                <button class="demo-btn" onclick="autoHeal()">
+                    <strong>Auto-Heal System</strong>
+                    <div style="font-size: 0.9em; color: var(--text-secondary); margin-top: 5px;">Implement fixes</div>
+                </button>
+            </div>
+            
+            <div class="demo-output" id="demoOutput"></div>
+        </section>
+        
+        <section class="resilience-viz">
+            <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 20px;">System Resilience Visualization</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 40px;">
+                Watch AI-driven chaos testing in action
+            </p>
+            
+            <div class="system-grid" id="systemGrid">
+                <!-- System nodes will be dynamically generated -->
+            </div>
+        </section>
+        
+        <section class="impact-metrics">
+            <div class="impact-tile">
+                <div class="impact-value counter" data-target="99.9">0</div>
+                <div>% Resilience Score</div>
+            </div>
+            <div class="impact-tile">
+                <div class="impact-value counter" data-target="87">0</div>
+                <div>% Faster Recovery</div>
+            </div>
+            <div class="impact-tile">
+                <div class="impact-value counter" data-target="95">0</div>
+                <div>% Issues Prevented</div>
+            </div>
+            <div class="impact-tile">
+                <div class="impact-value counter" data-target="1000">0</div>
+                <div>Experiments Run</div>
+            </div>
+            <div class="impact-tile">
+                <div class="impact-value counter" data-target="24">0</div>
+                <div>/7 Testing</div>
+            </div>
+            <div class="impact-tile">
+                <div class="impact-value counter" data-target="0">0</div>
+                <div>Customer Impact</div>
+            </div>
+        </section>
+        
+        <section class="case-studies">
+            <h2 style="text-align: center; font-size: 2.5em; margin-bottom: 40px;">Chaos Success Stories</h2>
+            <div class="case-grid">
+                <div class="case-card">
+                    <div class="case-header">
+                        <h3 style="font-size: 1.8em;">Streaming Platform</h3>
+                        <p style="color: var(--text-secondary);">Peak Event Preparation</p>
+                    </div>
+                    <div class="case-content">
+                        <p>AI-driven chaos testing prepared system for 10x traffic spike during live sports event, preventing any outages.</p>
+                        <div style="margin-top: 30px; display: flex; justify-content: space-around;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; color: var(--primary-red);">50M</div>
+                                <div style="color: var(--text-secondary);">Concurrent Users</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; color: var(--accent-green);">Zero</div>
+                                <div style="color: var(--text-secondary);">Outages</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="case-card">
+                    <div class="case-header">
+                        <h3 style="font-size: 1.8em;">Financial Trading Platform</h3>
+                        <p style="color: var(--text-secondary);">Ultra-Low Latency Requirements</p>
+                    </div>
+                    <div class="case-content">
+                        <p>Chaos engineering identified and fixed 17 potential failure modes, ensuring 99.999% availability for trading.</p>
+                        <div style="margin-top: 30px; display: flex; justify-content: space-around;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; color: var(--primary-purple);"><1ms</div>
+                                <div style="color: var(--text-secondary);">Recovery Time</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 2em; color: var(--primary-orange);">$100M</div>
+                                <div style="color: var(--text-secondary);">Protected Daily</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // Create chaos particles
+        function createChaosParticles() {
+            const chaosBg = document.getElementById('chaosBg');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'chaos-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (8 + Math.random() * 4) + 's';
+                const colors = ['var(--primary-red)', 'var(--primary-orange)', 'var(--primary-yellow)'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                chaosBg.appendChild(particle);
+            }
+        }
+        
+        createChaosParticles();
+        
+        // Create system grid
+        function createSystemGrid() {
+            const grid = document.getElementById('systemGrid');
+            const icons = ['🖥️', '🔧', '💾', '🌐', '⚡'];
+            for (let i = 0; i < 25; i++) {
+                const node = document.createElement('div');
+                node.className = 'system-node';
+                node.textContent = icons[i % icons.length];
+                node.onclick = () => simulateFailure(node);
+                grid.appendChild(node);
+            }
+        }
+        
+        createSystemGrid();
+        
+        // Simulate failure
+        function simulateFailure(node) {
+            node.classList.add('failing');
+            setTimeout(() => {
+                node.classList.remove('failing');
+                node.classList.add('recovered');
+                setTimeout(() => {
+                    node.classList.remove('recovered');
+                }, 1000);
+            }, 2000);
+        }
+        
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseFloat(element.getAttribute('data-target'));
+            const decimals = target.toString().includes('.') ? 1 : 0;
+            const increment = target / 100;
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = current.toFixed(decimals);
+            }, 20);
+        }
+        
+        // Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('counter')) {
+                        animateCounter(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        document.querySelectorAll('.counter').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Demo functions
+        function designExperiment() {
+            const output = document.getElementById('demoOutput');
+            output.innerHTML = `<span style="color: var(--primary-red);">🧪 AI CHAOS EXPERIMENT DESIGN</span>
+<span style="color: var(--text-secondary);">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span style="color: var(--primary-orange);">[AI Analysis]</span> Analyzing system architecture and dependencies...
+
+<span style="color: var(--primary-yellow);">[Weak Points Identified]</span>
+1. Single point of failure: Redis cache cluster
+2. Cascading risk: Payment → Inventory → Orders
+3. Resource constraint: Database connection pool
+4. External dependency: Third-party payment API
+
+<span style="color: var(--primary-purple);">[Experiment Design: "Payment Storm"]</span>
+Objective: Test payment system resilience under extreme load
+
+<span style="color: var(--primary-red);">Chaos Scenarios:</span>
+1. <span style="color: var(--accent-green);">Phase 1:</span> Inject 200ms latency to Redis (5 min)
+2. <span style="color: var(--accent-green);">Phase 2:</span> Drop 10% database connections (5 min)
+3. <span style="color: var(--accent-green);">Phase 3:</span> Simulate payment API timeout (5 min)
+4. <span style="color: var(--accent-green);">Phase 4:</span> Combined scenario (10 min)
+
+<span style="color: var(--primary-orange);">[Safety Controls]</span>
+• Blast radius: Limited to 5% of traffic
+• Rollback trigger: Error rate > 2%
+• Emergency stop: Manual override available
+• Monitoring: Real-time dashboards active
+
+<span style="color: var(--primary-purple);">[Expected Outcomes]</span>
+• Discover timeout configuration issues
+• Test circuit breaker effectiveness
+• Validate fallback mechanisms
+• Measure actual customer impact
+
+<span style="color: var(--text-secondary);">Experiment ready. Estimated duration: 25 minutes</span>`;
+            output.classList.add('show');
+        }
+        
+        function runChaos() {
+            const output = document.getElementById('demoOutput');
+            output.innerHTML = `<span style="color: var(--primary-orange);">💥 CHAOS TEST IN PROGRESS</span>
+<span style="color: var(--text-secondary);">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span style="color: var(--primary-red);">[Phase 1: Redis Latency Injection]</span>
+[14:30:00] Injecting 200ms latency to Redis cluster
+[14:30:05] <span style="color: var(--primary-yellow);">⚠️ Response time increased: 145ms → 387ms</span>
+[14:30:10] ✓ Circuit breaker activated for slow queries
+[14:30:15] ✓ Fallback to database cache layer
+[14:30:30] <span style="color: var(--accent-green);">✓ System stabilized, performance degraded but acceptable</span>
+
+<span style="color: var(--primary-red);">[Phase 2: Database Connection Drops]</span>
+[14:35:00] Dropping 10% of database connections randomly
+[14:35:02] <span style="color: var(--primary-yellow);">⚠️ Connection pool exhaustion detected</span>
+[14:35:05] ✓ Connection retry logic engaged
+[14:35:08] ✓ Read replicas taking additional load
+[14:35:20] <span style="color: var(--accent-green);">✓ Self-healing: Pool size auto-adjusted</span>
+
+<span style="color: var(--primary-red);">[Phase 3: Payment API Timeout]</span>
+[14:40:00] Simulating payment gateway timeouts
+[14:40:01] <span style="color: var(--primary-yellow);">⚠️ Payment failures: 0% → 8.3%</span>
+[14:40:03] ✓ Retry mechanism activated
+[14:40:05] ✓ Queuing payments for batch processing
+[14:40:10] <span style="color: var(--primary-orange);">🔄 Interesting: Secondary payment provider not failing over</span>
+
+<span style="color: var(--primary-purple);">[Real-time Metrics]</span>
+• Error rate: 0.8% (within SLA)
+• P99 latency: 423ms (degraded but acceptable)
+• Successful transactions: 94.2%
+• Customer complaints: 0
+
+<span style="color: var(--accent-green);">[AI Learning]</span>
+• Discovered: Payment provider failover not configured correctly
+• Recommendation: Implement active-active payment routing
+• System resilience score: 87/100
+
+<span style="color: var(--text-secondary);">Chaos test completed. 1 critical finding, 3 improvements identified.</span>`;
+            output.classList.add('show');
+            
+            // Animate some system nodes
+            const nodes = document.querySelectorAll('.system-node');
+            for (let i = 0; i < 5; i++) {
+                const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
+                setTimeout(() => simulateFailure(randomNode), i * 500);
+            }
+        }
+        
+        function analyzeResults() {
+            const output = document.getElementById('demoOutput');
+            output.innerHTML = `<span style="color: var(--primary-purple);">📊 CHAOS TEST ANALYSIS</span>
+<span style="color: var(--text-secondary);">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span style="color: var(--primary-orange);">[Test Summary]</span>
+Duration: 25 minutes
+Scenarios executed: 4
+Services tested: 12
+Issues discovered: 7 (1 critical, 4 moderate, 2 minor)
+
+<span style="color: var(--primary-red);">[Critical Finding]</span>
+<span style="color: var(--primary-yellow);">⚠️ Payment Provider Failover Broken</span>
+• Impact: Could cause 100% payment failure if primary fails
+• Root cause: Misconfigured health check endpoint
+• Customer impact: $45,000/hour potential loss
+• Fix complexity: Low (configuration change)
+
+<span style="color: var(--primary-orange);">[System Strengths]</span>
+✅ Circuit breakers worked perfectly
+✅ Cache fallback mechanisms effective
+✅ Database connection pooling self-healed
+✅ No customer-visible errors during test
+
+<span style="color: var(--primary-purple);">[Improvement Opportunities]</span>
+1. <span style="color: var(--accent-green);">Quick Win:</span> Fix payment failover (30 min)
+2. <span style="color: var(--accent-green);">Medium:</span> Implement request hedging (2 days)
+3. <span style="color: var(--accent-green);">Long-term:</span> Multi-region active-active (2 weeks)
+
+<span style="color: var(--primary-yellow);">[AI Recommendations]</span>
+• Schedule weekly chaos tests in staging
+• Implement chaos testing in CI/CD pipeline
+• Create game days for critical scenarios
+• Build chaos test library from findings
+
+<span style="color: var(--primary-purple);">[Resilience Score Update]</span>
+Before: 76/100
+After fixes: 94/100 (projected)
+
+<span style="color: var(--accent-green);">[Knowledge Base Updated]</span>
+✓ 7 new failure scenarios documented
+✓ 4 runbooks created/updated
+✓ 3 alerts refined
+✓ 1 architectural improvement logged
+
+<span style="color: var(--text-secondary);">Analysis complete. Implementation plan generated.</span>`;
+            output.classList.add('show');
+        }
+        
+        function autoHeal() {
+            const output = document.getElementById('demoOutput');
+            output.innerHTML = `<span style="color: var(--accent-green);">🔧 AUTO-HEALING SYSTEM ACTIVATION</span>
+<span style="color: var(--text-secondary);">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span style="color: var(--primary-purple);">[Implementing Chaos Test Learnings]</span>
+
+<span style="color: var(--primary-orange);">Fix 1: Payment Provider Failover</span>
+[15:00:00] Updating health check configuration
+[15:00:02] Testing failover mechanism
+[15:00:05] <span style="color: var(--accent-green);">✓ Failover successful in 230ms</span>
+[15:00:07] Deploying to production
+[15:00:10] <span style="color: var(--accent-green);">✓ Configuration applied across all regions</span>
+
+<span style="color: var(--primary-orange);">Fix 2: Connection Pool Optimization</span>
+[15:00:15] Analyzing usage patterns from chaos test
+[15:00:17] Calculating optimal pool size: 150 → 200
+[15:00:20] Applying new configuration
+[15:00:22] <span style="color: var(--accent-green);">✓ Connection timeouts reduced by 73%</span>
+
+<span style="color: var(--primary-orange);">Fix 3: Circuit Breaker Tuning</span>
+[15:00:25] Adjusting timeout thresholds based on test data
+[15:00:27] Error threshold: 50% → 30%
+[15:00:28] Recovery timeout: 60s → 30s
+[15:00:30] <span style="color: var(--accent-green);">✓ Faster failure detection implemented</span>
+
+<span style="color: var(--primary-red);">[Automated Testing]</span>
+[15:00:35] Running mini chaos test to validate fixes...
+[15:00:40] Injecting previous failure scenarios...
+[15:00:55] <span style="color: var(--accent-green);">✓ All scenarios handled successfully!</span>
+
+<span style="color: var(--primary-purple);">[System Hardening]</span>
+• Deployed 3 critical fixes
+• Updated 5 monitoring alerts
+• Enhanced 2 runbooks
+• Scheduled follow-up test in 7 days
+
+<span style="color: var(--primary-yellow);">[New Resilience Metrics]</span>
+• MTTR improved: 12 min → 3 min
+• Failure rate reduced: 0.8% → 0.1%
+• Blast radius limited: 100% → 15%
+• Recovery automated: 25% → 95%
+
+<span style="color: var(--accent-green);">✅ SYSTEM HARDENED</span>
+Your infrastructure is now more resilient to the chaos of production!
+
+<span style="color: var(--text-secondary);">Auto-healing complete. System resilience increased by 23%.</span>`;
+            output.classList.add('show');
+            
+            // Show system recovery animation
+            const nodes = document.querySelectorAll('.system-node');
+            nodes.forEach((node, index) => {
+                setTimeout(() => {
+                    node.classList.add('recovered');
+                    setTimeout(() => node.classList.remove('recovered'), 1000);
+                }, index * 100);
+            });
+        }
+        
+        // Add hover effects
+        document.querySelectorAll('.demo-btn, .chaos-card, .impact-tile').forEach(element => {
+            element.addEventListener('mousemove', (e) => {
+                const rect = element.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                element.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255, 71, 87, 0.2) 0%, transparent 50%)`;
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                element.style.background = '';
+            });
+        });
+    </script>
+</body>
+</html>
