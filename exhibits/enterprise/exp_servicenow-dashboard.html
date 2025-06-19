@@ -312,6 +312,7 @@
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 30px;
+            min-height: 200px;
         }
 
         .section-header {
@@ -319,6 +320,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .section-title {
@@ -327,7 +330,122 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-right: 20px;
         }
+
+        .section-subtitle {
+            font-size: 0.9em;
+            opacity: 0.7;
+            white-space: nowrap;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 1200px) {
+            .module-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .module-card {
+            background: rgba(77, 182, 172, 0.1);
+            border: 1px solid rgba(77, 182, 172, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(77, 182, 172, 0.3);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #4db6ac;
+        }
+
+        .module-icon {
+            font-size: 1.3em;
+        }
+
+        .module-stats {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .module-metric {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .metric-value {
+            font-size: 2.2em;
+            font-weight: bold;
+            line-height: 1;
+            background: linear-gradient(90deg, #fff, #4db6ac);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-detail {
+            font-size: 0.8em;
+            opacity: 0.6;
+            margin-top: 3px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-green { background: #4caf50; }
+        .status-yellow { background: #ffc107; }
+        .status-red { background: #f44336; }
 
         .ticket-grid {
             display: grid;
@@ -589,61 +707,91 @@
             <div class="section-card">
             <div class="section-header">
                 <h2 class="section-title">📋 ITSM Modules</h2>
-                <span style="opacity: 0.7;">IT Service Management Suite</span>
+                <span class="section-subtitle">IT Service Management Suite</span>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                <div class="stat-card" style="padding: 20px;">
-                    <h4 style="color: #4db6ac; font-size: 1em;">🎫 Incident Management</h4>
-                    <div style="font-size: 2em; font-weight: bold; color: #fff;">1,847</div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">Active Incidents</div>
-                    <div style="margin-top: 10px; font-size: 0.85em;">
-                        <div>P1: 23 | P2: 156 | P3: 892</div>
-                        <div style="color: #4caf50;">MTTR: 2.3 hrs</div>
+            <div class="module-grid">
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">🎫</span>
+                        <span>Incident Management</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="module-metric">
+                            <div class="metric-value">1,836</div>
+                            <div class="metric-label">Active Incidents</div>
+                        </div>
+                        <div class="metric-detail">P1: 23 | P2: 166 | P3: 892</div>
+                        <div class="metric-detail" style="color: #4caf50;">MTTR: 2.3 hrs</div>
                     </div>
                 </div>
-                <div class="stat-card" style="padding: 20px;">
-                    <h4 style="color: #4db6ac; font-size: 1em;">🔧 Problem Management</h4>
-                    <div style="font-size: 2em; font-weight: bold; color: #fff;">234</div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">Open Problems</div>
-                    <div style="margin-top: 10px; font-size: 0.85em;">
-                        <div>Known Errors: 89</div>
-                        <div style="color: #ff9800;">RCA Pending: 45</div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">🔧</span>
+                        <span>Problem Management</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="module-metric">
+                            <div class="metric-value">237</div>
+                            <div class="metric-label">Open Problems</div>
+                        </div>
+                        <div class="metric-detail">Known Errors: 89</div>
+                        <div class="metric-detail" style="color: #ff9800;">RCA Pending: 45</div>
                     </div>
                 </div>
-                <div class="stat-card" style="padding: 20px;">
-                    <h4 style="color: #4db6ac; font-size: 1em;">🔄 Change Management</h4>
-                    <div style="font-size: 2em; font-weight: bold; color: #fff;">567</div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">Changes This Month</div>
-                    <div style="margin-top: 10px; font-size: 0.85em;">
-                        <div>Emergency: 12 | Normal: 445</div>
-                        <div style="color: #2196f3;">Success Rate: 97.2%</div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">🔄</span>
+                        <span>Change Management</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="module-metric">
+                            <div class="metric-value">577</div>
+                            <div class="metric-label">Changes This Month</div>
+                        </div>
+                        <div class="metric-detail">Emergency: 12 | Normal: 445</div>
+                        <div class="metric-detail" style="color: #2196f3;">Success Rate: 97.2%</div>
                     </div>
                 </div>
-                <div class="stat-card" style="padding: 20px;">
-                    <h4 style="color: #4db6ac; font-size: 1em;">📦 Release Management</h4>
-                    <div style="font-size: 2em; font-weight: bold; color: #fff;">89</div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">Planned Releases</div>
-                    <div style="margin-top: 10px; font-size: 0.85em;">
-                        <div>This Sprint: 23</div>
-                        <div style="color: #9c27b0;">Major: 5 | Minor: 18</div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">📦</span>
+                        <span>Release Management</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="module-metric">
+                            <div class="metric-value">89</div>
+                            <div class="metric-label">Planned Releases</div>
+                        </div>
+                        <div class="metric-detail">This Sprint: 23</div>
+                        <div class="metric-detail" style="color: #9c27b0;">Major: 5 | Minor: 18</div>
                     </div>
                 </div>
-                <div class="stat-card" style="padding: 20px;">
-                    <h4 style="color: #4db6ac; font-size: 1em;">📞 Service Request</h4>
-                    <div style="font-size: 2em; font-weight: bold; color: #fff;">3,456</div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">Open Requests</div>
-                    <div style="margin-top: 10px; font-size: 0.85em;">
-                        <div>Catalog Items: 234</div>
-                        <div style="color: #4caf50;">Avg Fulfillment: 4.2 hrs</div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">📞</span>
+                        <span>Service Request</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="module-metric">
+                            <div class="metric-value">3,436</div>
+                            <div class="metric-label">Open Requests</div>
+                        </div>
+                        <div class="metric-detail">Catalog Items: 234</div>
+                        <div class="metric-detail" style="color: #4caf50;">Avg Fulfillment: 4.2 hrs</div>
                     </div>
                 </div>
-                <div class="stat-card" style="padding: 20px;">
-                    <h4 style="color: #4db6ac; font-size: 1em;">📊 Knowledge Management</h4>
-                    <div style="font-size: 2em; font-weight: bold; color: #fff;">15.2K</div>
-                    <div style="font-size: 0.8em; opacity: 0.7;">KB Articles</div>
-                    <div style="margin-top: 10px; font-size: 0.85em;">
-                        <div>Views Today: 8,934</div>
-                        <div style="color: #ff9800;">Helpful: 94.5%</div>
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-icon">📊</span>
+                        <span>Knowledge Management</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="module-metric">
+                            <div class="metric-value">15.2K</div>
+                            <div class="metric-label">KB Articles</div>
+                        </div>
+                        <div class="metric-detail">Views Today: 8,934</div>
+                        <div class="metric-detail" style="color: #ff9800;">Helpful: 94.5%</div>
                     </div>
                 </div>
             </div>
@@ -652,47 +800,107 @@
         <div class="section-card" style="background: rgba(33, 150, 243, 0.1); border-color: rgba(33, 150, 243, 0.3);">
             <div class="section-header">
                 <h2 class="section-title" style="color: #64b5f6;">💼 ITOM Modules</h2>
-                <span style="opacity: 0.7;">IT Operations Management</span>
+                <span class="section-subtitle">IT Operations Management</span>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                <div style="background: rgba(33, 150, 243, 0.2); padding: 20px; border-radius: 10px;">
-                    <h4 style="color: #64b5f6; margin-bottom: 10px;">🗺️ Discovery</h4>
-                    <div style="display: grid; gap: 8px;">
-                        <div>Discovered CIs: <strong>45,678</strong></div>
-                        <div>Servers: <strong>3,456</strong></div>
-                        <div>Applications: <strong>8,912</strong></div>
-                        <div>Network Devices: <strong>2,345</strong></div>
-                        <div style="color: #4caf50;">Last Run: 2 hours ago</div>
+            <div class="module-grid">
+                <div class="module-card" style="background: rgba(33, 150, 243, 0.15); border-color: rgba(33, 150, 243, 0.4);">
+                    <div class="module-header" style="color: #64b5f6;">
+                        <span class="module-icon">🗺️</span>
+                        <span>Discovery</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="metric-row">
+                            <span>Discovered CIs:</span>
+                            <strong>45,678</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Servers:</span>
+                            <strong>3,456</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Applications:</span>
+                            <strong>8,912</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Network Devices:</span>
+                            <strong>2,345</strong>
+                        </div>
+                        <div class="metric-detail" style="color: #4caf50; margin-top: 10px;">Last Run: 2 hours ago</div>
                     </div>
                 </div>
-                <div style="background: rgba(33, 150, 243, 0.2); padding: 20px; border-radius: 10px;">
-                    <h4 style="color: #64b5f6; margin-bottom: 10px;">🎯 Service Mapping</h4>
-                    <div style="display: grid; gap: 8px;">
-                        <div>Business Services: <strong>234</strong></div>
-                        <div>Technical Services: <strong>567</strong></div>
-                        <div>Dependencies Mapped: <strong>12.3K</strong></div>
-                        <div>Entry Points: <strong>456</strong></div>
-                        <div style="color: #ff9800;">Unmapped: 23</div>
+                <div class="module-card" style="background: rgba(33, 150, 243, 0.15); border-color: rgba(33, 150, 243, 0.4);">
+                    <div class="module-header" style="color: #64b5f6;">
+                        <span class="module-icon">🎯</span>
+                        <span>Service Mapping</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="metric-row">
+                            <span>Business Services:</span>
+                            <strong>234</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Technical Services:</span>
+                            <strong>567</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Dependencies:</span>
+                            <strong>12.3K</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Entry Points:</span>
+                            <strong>456</strong>
+                        </div>
+                        <div class="metric-detail" style="color: #ff9800; margin-top: 10px;">Unmapped: 23</div>
                     </div>
                 </div>
-                <div style="background: rgba(33, 150, 243, 0.2); padding: 20px; border-radius: 10px;">
-                    <h4 style="color: #64b5f6; margin-bottom: 10px;">📡 Event Management</h4>
-                    <div style="display: grid; gap: 8px;">
-                        <div>Events/Hour: <strong>125K</strong></div>
-                        <div>Alert Rules: <strong>456</strong></div>
-                        <div>Correlation Rules: <strong>89</strong></div>
-                        <div>Noise Reduction: <strong>87%</strong></div>
-                        <div style="color: #f44336;">Critical Alerts: 12</div>
+                <div class="module-card" style="background: rgba(33, 150, 243, 0.15); border-color: rgba(33, 150, 243, 0.4);">
+                    <div class="module-header" style="color: #64b5f6;">
+                        <span class="module-icon">📡</span>
+                        <span>Event Management</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="metric-row">
+                            <span>Events/Hour:</span>
+                            <strong>125K</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Alert Rules:</span>
+                            <strong>456</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Correlation Rules:</span>
+                            <strong>89</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Noise Reduction:</span>
+                            <strong>87%</strong>
+                        </div>
+                        <div class="metric-detail" style="color: #f44336; margin-top: 10px;">Critical Alerts: 12</div>
                     </div>
                 </div>
-                <div style="background: rgba(33, 150, 243, 0.2); padding: 20px; border-radius: 10px;">
-                    <h4 style="color: #64b5f6; margin-bottom: 10px;">☁️ Cloud Management</h4>
-                    <div style="display: grid; gap: 8px;">
-                        <div>AWS Instances: <strong>1,234</strong></div>
-                        <div>Azure VMs: <strong>892</strong></div>
-                        <div>GCP Resources: <strong>456</strong></div>
-                        <div>Monthly Spend: <strong>$125K</strong></div>
-                        <div style="color: #4caf50;">Cost Optimized: 23%</div>
+                <div class="module-card" style="background: rgba(33, 150, 243, 0.15); border-color: rgba(33, 150, 243, 0.4);">
+                    <div class="module-header" style="color: #64b5f6;">
+                        <span class="module-icon">☁️</span>
+                        <span>Cloud Management</span>
+                    </div>
+                    <div class="module-stats">
+                        <div class="metric-row">
+                            <span>AWS Instances:</span>
+                            <strong>1,234</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Azure VMs:</span>
+                            <strong>892</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>GCP Resources:</span>
+                            <strong>456</strong>
+                        </div>
+                        <div class="metric-row">
+                            <span>Monthly Spend:</span>
+                            <strong>$125K</strong>
+                        </div>
+                        <div class="metric-detail" style="color: #4caf50; margin-top: 10px;">Cost Optimized: 23%</div>
                     </div>
                 </div>
             </div>
@@ -701,58 +909,68 @@
         <div class="section-card" style="background: rgba(76, 175, 80, 0.1); border-color: rgba(76, 175, 80, 0.3);">
             <div class="section-header">
                 <h2 class="section-title" style="color: #81c784;">🛡️ Security Operations</h2>
-                <span style="opacity: 0.7;">SecOps & GRC</span>
+                <span class="section-subtitle">SecOps & GRC</span>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <div style="background: rgba(76, 175, 80, 0.2); padding: 20px; border-radius: 10px;">
-                    <h4 style="color: #81c784; margin-bottom: 15px;">🔒 Security Incident Response</h4>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div>
-                            <div style="font-size: 0.8em; opacity: 0.7;">Security Incidents</div>
-                            <div style="font-size: 1.5em; font-weight: bold;">234</div>
+            <div class="module-grid">
+                <div class="module-card" style="background: rgba(76, 175, 80, 0.15); border-color: rgba(76, 175, 80, 0.4);">
+                    <div class="module-header" style="color: #81c784;">
+                        <span class="module-icon">🔒</span>
+                        <span>Security Incident Response</span>
+                    </div>
+                    <div class="module-stats">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <div class="metric-value" style="font-size: 1.8em;">234</div>
+                                <div class="metric-label">Security Incidents</div>
+                            </div>
+                            <div>
+                                <div class="metric-value" style="font-size: 1.8em;">15m</div>
+                                <div class="metric-label">MTTD</div>
+                            </div>
                         </div>
-                        <div>
-                            <div style="font-size: 0.8em; opacity: 0.7;">MTTD</div>
-                            <div style="font-size: 1.5em; font-weight: bold;">15m</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.8em; opacity: 0.7;">Vulnerabilities</div>
-                            <div style="font-size: 1.5em; font-weight: bold; color: #ff9800;">1,234</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.8em; opacity: 0.7;">Threat Intel</div>
-                            <div style="font-size: 1.5em; font-weight: bold;">89</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div>
+                                <div class="metric-value" style="font-size: 1.5em; color: #ff9800;">1,234</div>
+                                <div class="metric-label">Vulnerabilities</div>
+                            </div>
+                            <div>
+                                <div class="metric-value" style="font-size: 1.5em;">89</div>
+                                <div class="metric-label">Threat Intel</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div style="background: rgba(76, 175, 80, 0.2); padding: 20px; border-radius: 10px;">
-                    <h4 style="color: #81c784; margin-bottom: 15px;">📋 GRC (Governance, Risk, Compliance)</h4>
-                    <div>
-                        <div style="margin-bottom: 10px;">
-                            <div style="display: flex; justify-content: space-between;">
+                <div class="module-card" style="background: rgba(76, 175, 80, 0.15); border-color: rgba(76, 175, 80, 0.4);">
+                    <div class="module-header" style="color: #81c784;">
+                        <span class="module-icon">📋</span>
+                        <span>GRC (Governance, Risk, Compliance)</span>
+                    </div>
+                    <div class="module-stats">
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                                 <span>Policies</span>
                                 <span style="font-weight: bold;">456</span>
                             </div>
-                            <div style="background: rgba(255,255,255,0.1); height: 4px; border-radius: 2px; margin-top: 5px;">
-                                <div style="background: #4caf50; height: 100%; width: 85%; border-radius: 2px;"></div>
+                            <div style="background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px;">
+                                <div style="background: #4caf50; height: 100%; width: 85%; border-radius: 3px;"></div>
                             </div>
                         </div>
-                        <div style="margin-bottom: 10px;">
-                            <div style="display: flex; justify-content: space-between;">
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                                 <span>Risk Register</span>
                                 <span style="font-weight: bold;">234</span>
                             </div>
-                            <div style="background: rgba(255,255,255,0.1); height: 4px; border-radius: 2px; margin-top: 5px;">
-                                <div style="background: #ff9800; height: 100%; width: 65%; border-radius: 2px;"></div>
+                            <div style="background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px;">
+                                <div style="background: #ff9800; height: 100%; width: 65%; border-radius: 3px;"></div>
                             </div>
                         </div>
                         <div>
-                            <div style="display: flex; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                                 <span>Compliance</span>
                                 <span style="font-weight: bold;">94%</span>
                             </div>
-                            <div style="background: rgba(255,255,255,0.1); height: 4px; border-radius: 2px; margin-top: 5px;">
-                                <div style="background: #2196f3; height: 100%; width: 94%; border-radius: 2px;"></div>
+                            <div style="background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px;">
+                                <div style="background: #2196f3; height: 100%; width: 94%; border-radius: 3px;"></div>
                             </div>
                         </div>
                     </div>
@@ -1422,6 +1640,12 @@
             const totalBudget = 12.5;
             const spent = (totalBudget * spentPercentage / 100).toFixed(1);
             const remaining = (totalBudget - spent).toFixed(1);
+            
+            // Fix the Knowledge Management KB Articles value
+            const kbElement = document.querySelector('.module-card:nth-child(6) .metric-value');
+            if (kbElement && kbElement.textContent === '-2') {
+                kbElement.textContent = '15.2K';
+            }
         }
 
         // Toggle connection panel
