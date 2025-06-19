@@ -18,7 +18,7 @@
 
 ### ServiceNow Dashboard Integration
 - Added expanded ServiceNow dashboard:
-  - `/exhibits/enterprise/exp_servicenow-dashboard.html` - ServiceNow Dashboard Expanded View (🚀)
+  - `/exhibits/enterprise/Exnd_servicenow_dashboard_fixed.html` - ServiceNow Dashboard Expanded View (🚀)
 - Integrated under "Enterprise Platform Integration" section in exhibits.html
 
 ## Project Structure
