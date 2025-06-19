@@ -10,8 +10,11 @@
 - Added two new dashboards to the exhibits section:
   - `/exhibits/k8s-dashboard.html` - Kubernetes Operations Dashboard
   - `/exhibits/vcenter-dashboard.html` - vCenter Infrastructure Dashboard
-- Both dashboards are integrated under "Site Reliability Engineering & AIOps" section in exhibits.html
-- Icons used: ☸️ for K8s, 🖥️ for vCenter
+- Added expanded versions with advanced features:
+  - `/exhibits/sre/expand_k8s-dashboard.html` - K8s Dashboard Expanded View (🎯)
+  - `/exhibits/sre/expand_vcenter-dashboard.html` - vCenter Dashboard Expanded View (📊)
+- All dashboards are integrated under "Site Reliability Engineering & AIOps" section in exhibits.html
+- Icons used: ☸️ for K8s, 🖥️ for vCenter, 🎯 for K8s Expanded, 📊 for vCenter Expanded
 
 ## Project Structure
 - Main sections: GenerativeAI Agents, Revenue Cycle Management, Site Reliability Engineering
