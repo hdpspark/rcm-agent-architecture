@@ -16,6 +16,11 @@
 - All dashboards are integrated under "Site Reliability Engineering & AIOps" section in exhibits.html
 - Icons used: ☸️ for K8s, 🖥️ for vCenter, 🎯 for K8s Expanded, 📊 for vCenter Expanded
 
+### ServiceNow Dashboard Integration
+- Added expanded ServiceNow dashboard:
+  - `/exhibits/enterprise/expanded_servicenow-dashboard.html` - ServiceNow Dashboard Expanded View (🚀)
+- Integrated under "Enterprise Platform Integration" section in exhibits.html
+
 ## Project Structure
 - Main sections: GenerativeAI Agents, Revenue Cycle Management, Site Reliability Engineering
 - Exhibits page (`exhibits.html`) serves as the gallery for all interactive demos
